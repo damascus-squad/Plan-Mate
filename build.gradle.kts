@@ -37,18 +37,18 @@ tasks.jacocoTestReport {
     }
     dependsOn(tasks.test)
 }
-
 tasks.jacocoTestCoverageVerification {
     violationRules {
-        classDirectories.setFrom(
-            classDirectories.files.forEach {
-                fileTree(it) {
-                    exclude("**/model/**")
-                    exclude("**/di/**")
-                }
-            }
-        )
         rule {
+            classDirectories.setFrom(
+                files(classDirectories.files.map { file ->
+                    fileTree(file) {
+                        exclude("**/model/**")
+                        exclude("**/di/**")
+                    }
+                })
+            )
+
             limit {
                 minimum = "0.8".toBigDecimal()
             }
