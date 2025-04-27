@@ -24,6 +24,9 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+    }
     finalizedBy(tasks.jacocoTestReport)
 }
 

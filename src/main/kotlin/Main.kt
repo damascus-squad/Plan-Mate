@@ -1,5 +1,5 @@
 package org.damascus
 
-fun main() {
-
+fun add(a: Int, b: Int): Int {
+    return a + b
 }
