@@ -1,6 +1,9 @@
 package model
 
+import java.util.UUID
+
 class Mate(
+    id: UUID,
     username: String,
     password: String
-) : User(username = username, password = password)
+) : User(id = id, username = username, password = password)

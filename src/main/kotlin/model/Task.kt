@@ -4,7 +4,7 @@ import kotlinx.datetime.LocalDateTime
 import java.util.*
 
 data class Task(
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID,
     val projectId: UUID,
     val title: String,
     val description: String,
