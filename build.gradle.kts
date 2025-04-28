@@ -11,6 +11,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
     implementation("io.insert-koin:koin-core:4.0.3")
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
