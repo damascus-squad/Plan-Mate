@@ -21,6 +21,9 @@ dependencies {
 
     testImplementation("com.google.truth:truth:1.4.4")
     testImplementation("io.mockk:mockk:1.14.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+    testImplementation("io.mockk:mockk:1.14.0")
 }
 
 tasks.test {
