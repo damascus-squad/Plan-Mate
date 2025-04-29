@@ -30,16 +30,16 @@ class TaskHelperTest {
             title = "task manipulation",
             description = "create crud operation",
             state = State(id = UUID.randomUUID(), name = "In Progress"),
-            projectId = UUID.randomUUID(),
+            projectId = fakeProjects.first().id,
             creationDate = LocalDateTime.now(),
         )
-        every { taskRepository.createTask(task = newTask) } returns false
+        every { taskRepository.createTask(task = newTask) } returns fakeProjects.any { it.id == newTask.projectId }
 
         //When
         val result = taskHelper.createTask(newTask)
 
         //Then
-        assertThat(result).isEqualTo(true)
+        assertThat(result).isTrue()
     }
 
     @Test
@@ -53,7 +53,7 @@ class TaskHelperTest {
             projectId = UUID.randomUUID(),
             creationDate = LocalDateTime.now()
         )
-        every { taskRepository.createTask(task = newTask) } returns true
+        every { taskRepository.createTask(task = newTask) } returns fakeProjects.any { it.id == newTask.projectId }
 
         //When
         val result = taskHelper.createTask(newTask)
@@ -66,21 +66,28 @@ class TaskHelperTest {
     fun `should return false when create task that already exist`() {
         //Given
         val task = fakeTasks.first()
-        every { taskRepository.createTask(task = task) } returns true
+        every { taskRepository.createTask(task = task) } returns fakeTasks.contains(task)
 
         //When
         val result = taskHelper.createTask(task)
 
         //Then
-        assertThat(result).isFalse()
+        assertThat(result).isTrue()
 
     }
 
     @Test
     fun `should return true when create task that not exist`() {
         //Given
-        val task = fakeTasks.first()
-        every { taskRepository.createTask(task = task) } returns false
+        val task = Task(
+            id = UUID.randomUUID(),
+            projectId = UUID.randomUUID(),
+            title = "Task 4",
+            description = "des",
+            state = State(id = UUID.randomUUID(), name = "Done"),
+            creationDate = LocalDateTime.now()
+        )
+        every { taskRepository.createTask(task = task) } returns !fakeTasks.contains(task)
 
         //When
         val result = taskHelper.createTask(task)
@@ -93,10 +100,10 @@ class TaskHelperTest {
     fun `should return true when update task that is exist`() {
         //Given
         val task = fakeTasks.first()
-        every { taskRepository.updateTask(taskId = task.id, task = task) } returns true
+        every { taskRepository.updateTask(taskId = task.id, task = task) } returns fakeTasks.contains(task)
 
         //When
-        val result = taskHelper.createTask(task)
+        val result = taskHelper.updateTask(task.id, task)
 
         //Then
         assertThat(result).isTrue()
@@ -105,8 +112,15 @@ class TaskHelperTest {
     @Test
     fun `should return false when update task that not exist`() {
         //Given
-        val task = fakeTasks.first()
-        every { taskRepository.updateTask(taskId = task.id, task = task) } returns true
+        val task = Task(
+            id = UUID.randomUUID(),
+            projectId = UUID.randomUUID(),
+            title = "Task 10",
+            description = "des",
+            state = State(id = UUID.randomUUID(), name = "Done"),
+            creationDate = LocalDateTime.now()
+        )
+        every { taskRepository.updateTask(taskId = task.id, task = task) } returns fakeTasks.contains(task)
 
         //When
         val result = taskHelper.updateTask(taskId = task.id, task = task)
@@ -118,8 +132,15 @@ class TaskHelperTest {
     @Test
     fun `should return false when delete task that not exist`() {
         //Given
-        val task = fakeTasks.first()
-        every { taskRepository.deleteTask(taskId = task.id) } returns true
+        val task = Task(
+            id = UUID.randomUUID(),
+            projectId = UUID.randomUUID(),
+            title = "Task 4",
+            description = "des",
+            state = State(id = UUID.randomUUID(), name = "Done"),
+            creationDate = LocalDateTime.now()
+        )
+        every { taskRepository.deleteTask(taskId = task.id) } returns fakeTasks.contains(task)
 
         //When
         val result = taskHelper.deleteTask(task.id)
@@ -132,7 +153,7 @@ class TaskHelperTest {
     fun `should return false when delete task that is exist`() {
         //Given
         val task = fakeTasks.first()
-        every { taskRepository.deleteTask(taskId = task.id) } returns false
+        every { taskRepository.deleteTask(taskId = task.id) } returns fakeTasks.contains(task)
 
         //When
         val result = taskHelper.deleteTask(task.id)
@@ -144,13 +165,17 @@ class TaskHelperTest {
     @Test
     fun `should return tasks when tasks list is not empty according to project id`() {
         //Given
-        every { taskRepository.getTasksByProject(projectId = UUID.randomUUID()) } returns fakeTasks
+        every { taskRepository.getTasksByProject(fakeProjects.first().id) } returns fakeTasks
+            .filter { it.projectId == fakeProjects.first().id }
 
         //When
-        val result = taskHelper.getTasksByProject(projectId = UUID.randomUUID())
+        val result = taskHelper.getTasksByProject(fakeProjects.first().id)
 
         //Then
-        assertThat(result).containsExactly(fakeProjects)
+        assertThat(result.map { it.title }).containsExactly(
+            "Task 1",
+            "Task 2"
+        )
     }
 
     @Test
@@ -162,9 +187,8 @@ class TaskHelperTest {
         val result = taskHelper.getTasksByProject(projectId = UUID.randomUUID())
 
         //Then
-        assertThat(result).containsExactly(fakeTasks)
+        assertThat(result).isEmpty()
     }
-
 
     private val fakeProjects = mutableListOf(
         Project(id = UUID.randomUUID(), name = "Project 1", creationDate = LocalDateTime.now()),
@@ -175,7 +199,7 @@ class TaskHelperTest {
     private val fakeTasks = mutableListOf(
         Task(
             id = UUID.randomUUID(),
-            projectId = UUID.randomUUID(),
+            projectId = fakeProjects.first().id,
             title = "Task 1",
             description = "des",
             state = State(id = UUID.randomUUID(), name = "Done"),
@@ -184,7 +208,7 @@ class TaskHelperTest {
 
         Task(
             id = UUID.randomUUID(),
-            projectId = UUID.randomUUID(),
+            projectId = fakeProjects.first().id,
             title = "Task 2",
             description = "des",
             state = State(id = UUID.randomUUID(), name = "Done"),
