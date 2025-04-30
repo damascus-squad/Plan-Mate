@@ -134,6 +134,16 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun `findByUsername should return null when user does not exist`() {
+        val user = Mate(id= UUID.randomUUID(),"testUser", "hashed123")
+        users.add(user)
+
+        val result = authRepo.findByUsername("nonExistingUser")
+
+        assertNull(result)
+    }
+
+    @Test
+    fun `findByUsername should return null when list is empty`() {
         val result = authRepo.findByUsername("nonExistingUser")
 
         assertNull(result)
