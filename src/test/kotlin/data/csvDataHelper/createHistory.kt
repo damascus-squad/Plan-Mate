@@ -22,7 +22,7 @@ fun createHistory(
     return History(
         id = id,
         projectId = projectId,
-        entityId = entityId,
+        taskId = entityId,
         entityType = entityType,
         changedBy = changedBy,
         oldState = oldState,

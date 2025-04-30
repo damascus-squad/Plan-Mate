@@ -51,7 +51,7 @@ object FileDataSerializer {
         return listOf(
             history.id.toString(),
             history.projectId.toString(),
-            history.entityId.toString(),
+            history.taskId.toString(),
             history.entityType,
             history.changedBy.toString(),
             oldStateId,

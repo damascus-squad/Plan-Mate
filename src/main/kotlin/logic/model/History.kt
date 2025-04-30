@@ -6,7 +6,7 @@ import java.util.UUID
 data class History(
     val id: UUID,
     val projectId: UUID,
-    val entityId: UUID,
+    val taskId: UUID,
     val entityType: String,
     val changedBy: UUID,
     val oldState: State?,

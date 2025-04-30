@@ -43,13 +43,13 @@ class HistoryCsvHandlerImplTest {
         // Given
         val file = File(filePath)
         file.parentFile.mkdirs()
-        file.writeText("id,projectID,entityId,entityType,changedBy,oldState,newState,timestamp\n")
+        file.writeText("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp\n")
 
         // When
         buildHandler()
 
         // Then
-        assertEquals("id,projectID,entityId,entityType,changedBy,oldState,newState,timestamp", file.readLines().first())
+        assertEquals("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp", file.readLines().first())
     }
 
     @Test
@@ -119,7 +119,7 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should return empty list if file only has header`() {
         // Given
-        File(filePath).writeText("id,projectID,entityId,entityType,changedBy,oldState,newState,timestamp\n")
+        File(filePath).writeText("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp\n")
 
         // When
         val result = handler.read(filePath)
@@ -131,7 +131,7 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should skip invalid lines when reading`() {
         // Given
-        File(filePath).writeText("id,projectID,entityId,entityType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
+        File(filePath).writeText("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
 
         // When
         val result = handler.read(filePath)
@@ -185,7 +185,7 @@ class HistoryCsvHandlerImplTest {
         val history = History(
             id = UUID.randomUUID(),
             projectId = UUID.randomUUID(),
-            entityId = UUID.randomUUID(),
+            taskId = UUID.randomUUID(),
             entityType = "task",
             changedBy = UUID.randomUUID(),
             oldState = null,
@@ -210,7 +210,7 @@ class HistoryCsvHandlerImplTest {
         val history = History(
             id = UUID.randomUUID(),
             projectId = UUID.randomUUID(),
-            entityId = UUID.randomUUID(),
+            taskId = UUID.randomUUID(),
             entityType = "task",
             changedBy = UUID.randomUUID(),
             oldState = oldState,
@@ -234,7 +234,7 @@ class HistoryCsvHandlerImplTest {
         val history = History(
             id = UUID.randomUUID(),
             projectId = UUID.randomUUID(),
-            entityId = UUID.randomUUID(),
+            taskId = UUID.randomUUID(),
             entityType = "task",
             changedBy = UUID.randomUUID(),
             oldState = oldState,
@@ -267,7 +267,7 @@ class HistoryCsvHandlerImplTest {
     private fun buildHandler(): GenericCsvHandlerImpl<History> {
         return GenericCsvHandlerImpl(
             filePath = filePath,
-            header = "id,projectID,entityId,entityType,changedBy,oldState,newState,timestamp",
+            header = "id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp",
             idSelector = { it.id.toString() },
             parser = FileDataParser::parseHistory,
             serializer = FileDataSerializer::serializeHistory

@@ -82,7 +82,7 @@ object FileDataParser {
         return History(
             id = UUID.fromString(tokens[0].trim()),
             projectId = UUID.fromString(tokens[1].trim()),
-            entityId = UUID.fromString(tokens[2].trim()),
+            taskId = UUID.fromString(tokens[2].trim()),
             entityType = tokens[3].trim(),
             changedBy = UUID.fromString(tokens[4].trim()),
             oldState = tokens[5].trim().takeIf { it.isNotBlank() }?.let { State(UUID.fromString(it), "") },
