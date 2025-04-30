@@ -1,74 +1,159 @@
 package data.source
 
 import data.csvDataHelper.createTask
-import data.model.State
+import data.model.Task
+import org.damascus.data.csv.FileDataParser
+import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
 import java.io.File
-import java.time.LocalDateTime
-import java.util.*
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class TaskCsvHandlerImplTest {
-    private val testFilePath = "test_assets/tasks_test.csv"
-    private lateinit var handler: TaskCsvHandlerImpl
 
-    @BeforeEach
+    private val filePath = "test_assets/tasks.csv"
+    private lateinit var handler: GenericCsvHandlerImpl<Task>
+
+    @BeforeTest
     fun setUp() {
-        File(testFilePath).delete()
-        handler = TaskCsvHandlerImpl(filePath = testFilePath)
+        File(filePath).delete()
+        handler = buildHandler()
     }
 
     @Test
-    fun `should create tasks_test csv file if not exists`() {
+    fun `should create file when file does not exist`() {
         // Given
-        val file = File(testFilePath)
+        val file = File(filePath)
 
-        // When/Then
-        assertTrue(file.exists(), "File should be created at $testFilePath")
-    }
-
-    @Test
-    fun `should contain correct header in the file`() {
-        // Given/When
-        val header = File(testFilePath).readLines().firstOrNull()
+        // When
+        val result = file.exists()
 
         // Then
-        assertEquals("id,projectId,title,description,assigneeId,stateId,creationDate", header)
+        assertTrue(result)
     }
 
     @Test
-    fun `should read tasks correctly from file`() {
+    fun `should keep existing header when file already exists`() {
         // Given
-        val file = File(testFilePath)
-        val task = createTask(
-            id = UUID.fromString("11111111-1111-1111-1111-111111111111"),
-            projectId = UUID.fromString("aaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"),
-            title = "TaskTitle",
-            description = "desc",
-            state = State(UUID.fromString("bbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"), "TODO"),
-            creationDate = LocalDateTime.parse("2025-04-28T12:00:00")
+        val file = File(filePath)
+        file.parentFile.mkdirs()
+        file.writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n")
+
+        // When
+        buildHandler()
+
+        // Then
+        assertEquals("id,projectId,title,description,assigneeId,stateId,creationDate", file.readLines().first())
+    }
+
+    @Test
+    fun `should write and return data correctly when reading`() {
+        // Given
+        val task1 = createTask()
+        val task2 = createTask()
+
+        // When
+        handler.write(filePath, listOf(task1, task2))
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `should update task when task exists`() {
+        // Given
+        val task1 = createTask()
+        val task2 = createTask()
+        handler.write(filePath, listOf(task1, task2))
+
+        val updated = task2.copy(title = "Updated Task")
+
+        // When
+        handler.update(filePath, task2.id.toString(), updated)
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals("Updated Task", result.find { it.id == task2.id }?.title)
+    }
+
+    @Test
+    fun `should ignore update when task does not exist`() {
+        // Given
+        val task1 = createTask()
+        handler.write(filePath, listOf(task1))
+
+        val fakeId = createTask().id
+        val ghostTask = task1.copy(id = fakeId, title = "Ghost")
+
+        // When
+        handler.update(filePath, fakeId.toString(), ghostTask)
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals(1, result.size)
+        assertNotEquals("Ghost", result.first().title)
+    }
+
+    @Test
+    fun `should delete task by id`() {
+        // Given
+        val task1 = createTask()
+        val task2 = createTask()
+        handler.write(filePath, listOf(task1, task2))
+
+        // When
+        handler.delete(filePath, task1.id.toString())
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals(task2.id, result.first().id)
+    }
+
+    @Test
+    fun `should return empty list if file only has header`() {
+        // Given
+        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should skip invalid lines when reading`() {
+        // Given
+        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\ninvalid_line\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should return empty list when file does not exist`() {
+        // Given
+        File(filePath).delete()
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    private fun buildHandler(): GenericCsvHandlerImpl<Task> {
+        return GenericCsvHandlerImpl(
+            filePath = filePath,
+            header = "id,projectId,title,description,assigneeId,stateId,creationDate",
+            idSelector = { it.id.toString() },
+            parser = FileDataParser::parseTask,
+            serializer = { FileDataSerializer.serializeTask(it) }
         )
-        file.appendText("${task.id},${task.projectId},${task.title},${task.description},${task.assignee?.id ?: ""},${task.state.id},${task.creationDate}\n")
-
-        // When
-        val result = handler.read(testFilePath)
-
-        // Then
-        assertEquals("TaskTitle", result.first().title)
-    }
-
-    @Test
-    fun `should write tasks correctly to file`() {
-        // Given
-        val task1 = createTask(title = "Task One")
-        val task2 = createTask(title = "Task Two")
-
-        // When
-        handler.write(testFilePath, listOf(task1, task2))
-        val result = File(testFilePath).readLines().drop(1)
-
-        // Then
-        assertTrue(result.size == 2)
     }
 }
