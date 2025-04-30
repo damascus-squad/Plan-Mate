@@ -24,15 +24,17 @@ object FileDataSerializer {
     }
 
     fun serializeTask(task: Task): String {
+        val assigneeId = task.assignee?.id?.toString()
         return listOf(
             task.id.toString(),
             task.projectId.toString(),
             task.title,
             task.description,
-            task.assignee?.id?.toString() ?: "",
+            assigneeId ?: "",
             task.state.id.toString(),
             task.creationDate.toString()
         ).joinToString(",")
+
     }
 
     fun serializeState(state: State): String {

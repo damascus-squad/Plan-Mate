@@ -1,7 +1,9 @@
 package data.source
 
 import data.csvDataHelper.createUser
+import data.model.Mate
 import data.model.User
+import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
@@ -164,6 +166,42 @@ class UserCsvHandlerImplTest {
 
         // Then
         assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should parse valid user`() {
+        // Given
+        val line = "${UUID.randomUUID()},alice,1234,mate"
+
+        // When
+        val result = FileDataParser.parseUser(line)
+
+        // Then
+        assertTrue(result is Mate)
+        assertEquals("alice", result.username)
+    }
+
+    @Test
+    fun `should throw when user role is unknown`() {
+        // Given
+        val line = "${UUID.randomUUID()},bob,pass,manager"
+
+        // When/Then
+        val ex = assertThrows(CsvParsingException::class.java) {
+            FileDataParser.parseUser(line)
+        }
+        assertTrue(ex.message!!.contains("Unknown role"))
+    }
+
+    @Test
+    fun `should throw when user line is invalid`() {
+        // Given
+        val line = "incomplete,data"
+
+        // When/Then
+        assertThrows(CsvParsingException::class.java) {
+            FileDataParser.parseUser(line)
+        }
     }
 
     private fun buildHandler(): GenericCsvHandlerImpl<User> {

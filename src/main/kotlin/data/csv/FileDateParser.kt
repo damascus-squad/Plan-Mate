@@ -80,4 +80,5 @@ object FileDataParser {
             timestamp = LocalDateTime.parse(tokens[7].trim())
         )
     }
+
 }

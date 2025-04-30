@@ -2,10 +2,12 @@ package data.source
 
 import data.csvDataHelper.createHistory
 import data.model.History
+import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -147,6 +149,52 @@ class HistoryCsvHandlerImplTest {
         assertTrue(result.isEmpty())
     }
 
+    @Test
+    fun `should parse history with null states`() {
+        // Given
+        val line =
+            "${UUID.randomUUID()},${UUID.randomUUID()},${UUID.randomUUID()},task,${UUID.randomUUID()},,,${LocalDateTime.now()}"
+
+        // When
+        val result = FileDataParser.parseHistory(line)
+
+        // Then
+        assertNull(result.oldState)
+        assertNull(result.newState)
+    }
+
+    @Test
+    fun `should throw when history line is invalid`() {
+        // Given
+        val line = "invalid,line,with,not,enough,columns"
+
+        // When/Then
+        assertThrows(CsvParsingException::class.java) {
+            FileDataParser.parseHistory(line)
+        }
+    }
+    @Test
+    fun `should serialize history with null oldState and newState as empty strings`() {
+        // Given
+        val history = History(
+            id = UUID.randomUUID(),
+            projectID = UUID.randomUUID(),
+            entityId = UUID.randomUUID(),
+            entityType = "task",
+            changedBy = UUID.randomUUID(),
+            oldState = null,
+            newState = null,
+            timestamp = LocalDateTime.now()
+        )
+
+        // When
+        val serialized = FileDataSerializer.serializeHistory(history)
+
+        // Then
+        val tokens = serialized.split(",")
+        assertEquals("", tokens[5], "oldState should be serialized as empty string")
+        assertEquals("", tokens[6], "newState should be serialized as empty string")
+    }
     private fun buildHandler(): GenericCsvHandlerImpl<History> {
         return GenericCsvHandlerImpl(
             filePath = filePath,

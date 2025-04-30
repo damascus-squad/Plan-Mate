@@ -1,11 +1,15 @@
 package data.source
 
 import data.csvDataHelper.createTask
+import data.model.Mate
 import data.model.Task
+import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import java.time.LocalDateTime
+import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -147,6 +151,63 @@ class TaskCsvHandlerImplTest {
         assertTrue(result.isEmpty())
     }
 
+    @Test
+    fun `should serialize task with assignee having null id safely`() {
+        // Given
+        val assigneeWithNullId = Mate(
+            id = UUID.fromString("00000000-0000-0000-0000-000000000000"), // NOT null, but edge value
+            username = "test",
+            password = "test",
+            role = "mate"
+        )
+
+        val task = createTask(assignee = assigneeWithNullId)
+
+        // When
+        val serialized = FileDataSerializer.serializeTask(task)
+
+        // Then
+        val fields = serialized.split(",")
+        assertEquals(7, fields.size)
+        assertEquals("00000000-0000-0000-0000-000000000000", fields[4])
+    }
+
+    @Test
+    fun `should serialize task with non-null assignee but null id using reflection`() {
+        // Given
+        val assignee = Mate(UUID.randomUUID(), "hacked", "hacked", "mate")
+
+        // User
+        val idField = assignee::class.java.superclass.getDeclaredField("id")
+        idField.isAccessible = true
+        idField.set(assignee, null)
+
+        val task = createTask(assignee = assignee)
+
+        // When
+        val serialized = FileDataSerializer.serializeTask(task)
+
+        // Then
+        val columns = serialized.split(",")
+        assertEquals("", columns[4], "Expected blank column for null id even if assignee is not null")
+    }
+
+    @Test
+    fun `should parse valid task with and without assignee`() {
+        val taskWithAssignee = FileDataParser.parseTask("${UUID.randomUUID()},${UUID.randomUUID()},Task,Desc,${UUID.randomUUID()},${UUID.randomUUID()},${LocalDateTime.now()}")
+        assertNotNull(taskWithAssignee.assignee)
+
+        val taskWithoutAssignee = FileDataParser.parseTask("${UUID.randomUUID()},${UUID.randomUUID()},Task,Desc,,${UUID.randomUUID()},${LocalDateTime.now()}")
+        assertNull(taskWithoutAssignee.assignee)
+    }
+
+    @Test
+    fun `should throw when task line is invalid`() {
+        val line = "${UUID.randomUUID()},${UUID.randomUUID()},Task"
+        assertThrows(CsvParsingException::class.java) {
+            FileDataParser.parseTask(line)
+        }
+    }
     private fun buildHandler(): GenericCsvHandlerImpl<Task> {
         return GenericCsvHandlerImpl(
             filePath = filePath,
