@@ -42,7 +42,7 @@ class TaskRepositoryImplTest {
         )
 
         every { taskDataSource.load() } returns fakeTasks
-        every { taskDataSource.save(listOf(newTask)) } returns true
+        every { taskDataSource.save(any()) } returns true
         //When
         val result = repository.create(newTask)
 
