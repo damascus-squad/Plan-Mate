@@ -5,8 +5,8 @@ import java.util.UUID
 
 data class ActionLog(
     val userName: String,
-    val taskId: UUID = UUID.randomUUID(),
-    val projectId: UUID = UUID.randomUUID(),
+    val taskId: UUID,
+    val projectId: UUID,
     val actionDate: LocalDateTime,
     val currentState: String,
     val targetedState: String

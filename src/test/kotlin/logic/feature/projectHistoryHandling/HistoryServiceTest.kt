@@ -7,14 +7,13 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.damascus.logic.feature.projectHistoryHandling.HistoryService
 import org.damascus.logic.repositories.HistoryRepository
-import org.damascus.utiles.HistoryEmptyException
+import org.damascus.utiles.NoHistoryException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 import io.mockk.verify
-
 
 
 class HistoryServiceTest {
@@ -37,6 +36,7 @@ class HistoryServiceTest {
                 currentState = "TODO",
                 targetedState = "In-progress",
                 taskId = UUID.randomUUID(),
+                projectId = UUID.randomUUID(),
                 actionDate = fakeDate,
             ),
             createFakeActionLog(
@@ -44,6 +44,7 @@ class HistoryServiceTest {
                 currentState = "To-do",
                 targetedState = "In-progress",
                 taskId = UUID.randomUUID(),
+                projectId = UUID.randomUUID(),
                 actionDate = fakeDate,
             )
         )
@@ -52,7 +53,6 @@ class HistoryServiceTest {
 
         //Then
         assertEquals(2, historyLog.size)
-
     }
 
     @Test
@@ -61,10 +61,9 @@ class HistoryServiceTest {
         every { historyRepository.getAllLogs() } returns emptyList()
 
         // When & Then
-        assertThrows<HistoryEmptyException> {
+        assertThrows<NoHistoryException> {
             historyService.getAllLogs()
         }
-
     }
 
     @Test
@@ -77,12 +76,71 @@ class HistoryServiceTest {
                 currentState = "TODO",
                 targetedState = "In-progress",
                 taskId = UUID.randomUUID(),
+                projectId = UUID.randomUUID(),
                 actionDate = fakeDate,
             )
         // When
         historyService.saveLog(userAction)
 
         // Then
-        verify(exactly = 1) { historyRepository.saveLog(userAction) }
+        val validStates = listOf("TODO", "In-progress", "Done")
+
+        verify(exactly = 1) {
+            historyRepository.saveLog(match {
+                it.currentState in validStates &&
+                        it.targetedState in validStates &&
+                        it.userName == "TestMate"
+            })
+        }
+    }
+    @Test
+    fun `should return action logs for the given projectId`() {
+        // Given
+        val projectId = UUID.randomUUID()
+        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val logs = listOf(
+            createFakeActionLog(
+                userName = "Tester",
+                currentState = "TODO",
+                targetedState = "In-progress",
+                taskId = UUID.randomUUID(),
+                projectId = projectId,
+                actionDate = fakeDate
+            )
+        )
+
+        every { historyRepository.getLogByProjectId(projectId) } returns logs
+
+        // When
+        val result = historyService.getLogByProjectId(projectId)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals(projectId, result.first().projectId)
+    }
+    @Test
+    fun `should return action logs for the given taskId`() {
+        // Given
+        val taskId = UUID.randomUUID()
+        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val logs = listOf(
+            createFakeActionLog(
+                userName = "Tester",
+                taskId = taskId,
+                currentState = "In-progress",
+                targetedState = "Done",
+                projectId = UUID.randomUUID(),
+                actionDate = fakeDate
+            )
+        )
+
+        every { historyRepository.getLogByTaskId(taskId) } returns logs
+
+        // When
+        val result = historyService.getLogByTaskId(taskId)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals(taskId, result.first().taskId)
     }
 }

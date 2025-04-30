@@ -1,18 +1,15 @@
 package org.damascus.logic.repositories
 
 import org.damascus.logic.entities.ActionLog
+import java.util.UUID
 
 
 interface HistoryRepository {
-    fun saveLog(actionLog: ActionLog){
-    }
-    fun getLogByProjectId(projectId: String): List<ActionLog> {
-        TODO()
-    }
-    fun getLogByTaskId(taskId: String): List<ActionLog> {
-        TODO()
-    }
-    fun getAllLogs(): List<ActionLog>{
-        TODO()
-    }
+    fun saveLog(actionLog: ActionLog)
+
+    fun getLogByProjectId(projectId: UUID): List<ActionLog>
+
+    fun getLogByTaskId(taskId: UUID): List<ActionLog>
+
+    fun getAllLogs(): List<ActionLog>
 }
