@@ -14,14 +14,14 @@ import org.damascus.utils.Constants.PROJECT_FIELD_COUNT
 import org.damascus.utils.Constants.STATE_FIELD_COUNT
 import org.damascus.utils.Constants.TASK_FIELD_COUNT
 import org.damascus.utils.Constants.USER_FIELD_COUNT
-import org.damascus.utils.Constants.listSeparator
-import org.damascus.utils.Constants.separator
+import org.damascus.utils.Constants.LIST_SEPARATOR
+import org.damascus.utils.Constants.SEPARATOR
 import java.util.*
 
 object FileDataParser {
 
     fun parseUser(line: String): User {
-        val tokens = line.split(separator)
+        val tokens = line.split(SEPARATOR)
         if (tokens.size < USER_FIELD_COUNT) throw CsvParsingException("Invalid user line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
@@ -36,12 +36,12 @@ object FileDataParser {
     }
 
     fun parseProject(line: String): Project {
-        val tokens = line.split(separator)
+        val tokens = line.split(SEPARATOR)
         if (tokens.size < PROJECT_FIELD_COUNT) throw CsvParsingException("Invalid project line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
         val name = tokens[1].trim()
-        val assignedMates = tokens[2].trim().split(listSeparator)
+        val assignedMates = tokens[2].trim().split(LIST_SEPARATOR)
             .filter { it.isNotBlank() }
             .map { Mate(UUID.fromString(it), "", "", Role.MATE) }
             .toMutableList()
@@ -51,7 +51,7 @@ object FileDataParser {
     }
 
     fun parseTask(line: String): Task {
-        val tokens = line.split(separator)
+        val tokens = line.split(SEPARATOR)
         if (tokens.size < TASK_FIELD_COUNT) throw CsvParsingException("Invalid task line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
@@ -67,7 +67,7 @@ object FileDataParser {
     }
 
     fun parseState(line: String): State {
-        val tokens = line.split(separator)
+        val tokens = line.split(SEPARATOR)
         if (tokens.size < STATE_FIELD_COUNT) throw CsvParsingException("Invalid state line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
@@ -76,7 +76,7 @@ object FileDataParser {
     }
 
     fun parseHistory(line: String): History {
-        val tokens = line.split(separator)
+        val tokens = line.split(SEPARATOR)
         if (tokens.size < HISTORY_FIELD_COUNT) throw CsvParsingException("Invalid history line: $line")
 
         return History(
