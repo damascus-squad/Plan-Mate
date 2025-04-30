@@ -3,7 +3,7 @@ package data.model
 import java.util.*
 
 class Admin(
-    id: UUID = UUID.randomUUID(),
+    id: UUID,
     username: String,
     password: String,
     role: String

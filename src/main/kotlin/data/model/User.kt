@@ -3,7 +3,7 @@ package data.model
 import java.util.*
 
 abstract class User(
-    val id: UUID = UUID.randomUUID(),
+    val id: UUID,
     val username: String,
     val password: String,
     val role: String

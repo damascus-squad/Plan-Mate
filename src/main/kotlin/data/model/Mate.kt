@@ -3,7 +3,7 @@ package data.model
 import java.util.UUID
 
 class Mate(
-    id: UUID = UUID.randomUUID(),
+    id: UUID,
     username: String,
     password: String,
     role: String
