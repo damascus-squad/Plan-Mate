@@ -1,13 +1,13 @@
 package org.damascus.logic.services
 
+import User
+import model.Admin
+import model.Mate
 import org.damascus.logic.HashingService
 import org.damascus.logic.exception.InvalidPasswordException
 import org.damascus.logic.exception.UnauthorizedActionException
 import org.damascus.logic.exception.UserAlreadyExistException
 import org.damascus.logic.exception.UserNotFoundException
-import org.damascus.model.Admin
-import org.damascus.model.Mate
-import org.damascus.model.User
 import java.util.*
 
 class AuthenticationRepoImpl(

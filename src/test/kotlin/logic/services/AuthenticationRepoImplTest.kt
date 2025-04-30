@@ -1,19 +1,19 @@
 package logic.services
 
+import User
 import org.junit.jupiter.api.Assertions.*
 
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
+import model.Admin
+import model.Mate
 import org.damascus.logic.HashingService
 import org.damascus.logic.exception.InvalidPasswordException
 import org.damascus.logic.exception.UnauthorizedActionException
 import org.damascus.logic.exception.UserNotFoundException
 import org.damascus.logic.exception.UserAlreadyExistException
-import org.damascus.model.Admin
-import org.damascus.model.Mate
-import org.damascus.model.User
 import org.damascus.logic.services.AuthenticationRepository
 import org.damascus.logic.services.AuthenticationRepoImpl
 import org.junit.jupiter.api.Assertions.*

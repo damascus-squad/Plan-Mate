@@ -1,5 +1,6 @@
 package model
 
+import User
 import java.util.UUID
 
 class Mate(
