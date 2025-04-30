@@ -10,5 +10,4 @@ data class Task(
     val description: String,
     var assignee: Mate? = null,
     val state: State,
-    val creationDate: LocalDateTime
-)
+    val creationDate: LocalDateTime)

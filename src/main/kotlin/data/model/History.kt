@@ -11,5 +11,4 @@ data class History(
     val changedBy: UUID,
     val oldState: String?,
     val newState: String?,
-    val timestamp: LocalDateTime = LocalDateTime.now()
-)
+    val timestamp: LocalDateTime = LocalDateTime.now())
