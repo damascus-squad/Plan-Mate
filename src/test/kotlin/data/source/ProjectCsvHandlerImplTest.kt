@@ -1,35 +1,34 @@
 package data.source
 
-import java.util.UUID
-
-import data.csvDataHelper.createProject
-import logic.model.Project
+import data.csvDataHelper.CreateProjectHelper.FILE_PATH_PROJECT
+import data.csvDataHelper.CreateProjectHelper.buildHandlerProject
+import data.csvDataHelper.CreateProjectHelper.createProject
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import logic.model.Project
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
-import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
+import java.util.*
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class ProjectCsvHandlerImplTest {
 
-    private val filePath = "test_assets/projects.csv"
-    private lateinit var handler: GenericCsvHandlerImpl<Project>
+    private lateinit var handler: CsvHandlerImpl<Project>
 
     @BeforeTest
     fun setUp() {
-        File(filePath).delete()
-        handler = buildHandler()
+        File(FILE_PATH_PROJECT).delete()
+        handler = buildHandlerProject()
     }
 
     @Test
     fun `should create file when file does not exist`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH_PROJECT)
 
         // When/Then
         assertTrue(file.exists())
@@ -38,12 +37,12 @@ class ProjectCsvHandlerImplTest {
     @Test
     fun `should keep existing header when file already exists`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH_PROJECT)
         file.parentFile.mkdirs()
         file.writeText("id,name,assignedMates,creationDate\n")
 
         // When
-        buildHandler()
+        buildHandlerProject()
 
         // Then
         assertEquals("id,name,assignedMates,creationDate", file.readLines().first())
@@ -56,8 +55,8 @@ class ProjectCsvHandlerImplTest {
         val project2 = createProject()
 
         // When
-        handler.write(filePath, listOf(project1, project2))
-        val result = handler.read(filePath)
+        handler.write( listOf(project1, project2))
+        val result = handler.read()
 
         // Then
         assertEquals(2, result.size)
@@ -66,10 +65,10 @@ class ProjectCsvHandlerImplTest {
     @Test
     fun `should return empty list if file only has header`() {
         // Given
-        File(filePath).writeText("id,name,assignedMates,creationDate\n")
+        File(FILE_PATH_PROJECT).writeText("id,name,assignedMates,creationDate\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -78,10 +77,10 @@ class ProjectCsvHandlerImplTest {
     @Test
     fun `should skip invalid lines when reading`() {
         // Given
-        File(filePath).writeText("id,name,assignedMates,creationDate\ninvalid_line\n")
+        File(FILE_PATH_PROJECT).writeText("id,name,assignedMates,creationDate\ninvalid_line\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -90,10 +89,10 @@ class ProjectCsvHandlerImplTest {
     @Test
     fun `should return empty list when file does not exist`() {
         // Given
-        File(filePath).delete()
+        File(FILE_PATH_PROJECT).delete()
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -104,12 +103,12 @@ class ProjectCsvHandlerImplTest {
         // Given
         val project1 = createProject()
         val project2 = createProject()
-        handler.write(filePath, listOf(project1, project2))
+        handler.write( listOf(project1, project2))
         val updated = project2.copy(name = "Updated Project")
 
         // When
-        handler.update(filePath, project2.id.toString(), updated)
-        val result = handler.read(filePath)
+        handler.update( project2.id.toString(), updated)
+        val result = handler.read()
 
         // Then
         assertEquals("Updated Project", result.find { it.id == project2.id }?.name)
@@ -119,13 +118,13 @@ class ProjectCsvHandlerImplTest {
     fun `should ignore update when project does not exist`() {
         // Given
         val project1 = createProject()
-        handler.write(filePath, listOf(project1))
+        handler.write( listOf(project1))
         val fakeId = UUID.randomUUID()
         val ghostProject = project1.copy(id = fakeId, name = "Ghost")
 
         // When
-        handler.update(filePath, fakeId.toString(), ghostProject)
-        val result = handler.read(filePath)
+        handler.update( fakeId.toString(), ghostProject)
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -137,11 +136,11 @@ class ProjectCsvHandlerImplTest {
         // Given
         val project1 = createProject()
         val project2 = createProject()
-        handler.write(filePath, listOf(project1, project2))
+        handler.write( listOf(project1, project2))
 
         // When
-        handler.delete(filePath, project1.id.toString())
-        val result = handler.read(filePath)
+        handler.delete( project1.id.toString())
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -186,15 +185,5 @@ class ProjectCsvHandlerImplTest {
         assertThrows(CsvParsingException::class.java) {
             FileDataParser.parseProject(line)
         }
-    }
-
-    private fun buildHandler(): GenericCsvHandlerImpl<Project> {
-        return GenericCsvHandlerImpl(
-            filePath = filePath,
-            header = "id,name,assignedMates,creationDate",
-            idSelector = { it.id.toString() },
-            parser = FileDataParser::parseProject,
-            serializer = FileDataSerializer::serializeProject
-        )
     }
 }

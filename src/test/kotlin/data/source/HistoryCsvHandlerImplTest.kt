@@ -1,6 +1,8 @@
 package data.source
 
-import data.csvDataHelper.createHistory
+import data.csvDataHelper.CreateHistoryHelper.FILE_PATH_HISTORY
+import data.csvDataHelper.CreateHistoryHelper.buildHandlerHistory
+import data.csvDataHelper.CreateHistoryHelper.createHistory
 import logic.model.History
 import logic.model.State
 import kotlinx.datetime.Clock
@@ -17,19 +19,18 @@ import kotlin.test.Test
 
 class HistoryCsvHandlerImplTest {
 
-    private val filePath = "test_assets/history.csv"
-    private lateinit var handler: GenericCsvHandlerImpl<History>
+    private lateinit var handler: CsvHandlerImpl<History>
 
     @BeforeTest
     fun setUp() {
-        File(filePath).delete()
-        handler = buildHandler()
+        File(FILE_PATH_HISTORY).delete()
+        handler = buildHandlerHistory()
     }
 
     @Test
     fun `should create file when file does not exist`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH_HISTORY)
 
         // When
         val result = file.exists()
@@ -41,12 +42,12 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should keep existing header when file already exists`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH_HISTORY)
         file.parentFile.mkdirs()
         file.writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
 
         // When
-        buildHandler()
+        buildHandlerHistory()
 
         // Then
         assertEquals("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp", file.readLines().first())
@@ -59,8 +60,8 @@ class HistoryCsvHandlerImplTest {
         val h2 = createHistory()
 
         // When
-        handler.write(filePath, listOf(h1, h2))
-        val result = handler.read(filePath)
+        handler.write(listOf(h1, h2))
+        val result = handler.read()
 
         // Then
         assertEquals(2, result.size)
@@ -69,10 +70,10 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should return empty list if file only has header`() {
         // Given
-        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
+        File(FILE_PATH_HISTORY).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -81,10 +82,10 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should skip invalid lines when reading`() {
         // Given
-        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
+        File(FILE_PATH_HISTORY).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -93,10 +94,10 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should return empty list when file does not exist`() {
         // Given
-        File(filePath).delete()
+        File(FILE_PATH_HISTORY).delete()
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -107,13 +108,13 @@ class HistoryCsvHandlerImplTest {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()
-        handler.write(filePath, listOf(h1, h2))
+        handler.write(listOf(h1, h2))
 
         val updated = h2.copy(actionType = "UpdatedEntity")
 
         // When
-        handler.update(filePath, h2.id.toString(), updated)
-        val result = handler.read(filePath)
+        handler.update(h2.id.toString(), updated)
+        val result = handler.read()
 
         // Then
         assertEquals("UpdatedEntity", result.find { it.id == h2.id }?.actionType)
@@ -123,13 +124,13 @@ class HistoryCsvHandlerImplTest {
     fun `should ignore update when history does not exist`() {
         // Given
         val h1 = createHistory()
-        handler.write(filePath, listOf(h1))
+        handler.write( listOf(h1))
 
         val ghost = h1.copy(id = UUID.randomUUID(), actionType = "Ghost")
 
         // When
-        handler.update(filePath, ghost.id.toString(), ghost)
-        val result = handler.read(filePath)
+        handler.update( ghost.id.toString(), ghost)
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -141,11 +142,11 @@ class HistoryCsvHandlerImplTest {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()
-        handler.write(filePath, listOf(h1, h2))
+        handler.write(listOf(h1, h2))
 
         // When
-        handler.delete(filePath, h1.id.toString())
-        val result = handler.read(filePath)
+        handler.delete(h1.id.toString())
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -267,15 +268,5 @@ class HistoryCsvHandlerImplTest {
         // Then
         val tokens = result.split(",")
         assertEquals("22222222-2222-2222-2222-222222222222", tokens[6])
-    }
-
-    private fun buildHandler(): GenericCsvHandlerImpl<History> {
-        return GenericCsvHandlerImpl(
-            filePath = filePath,
-            header = "id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp",
-            idSelector = { it.id.toString() },
-            parser = FileDataParser::parseHistory,
-            serializer = FileDataSerializer::serializeHistory
-        )
     }
 }

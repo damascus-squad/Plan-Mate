@@ -1,32 +1,33 @@
 package data.source
 
-import data.csvDataHelper.createUser
+
+import data.csvDataHelper.CreateUserHelper.FILE_PATH
+import data.csvDataHelper.CreateUserHelper.buildHandlerUser
+import data.csvDataHelper.CreateUserHelper.createUser
 import logic.model.Mate
 import logic.model.User
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
-import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import java.util.UUID
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 class UserCsvHandlerImplTest {
 
-    private val filePath = "test_assets/users.csv"
-    private lateinit var handler: GenericCsvHandlerImpl<User>
+    private lateinit var handler: CsvHandlerImpl<User>
 
-    @BeforeTest
+    @BeforeEach
     fun setUp() {
-        File(filePath).delete()
-        handler = buildHandler()
+        File(FILE_PATH).delete()
+        handler = buildHandlerUser()
     }
 
     @Test
     fun `should create file when file does not exist`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH)
 
         // When
         val result = file.exists()
@@ -38,12 +39,12 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should keep existing header when file already exists`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH)
         file.parentFile.mkdirs()
         file.writeText("id,username,password,role\n")
 
         // When
-        buildHandler()
+        buildHandlerUser()
 
         // Then
         assertEquals("id,username,password,role", file.readLines().first())
@@ -52,10 +53,10 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should return valid entries when reading and skipping blank lines`() {
         // Given
-        File(filePath).writeText("id,username,password,role\n${UUID.randomUUID()},Alice,p1,mate\n\n")
+        File(FILE_PATH).writeText("id,username,password,role\n${UUID.randomUUID()},Alice,p1,mate\n\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -70,7 +71,7 @@ class UserCsvHandlerImplTest {
         writeUsers(user1, user2)
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertEquals(2, result.size)
@@ -81,10 +82,10 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should return empty list when file only has header`() {
         // Given
-        File(filePath).writeText("id,username,password,role\n")
+        File(FILE_PATH).writeText("id,username,password,role\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -93,10 +94,10 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should skip invalid lines when reading`() {
         // Given
-        File(filePath).writeText("id,username,password,role\n${UUID.randomUUID()}\n${UUID.randomUUID()},Alice,p1,mate\n")
+        File(FILE_PATH).writeText("id,username,password,role\n${UUID.randomUUID()}\n${UUID.randomUUID()},Alice,p1,mate\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -106,10 +107,10 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should return empty list when file does not exist`() {
         // Given
-        File(filePath).delete()
+        File(FILE_PATH).delete()
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -126,8 +127,8 @@ class UserCsvHandlerImplTest {
         )
 
         // When
-        handler.update(filePath, id2.toString(), createUser(id2, "Bobby", "pp", "admin"))
-        val result = handler.read(filePath)
+        handler.update(id2.toString(), createUser(id2, "Bobby", "pp", "admin"))
+        val result = handler.read()
 
         // Then
         assertEquals("Bobby", result.find { it.id == id2 }?.username)
@@ -141,8 +142,8 @@ class UserCsvHandlerImplTest {
         writeUsers(createUser(id1, "Alice", "123", "mate"))
 
         // When
-        handler.update(filePath, fakeId.toString(), createUser(fakeId, "Ghost", "123", "mate"))
-        val result = handler.read(filePath)
+        handler.update(fakeId.toString(), createUser(fakeId, "Ghost", "123", "mate"))
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -160,8 +161,8 @@ class UserCsvHandlerImplTest {
         )
 
         // When
-        handler.delete(filePath, id1.toString())
-        val result = handler.read(filePath)
+        handler.delete(id1.toString())
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -204,17 +205,8 @@ class UserCsvHandlerImplTest {
         }
     }
 
-    private fun buildHandler(): GenericCsvHandlerImpl<User> {
-        return GenericCsvHandlerImpl(
-            filePath = filePath,
-            header = "id,username,password,role",
-            idSelector = { it.id.toString() },
-            parser = FileDataParser::parseUser,
-            serializer = FileDataSerializer::serializeUser
-        )
-    }
 
     private fun writeUsers(vararg users: User) {
-        handler.write(filePath, users.toList())
+        handler.write(users.toList())
     }
 }

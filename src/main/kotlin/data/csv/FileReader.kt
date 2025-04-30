@@ -12,6 +12,6 @@ class FileReader(private val file: File) {
     }
 
     companion object {
-        const val HEADER_LINE_COUNT = 1
+        private const val HEADER_LINE_COUNT = 1
     }
 }

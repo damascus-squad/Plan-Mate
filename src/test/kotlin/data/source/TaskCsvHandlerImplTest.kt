@@ -1,6 +1,8 @@
 package data.source
 
-import data.csvDataHelper.createTask
+import data.csvDataHelper.CreateTaskHelper.FILE_PATH_TASK
+import data.csvDataHelper.CreateTaskHelper.buildHandlerTask
+import data.csvDataHelper.CreateTaskHelper.createTask
 import logic.model.Mate
 import logic.model.Task
 import kotlinx.datetime.Clock
@@ -18,19 +20,18 @@ import kotlin.test.Test
 
 class TaskCsvHandlerImplTest {
 
-    private val filePath = "test_assets/tasks.csv"
-    private lateinit var handler: GenericCsvHandlerImpl<Task>
+    private lateinit var handler: CsvHandlerImpl<Task>
 
     @BeforeTest
     fun setUp() {
-        File(filePath).delete()
-        handler = buildHandler()
+        File(FILE_PATH_TASK).delete()
+        handler = buildHandlerTask()
     }
 
     @Test
     fun `should create file when file does not exist`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH_TASK)
 
         // When
         val result = file.exists()
@@ -42,12 +43,12 @@ class TaskCsvHandlerImplTest {
     @Test
     fun `should keep existing header when file already exists`() {
         // Given
-        val file = File(filePath)
+        val file = File(FILE_PATH_TASK)
         file.parentFile.mkdirs()
         file.writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n")
 
         // When
-        buildHandler()
+        buildHandlerTask()
 
         // Then
         assertEquals("id,projectId,title,description,assigneeId,stateId,creationDate", file.readLines().first())
@@ -60,8 +61,8 @@ class TaskCsvHandlerImplTest {
         val task2 = createTask()
 
         // When
-        handler.write(filePath, listOf(task1, task2))
-        val result = handler.read(filePath)
+        handler.write(listOf(task1, task2))
+        val result = handler.read()
 
         // Then
         assertEquals(2, result.size)
@@ -70,10 +71,10 @@ class TaskCsvHandlerImplTest {
     @Test
     fun `should return empty list if file only has header`() {
         // Given
-        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n")
+        File(FILE_PATH_TASK).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -82,10 +83,10 @@ class TaskCsvHandlerImplTest {
     @Test
     fun `should return empty list when file does not exist`() {
         // Given
-        File(filePath).delete()
+        File(FILE_PATH_TASK).delete()
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -94,10 +95,10 @@ class TaskCsvHandlerImplTest {
     @Test
     fun `should skip invalid lines when reading`() {
         // Given
-        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n${UUID.randomUUID()}\n")
+        File(FILE_PATH_TASK).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n${UUID.randomUUID()}\n")
 
         // When
-        val result = handler.read(filePath)
+        val result = handler.read()
 
         // Then
         assertTrue(result.isEmpty())
@@ -108,13 +109,13 @@ class TaskCsvHandlerImplTest {
         // Given
         val task1 = createTask()
         val task2 = createTask()
-        handler.write(filePath, listOf(task1, task2))
+        handler.write(listOf(task1, task2))
 
         val updated = task2.copy(title = "Updated Task")
 
         // When
-        handler.update(filePath, task2.id.toString(), updated)
-        val result = handler.read(filePath)
+        handler.update(task2.id.toString(), updated)
+        val result = handler.read()
 
         // Then
         assertEquals("Updated Task", result.find { it.id == task2.id }?.title)
@@ -124,14 +125,14 @@ class TaskCsvHandlerImplTest {
     fun `should ignore update when task does not exist`() {
         // Given
         val task = createTask()
-        handler.write(filePath, listOf(task))
+        handler.write(listOf(task))
 
         val fakeId = createTask().id
         val ghostTask = task.copy(id = fakeId, title = "Ghost")
 
         // When
-        handler.update(filePath, fakeId.toString(), ghostTask)
-        val result = handler.read(filePath)
+        handler.update(fakeId.toString(), ghostTask)
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -143,11 +144,11 @@ class TaskCsvHandlerImplTest {
         // Given
         val task1 = createTask()
         val task2 = createTask()
-        handler.write(filePath, listOf(task1, task2))
+        handler.write(listOf(task1, task2))
 
         // When
-        handler.delete(filePath, task1.id.toString())
-        val result = handler.read(filePath)
+        handler.delete(task1.id.toString())
+        val result = handler.read()
 
         // Then
         assertEquals(1, result.size)
@@ -218,15 +219,5 @@ class TaskCsvHandlerImplTest {
         assertThrows(CsvParsingException::class.java) {
             FileDataParser.parseTask(line)
         }
-    }
-
-    private fun buildHandler(): GenericCsvHandlerImpl<Task> {
-        return GenericCsvHandlerImpl(
-            filePath = filePath,
-            header = "id,projectId,title,description,assigneeId,stateId,creationDate",
-            idSelector = { it.id.toString() },
-            parser = FileDataParser::parseTask,
-            serializer = { FileDataSerializer.serializeTask(it) }
-        )
     }
 }

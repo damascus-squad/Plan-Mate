@@ -13,14 +13,14 @@ import java.util.*
 
 object FileDataParser {
 
-    const val SEPARATOR = ","
-    const val LIST_SEPARATOR = ";"
-    const val USER_FIELD_COUNT = 4
-    const val PROJECT_FIELD_COUNT = 4
-    const val TASK_FIELD_COUNT = 7
-    const val STATE_FIELD_COUNT = 2
-    const val HISTORY_FIELD_COUNT = 8
-    
+    private const val SEPARATOR = ","
+    private const val LIST_SEPARATOR = ";"
+    private const val USER_FIELD_COUNT = 4
+    private const val PROJECT_FIELD_COUNT = 4
+    private const val TASK_FIELD_COUNT = 7
+    private const val STATE_FIELD_COUNT = 2
+    private const val HISTORY_FIELD_COUNT = 8
+
     fun parseUser(line: String): User {
         val tokens = line.split(SEPARATOR)
         if (tokens.size < USER_FIELD_COUNT) throw CsvParsingException("Invalid user line: $line")
