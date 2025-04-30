@@ -12,18 +12,18 @@ import java.util.UUID
 fun createHistory(
     id: UUID = UUID.randomUUID(),
     projectId: UUID = UUID.randomUUID(),
-    entityId: UUID = UUID.randomUUID(),
-    entityType: String = "TASK",
+    taskId: UUID = UUID.randomUUID(),
+    actionType: String = "TASK",
     changedBy: UUID = UUID.randomUUID(),
     oldState: State? = State(UUID.randomUUID(), "TODO"),
-    newState: State? = State(UUID.randomUUID(), "IN_PROGRESS"),
+    newState: State = State(UUID.randomUUID(), "IN_PROGRESS"),
     timestamp: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 ): History {
     return History(
         id = id,
         projectId = projectId,
-        taskId = entityId,
-        entityType = entityType,
+        taskId = taskId,
+        actionType = actionType,
         changedBy = changedBy,
         oldState = oldState,
         newState = newState,

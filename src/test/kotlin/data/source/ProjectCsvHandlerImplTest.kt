@@ -152,7 +152,9 @@ class ProjectCsvHandlerImplTest {
     fun `should parse valid project`() {
         // Given
         val mateId = UUID.randomUUID()
-        val line = "${UUID.randomUUID()},MyProject,$mateId,${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())}"
+        val line = "${UUID.randomUUID()},MyProject,$mateId,${
+            Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        }"
 
         // When
         val result = FileDataParser.parseProject(line)
@@ -165,7 +167,8 @@ class ProjectCsvHandlerImplTest {
     @Test
     fun `should handle empty assigned mates`() {
         // Given
-        val line = "${UUID.randomUUID()},NoMates,,${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())}"
+        val line =
+            "${UUID.randomUUID()},NoMates,,${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())}"
 
         // When
         val result = FileDataParser.parseProject(line)

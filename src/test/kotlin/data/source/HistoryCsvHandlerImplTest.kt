@@ -43,13 +43,13 @@ class HistoryCsvHandlerImplTest {
         // Given
         val file = File(filePath)
         file.parentFile.mkdirs()
-        file.writeText("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp\n")
+        file.writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
 
         // When
         buildHandler()
 
         // Then
-        assertEquals("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp", file.readLines().first())
+        assertEquals("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp", file.readLines().first())
     }
 
     @Test
@@ -73,14 +73,14 @@ class HistoryCsvHandlerImplTest {
         val h2 = createHistory()
         handler.write(filePath, listOf(h1, h2))
 
-        val updated = h2.copy(entityType = "UpdatedEntity")
+        val updated = h2.copy(actionType = "UpdatedEntity")
 
         // When
         handler.update(filePath, h2.id.toString(), updated)
         val result = handler.read(filePath)
 
         // Then
-        assertEquals("UpdatedEntity", result.find { it.id == h2.id }?.entityType)
+        assertEquals("UpdatedEntity", result.find { it.id == h2.id }?.actionType)
     }
 
     @Test
@@ -89,7 +89,7 @@ class HistoryCsvHandlerImplTest {
         val h1 = createHistory()
         handler.write(filePath, listOf(h1))
 
-        val ghost = h1.copy(id = UUID.randomUUID(), entityType = "Ghost")
+        val ghost = h1.copy(id = UUID.randomUUID(), actionType = "Ghost")
 
         // When
         handler.update(filePath, ghost.id.toString(), ghost)
@@ -97,7 +97,7 @@ class HistoryCsvHandlerImplTest {
 
         // Then
         assertEquals(1, result.size)
-        assertNotEquals("Ghost", result.first().entityType)
+        assertNotEquals("Ghost", result.first().actionType)
     }
 
     @Test
@@ -119,7 +119,7 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should return empty list if file only has header`() {
         // Given
-        File(filePath).writeText("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp\n")
+        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
 
         // When
         val result = handler.read(filePath)
@@ -131,7 +131,7 @@ class HistoryCsvHandlerImplTest {
     @Test
     fun `should skip invalid lines when reading`() {
         // Given
-        File(filePath).writeText("id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
+        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
 
         // When
         val result = handler.read(filePath)
@@ -153,20 +153,20 @@ class HistoryCsvHandlerImplTest {
     }
 
     @Test
-    fun `should parse history with null states`() {
+    fun `should parse history with null oldState`() {
         // Given
+        val newStateId = UUID.randomUUID()
         val line =
-            "${UUID.randomUUID()},${UUID.randomUUID()},${UUID.randomUUID()},task,${UUID.randomUUID()},,,${
-                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-            }"
+            "${UUID.randomUUID()},${UUID.randomUUID()},${UUID.randomUUID()},task,${UUID.randomUUID()},,${newStateId},${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())}"
 
         // When
         val result = FileDataParser.parseHistory(line)
 
         // Then
         assertNull(result.oldState)
-        assertNull(result.newState)
+        assertEquals(newStateId, result.newState.id)
     }
+
 
     @Test
     fun `should throw when history line is invalid`() {
@@ -180,16 +180,17 @@ class HistoryCsvHandlerImplTest {
     }
 
     @Test
-    fun `should serialize history with null oldState and newState as empty strings`() {
+    fun `should serialize history with null oldState and valid newState`() {
         // Given
+        val newState = State(UUID.fromString("22222222-2222-2222-2222-222222222222"), "InProgress")
         val history = History(
             id = UUID.randomUUID(),
             projectId = UUID.randomUUID(),
             taskId = UUID.randomUUID(),
-            entityType = "task",
+            actionType = "task",
             changedBy = UUID.randomUUID(),
             oldState = null,
-            newState = null,
+            newState = newState,
             timestamp = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         )
 
@@ -199,7 +200,7 @@ class HistoryCsvHandlerImplTest {
         // Then
         val tokens = serialized.split(",")
         assertEquals("", tokens[5], "oldState should be serialized as empty string")
-        assertEquals("", tokens[6], "newState should be serialized as empty string")
+        assertEquals("22222222-2222-2222-2222-222222222222", tokens[6])
     }
 
     @Test
@@ -211,7 +212,7 @@ class HistoryCsvHandlerImplTest {
             id = UUID.randomUUID(),
             projectId = UUID.randomUUID(),
             taskId = UUID.randomUUID(),
-            entityType = "task",
+            actionType = "task",
             changedBy = UUID.randomUUID(),
             oldState = oldState,
             newState = newState,
@@ -226,6 +227,7 @@ class HistoryCsvHandlerImplTest {
         assertEquals("11111111-1111-1111-1111-111111111111", fields[5])
         assertEquals("22222222-2222-2222-2222-222222222222", fields[6])
     }
+
     @Test
     fun `should serialize history with valid oldState and newState ids`() {
         // Given
@@ -235,7 +237,7 @@ class HistoryCsvHandlerImplTest {
             id = UUID.randomUUID(),
             projectId = UUID.randomUUID(),
             taskId = UUID.randomUUID(),
-            entityType = "task",
+            actionType = "task",
             changedBy = UUID.randomUUID(),
             oldState = oldState,
             newState = newState,
@@ -250,6 +252,7 @@ class HistoryCsvHandlerImplTest {
         assertEquals("11111111-1111-1111-1111-111111111111", parts[5])
         assertEquals("22222222-2222-2222-2222-222222222222", parts[6])
     }
+
     @Test
     fun `should serialize history with non-null newState and id`() {
         // Given
@@ -267,7 +270,7 @@ class HistoryCsvHandlerImplTest {
     private fun buildHandler(): GenericCsvHandlerImpl<History> {
         return GenericCsvHandlerImpl(
             filePath = filePath,
-            header = "id,projectID,taskId,entityType,changedBy,oldState,newState,timestamp",
+            header = "id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp",
             idSelector = { it.id.toString() },
             parser = FileDataParser::parseHistory,
             serializer = FileDataSerializer::serializeHistory

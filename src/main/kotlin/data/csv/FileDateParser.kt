@@ -27,7 +27,7 @@ object FileDataParser {
         val id = UUID.fromString(tokens[0].trim())
         val username = tokens[1].trim()
         val password = tokens[2].trim()
-        val role = Role.fromString(tokens[3].trim()) // ← هنا نستخدمها
+        val role = Role.fromString(tokens[3].trim())
 
         return when (role) {
             Role.ADMIN -> Admin(id, username, password, role)
@@ -83,10 +83,10 @@ object FileDataParser {
             id = UUID.fromString(tokens[0].trim()),
             projectId = UUID.fromString(tokens[1].trim()),
             taskId = UUID.fromString(tokens[2].trim()),
-            entityType = tokens[3].trim(),
+            actionType = tokens[3].trim(),
             changedBy = UUID.fromString(tokens[4].trim()),
             oldState = tokens[5].trim().takeIf { it.isNotBlank() }?.let { State(UUID.fromString(it), "") },
-            newState = tokens[6].trim().takeIf { it.isNotBlank() }?.let { State(UUID.fromString(it), "") },
+            newState = State(UUID.fromString(tokens[6].trim()), ""),
             timestamp = LocalDateTime.parse(tokens[7].trim())
         )
     }

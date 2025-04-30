@@ -7,9 +7,9 @@ data class History(
     val id: UUID,
     val projectId: UUID,
     val taskId: UUID,
-    val entityType: String,
+    val actionType: String,
     val changedBy: UUID,
     val oldState: State?,
-    val newState: State?,
+    val newState: State,
     val timestamp: LocalDateTime
 )

@@ -47,12 +47,12 @@ object FileDataSerializer {
 
     fun serializeHistory(history: History): String {
         val oldStateId = history.oldState?.id?.toString() ?: ""
-        val newStateId = history.newState?.id?.toString() ?: ""
+        val newStateId = history.newState.id.toString()
         return listOf(
             history.id.toString(),
             history.projectId.toString(),
             history.taskId.toString(),
-            history.entityType,
+            history.actionType,
             history.changedBy.toString(),
             oldStateId,
             newStateId,
