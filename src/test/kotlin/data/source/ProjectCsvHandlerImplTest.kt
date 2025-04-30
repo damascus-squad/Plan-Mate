@@ -3,13 +3,15 @@ package data.source
 import java.util.UUID
 
 import data.csvDataHelper.createProject
-import data.model.Project
+import logic.model.Project
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
-import java.time.LocalDateTime
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -150,7 +152,7 @@ class ProjectCsvHandlerImplTest {
     fun `should parse valid project`() {
         // Given
         val mateId = UUID.randomUUID()
-        val line = "${UUID.randomUUID()},MyProject,$mateId,${LocalDateTime.now()}"
+        val line = "${UUID.randomUUID()},MyProject,$mateId,${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())}"
 
         // When
         val result = FileDataParser.parseProject(line)
@@ -163,7 +165,7 @@ class ProjectCsvHandlerImplTest {
     @Test
     fun `should handle empty assigned mates`() {
         // Given
-        val line = "${UUID.randomUUID()},NoMates,,${LocalDateTime.now()}"
+        val line = "${UUID.randomUUID()},NoMates,,${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())}"
 
         // When
         val result = FileDataParser.parseProject(line)

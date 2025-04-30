@@ -1,8 +1,9 @@
 package data.csvDataHelper
 
-import data.model.Admin
-import data.model.Mate
-import data.model.User
+import logic.model.Admin
+import logic.model.Mate
+import logic.model.User
+import org.damascus.logic.model.Role
 import java.util.UUID
 
 
@@ -13,7 +14,7 @@ fun createUser(
     role: String = "mate"
 ): User {
     return when (role.lowercase()) {
-        "admin" -> Admin(id = id, username = username, password = password, role = "admin")
-        else -> Mate(id = id, username = username, password = password, role = "mate")
+        "admin" -> Admin(id = id, username = username, password = password, role = Role.ADMIN)
+        else -> Mate(id = id, username = username, password = password, role = Role.MATE)
     }
 }

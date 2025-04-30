@@ -1,8 +1,8 @@
 package data.source
 
 import data.csvDataHelper.createUser
-import data.model.Mate
-import data.model.User
+import logic.model.Mate
+import logic.model.User
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer

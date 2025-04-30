@@ -1,4 +1,4 @@
-package org.damascus.domin.repository
+package org.damascus.logic.domin.repository
 
 interface CsvHandler<T> {
     fun read(filePath: String): List<T>

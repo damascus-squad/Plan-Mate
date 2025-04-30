@@ -1,4 +1,4 @@
-package data.model
+package logic.model
 
 import java.util.UUID
 

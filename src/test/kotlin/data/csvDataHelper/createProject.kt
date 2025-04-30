@@ -1,15 +1,19 @@
 package data.csvDataHelper
 
-import data.model.Mate
-import data.model.Project
-import java.time.LocalDateTime
+import logic.model.Mate
+import logic.model.Project
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 
 fun createProject(
     id: UUID = UUID.randomUUID(),
     name: String = "Test Project",
     assignedMates: MutableList<Mate> = mutableListOf(),
-    creationDate: LocalDateTime = LocalDateTime.now()
+    creationDate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
 ): Project {
     return Project(
         id = id,

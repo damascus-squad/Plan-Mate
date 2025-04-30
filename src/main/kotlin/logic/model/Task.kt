@@ -1,6 +1,6 @@
-package data.model
+package logic.model
 
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 
 data class Task(
@@ -8,6 +8,6 @@ data class Task(
     val projectId: UUID,
     val title: String,
     val description: String,
-    var assignee: Mate? = null,
+    var assignee: Mate?,
     val state: State,
     val creationDate: LocalDateTime)

@@ -1,14 +1,17 @@
 package data.source
 
 import data.csvDataHelper.createTask
-import data.model.Mate
-import data.model.Task
+import logic.model.Mate
+import logic.model.Task
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer
+import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
-import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -155,10 +158,10 @@ class TaskCsvHandlerImplTest {
     fun `should serialize task with assignee having null id safely`() {
         // Given
         val assigneeWithNullId = Mate(
-            id = UUID.fromString("00000000-0000-0000-0000-000000000000"), // NOT null, but edge value
+            id = UUID.fromString("00000000-0000-0000-0000-000000000000"),
             username = "test",
             password = "test",
-            role = "mate"
+            role = Role.MATE
         )
 
         val task = createTask(assignee = assigneeWithNullId)
@@ -175,7 +178,7 @@ class TaskCsvHandlerImplTest {
     @Test
     fun `should serialize task with non-null assignee but null id using reflection`() {
         // Given
-        val assignee = Mate(UUID.randomUUID(), "hacked", "hacked", "mate")
+        val assignee = Mate(UUID.randomUUID(), "hacked", "hacked", Role.MATE)
 
         // User
         val idField = assignee::class.java.superclass.getDeclaredField("id")
@@ -194,10 +197,18 @@ class TaskCsvHandlerImplTest {
 
     @Test
     fun `should parse valid task with and without assignee`() {
-        val taskWithAssignee = FileDataParser.parseTask("${UUID.randomUUID()},${UUID.randomUUID()},Task,Desc,${UUID.randomUUID()},${UUID.randomUUID()},${LocalDateTime.now()}")
+        val taskWithAssignee = FileDataParser.parseTask(
+            "${UUID.randomUUID()},${UUID.randomUUID()},Task,Desc,${UUID.randomUUID()},${UUID.randomUUID()},${
+                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            }"
+        )
         assertNotNull(taskWithAssignee.assignee)
 
-        val taskWithoutAssignee = FileDataParser.parseTask("${UUID.randomUUID()},${UUID.randomUUID()},Task,Desc,,${UUID.randomUUID()},${LocalDateTime.now()}")
+        val taskWithoutAssignee = FileDataParser.parseTask(
+            "${UUID.randomUUID()},${UUID.randomUUID()},Task,Desc,,${UUID.randomUUID()},${
+                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            }"
+        )
         assertNull(taskWithoutAssignee.assignee)
     }
 
@@ -208,6 +219,7 @@ class TaskCsvHandlerImplTest {
             FileDataParser.parseTask(line)
         }
     }
+
     private fun buildHandler(): GenericCsvHandlerImpl<Task> {
         return GenericCsvHandlerImpl(
             filePath = filePath,

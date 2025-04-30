@@ -2,7 +2,7 @@ package data.source
 
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileReader
-import org.damascus.domin.repository.CsvHandler
+import org.damascus.logic.domin.repository.CsvHandler
 import java.io.File
 
 class GenericCsvHandlerImpl<T>(
@@ -33,8 +33,6 @@ class GenericCsvHandlerImpl<T>(
             }
         }
     }
-
-
 
     override fun write(filePath: String, data: List<T>) {
         val file = fileProvider(filePath)

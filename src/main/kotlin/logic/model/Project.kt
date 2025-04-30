@@ -1,6 +1,6 @@
-package data.model
+package logic.model
 
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 import java.util.UUID
 
 data class Project(

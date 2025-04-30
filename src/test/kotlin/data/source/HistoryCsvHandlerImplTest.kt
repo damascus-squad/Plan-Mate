@@ -1,13 +1,16 @@
 package data.source
 
 import data.csvDataHelper.createHistory
-import data.model.History
+import logic.model.History
+import logic.model.State
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*
 import java.io.File
-import java.time.LocalDateTime
 import java.util.UUID
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -153,7 +156,9 @@ class HistoryCsvHandlerImplTest {
     fun `should parse history with null states`() {
         // Given
         val line =
-            "${UUID.randomUUID()},${UUID.randomUUID()},${UUID.randomUUID()},task,${UUID.randomUUID()},,,${LocalDateTime.now()}"
+            "${UUID.randomUUID()},${UUID.randomUUID()},${UUID.randomUUID()},task,${UUID.randomUUID()},,,${
+                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            }"
 
         // When
         val result = FileDataParser.parseHistory(line)
@@ -173,18 +178,19 @@ class HistoryCsvHandlerImplTest {
             FileDataParser.parseHistory(line)
         }
     }
+
     @Test
     fun `should serialize history with null oldState and newState as empty strings`() {
         // Given
         val history = History(
             id = UUID.randomUUID(),
-            projectID = UUID.randomUUID(),
+            projectId = UUID.randomUUID(),
             entityId = UUID.randomUUID(),
             entityType = "task",
             changedBy = UUID.randomUUID(),
             oldState = null,
             newState = null,
-            timestamp = LocalDateTime.now()
+            timestamp = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         )
 
         // When
@@ -195,6 +201,69 @@ class HistoryCsvHandlerImplTest {
         assertEquals("", tokens[5], "oldState should be serialized as empty string")
         assertEquals("", tokens[6], "newState should be serialized as empty string")
     }
+
+    @Test
+    fun `should serialize history with non-null states`() {
+        // Given
+        val oldState = State(UUID.fromString("11111111-1111-1111-1111-111111111111"), "TODO")
+        val newState = State(UUID.fromString("22222222-2222-2222-2222-222222222222"), "DONE")
+        val history = History(
+            id = UUID.randomUUID(),
+            projectId = UUID.randomUUID(),
+            entityId = UUID.randomUUID(),
+            entityType = "task",
+            changedBy = UUID.randomUUID(),
+            oldState = oldState,
+            newState = newState,
+            timestamp = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        )
+
+        // When
+        val result = FileDataSerializer.serializeHistory(history)
+        val fields = result.split(",")
+
+        // Then
+        assertEquals("11111111-1111-1111-1111-111111111111", fields[5])
+        assertEquals("22222222-2222-2222-2222-222222222222", fields[6])
+    }
+    @Test
+    fun `should serialize history with valid oldState and newState ids`() {
+        // Given
+        val oldState = State(UUID.fromString("11111111-1111-1111-1111-111111111111"), "TODO")
+        val newState = State(UUID.fromString("22222222-2222-2222-2222-222222222222"), "DONE")
+        val history = History(
+            id = UUID.randomUUID(),
+            projectId = UUID.randomUUID(),
+            entityId = UUID.randomUUID(),
+            entityType = "task",
+            changedBy = UUID.randomUUID(),
+            oldState = oldState,
+            newState = newState,
+            timestamp = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        )
+
+        // When
+        val serialized = FileDataSerializer.serializeHistory(history)
+
+        // Then
+        val parts = serialized.split(",")
+        assertEquals("11111111-1111-1111-1111-111111111111", parts[5])
+        assertEquals("22222222-2222-2222-2222-222222222222", parts[6])
+    }
+    @Test
+    fun `should serialize history with non-null newState and id`() {
+        // Given
+        val newState = State(UUID.fromString("22222222-2222-2222-2222-222222222222"), "InProgress")
+        val history = createHistory(newState = newState)
+
+        // When
+        val result = FileDataSerializer.serializeHistory(history)
+
+        // Then
+        val tokens = result.split(",")
+        assertEquals("22222222-2222-2222-2222-222222222222", tokens[6])
+    }
+
     private fun buildHandler(): GenericCsvHandlerImpl<History> {
         return GenericCsvHandlerImpl(
             filePath = filePath,

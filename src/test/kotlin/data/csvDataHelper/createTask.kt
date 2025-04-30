@@ -1,9 +1,12 @@
 package data.csvDataHelper
 
-import data.model.Mate
-import data.model.State
-import data.model.Task
-import java.time.LocalDateTime
+import logic.model.Mate
+import logic.model.State
+import logic.model.Task
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 
 fun createTask(
@@ -13,7 +16,8 @@ fun createTask(
     description: String = "This is a test task",
     assignee: Mate? = null,
     state: State = State(UUID.randomUUID(), "TODO"),
-    creationDate: LocalDateTime = LocalDateTime.now()
+    creationDate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
 ): Task {
     return Task(
         id = id,

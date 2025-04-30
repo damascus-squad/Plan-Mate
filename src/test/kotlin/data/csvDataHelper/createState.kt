@@ -1,6 +1,6 @@
 package data.csvDataHelper
 
-import data.model.State
+import logic.model.State
 import java.util.UUID
 
 fun createState(

@@ -1,6 +1,10 @@
 package org.damascus.data.csv
 
-import data.model.*
+import logic.model.History
+import logic.model.Project
+import logic.model.State
+import logic.model.Task
+import logic.model.User
 
 object FileDataSerializer {
 
@@ -42,14 +46,16 @@ object FileDataSerializer {
     }
 
     fun serializeHistory(history: History): String {
+        val oldStateId = history.oldState?.id?.toString() ?: ""
+        val newStateId = history.newState?.id?.toString() ?: ""
         return listOf(
             history.id.toString(),
-            history.projectID.toString(),
+            history.projectId.toString(),
             history.entityId.toString(),
             history.entityType,
             history.changedBy.toString(),
-            history.oldState ?: "",
-            history.newState ?: "",
+            oldStateId,
+            newStateId,
             history.timestamp.toString()
         ).joinToString(",")
     }

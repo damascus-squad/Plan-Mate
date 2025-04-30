@@ -1,7 +1,7 @@
 package data.source
 
 import data.csvDataHelper.createState
-import data.model.State
+import logic.model.State
 import org.damascus.data.csv.FileDataParser
 import org.damascus.data.csv.FileDataSerializer
 import org.junit.jupiter.api.Assertions.*

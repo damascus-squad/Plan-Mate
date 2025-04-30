@@ -1,22 +1,27 @@
 package data.csvDataHelper
 
-import data.model.History
-import java.time.LocalDateTime
+import logic.model.History
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import logic.model.State
 import java.util.UUID
+
 
 fun createHistory(
     id: UUID = UUID.randomUUID(),
-    projectID: UUID = UUID.randomUUID(),
+    projectId: UUID = UUID.randomUUID(),
     entityId: UUID = UUID.randomUUID(),
     entityType: String = "TASK",
     changedBy: UUID = UUID.randomUUID(),
-    oldState: String = "TODO",
-    newState: String = "In Progress",
-    timestamp: LocalDateTime = LocalDateTime.now()
+    oldState: State? = State(UUID.randomUUID(), "TODO"),
+    newState: State? = State(UUID.randomUUID(), "IN_PROGRESS"),
+    timestamp: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
 ): History {
     return History(
         id = id,
-        projectID = projectID,
+        projectId = projectId,
         entityId = entityId,
         entityType = entityType,
         changedBy = changedBy,
