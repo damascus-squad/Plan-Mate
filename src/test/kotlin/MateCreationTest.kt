@@ -11,7 +11,7 @@ class MateCreationTest {
     class Mate private constructor(
         val id: UUID,
         val username: String,
-        val password: String
+        val password: String,
     ) {
         companion object {
             private val registeredUsernames = mutableSetOf<String>()
@@ -19,7 +19,7 @@ class MateCreationTest {
             fun create(
                 id: UUID,
                 username: String,
-                rawPassword: String
+                rawPassword: String,
             ): Mate {
                 validateUsername(username)
 
@@ -60,17 +60,20 @@ class MateCreationTest {
 
     @Test
     fun `should encrypt password using MD5`() {
+
         val rawPassword = "pass123"
         val mate = Mate.create(
             id = UUID.randomUUID(),
             username = "user1",
             rawPassword = rawPassword
         )
+
         assertThat(mate.password).isNotEqualTo(rawPassword)
     }
 
     @Test
     fun `should throw exception when password is too short`() {
+
         val exception = assertThrows<IllegalArgumentException> {
             Mate.create(
                 id = UUID.randomUUID(),
@@ -78,11 +81,13 @@ class MateCreationTest {
                 rawPassword = "123"
             )
         }
+
         assertThat(exception.message).contains("Password must be at least 6 characters")
     }
 
     @Test
     fun `should throw exception when username contains special characters`() {
+
         val exception = assertThrows<IllegalArgumentException> {
             Mate.create(
                 id = UUID.randomUUID(),
@@ -90,11 +95,13 @@ class MateCreationTest {
                 rawPassword = "pass123"
             )
         }
+
         assertThat(exception.message).contains("Invalid username format")
     }
 
     @Test
     fun `should create mate successfully when all data is valid`() {
+
         val id = UUID.randomUUID()
         val username = "validUser"
         val rawPassword = "secure123"
@@ -112,6 +119,7 @@ class MateCreationTest {
 
     @Test
     fun `should throw exception when creating mate with blank username`() {
+
         val id = UUID.randomUUID()
         val rawPassword = "secure123"
 
@@ -122,11 +130,13 @@ class MateCreationTest {
                 rawPassword = rawPassword
             )
         }
+
         assertThat(exception.message).isEqualTo("Username cannot be blank")
     }
 
     @Test
     fun `should throw exception when creating mate with empty password`() {
+
         val id = UUID.randomUUID()
         val username = "newUser"
 
@@ -137,36 +147,31 @@ class MateCreationTest {
                 rawPassword = ""
             )
         }
+
         assertThat(exception.message).isEqualTo("Password cannot be blank")
     }
 
     @Test
     fun `should return true when checking if username is taken`() {
-        // given
         val username = "existingUser"
         val validator = mockk<UsernameValidator>()
 
         every { validator.isUsernameTaken(username) } returns true
 
-        // when
         val isTaken = validator.isUsernameTaken(username)
 
-        // then
         assertThat(isTaken).isTrue()
     }
 
     @Test
     fun `should return false when checking if username is available`() {
-        // given
         val username = "uniqueUser"
         val validator = mockk<UsernameValidator>()
 
         every { validator.isUsernameTaken(username) } returns false
 
-        // when
         val isTaken = validator.isUsernameTaken(username)
 
-        // then
         assertThat(isTaken).isFalse()
     }
 }
