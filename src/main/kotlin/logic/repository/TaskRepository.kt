@@ -1,5 +1,6 @@
 package org.damascus.logic.repository
 
+import model.Task
 import org.damascus.logic.model.Task
 import java.util.UUID
 

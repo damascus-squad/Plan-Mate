@@ -6,12 +6,12 @@ import io.mockk.mockk
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.damascus.data.repository.TaskRepositoryImpl
+import model.Mate
+import model.Project
+import model.State
+import model.Task
+import org.damascus.data.repo.TaskRepositoryImpl
 import org.damascus.data.source.TaskDataSource
-import org.damascus.logic.model.Mate
-import org.damascus.logic.model.Project
-import org.damascus.logic.model.State
-import org.damascus.logic.model.Task
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.NoSuchElementException

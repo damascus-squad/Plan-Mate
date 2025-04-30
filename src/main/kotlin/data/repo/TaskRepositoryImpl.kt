@@ -1,35 +1,37 @@
 package org.damascus.data.repo
 
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import model.*
 import org.damascus.data.source.TaskDataSource
-import org.damascus.logic.model.State
-import org.damascus.logic.model.Task
 import org.damascus.logic.repository.TaskRepository
 import java.time.LocalDateTime
 import java.util.*
 
-class TaskRepositoryImpl(private val taskDataSource: TaskDataSource) : TaskRepository {
+class TaskRepositoryImpl(private val taskDataSource: TaskDataSource<Task>) : TaskRepository {
 
-    override fun createTask(task: Task): Boolean {
+    override fun create(task: Task): Boolean {
         return false
     }
 
-    override fun updateTask(taskId: UUID, task: Task): Boolean {
+    override fun update(taskId: UUID, task: Task): Boolean {
         return true
     }
 
-    override fun deleteTask(taskId: UUID): Boolean {
+    override fun delete(taskId: UUID): Boolean {
         return true
     }
 
-    override fun taskExists(taskId: UUID): Boolean {
+    override fun exists(taskId: UUID): Boolean {
         return false
     }
 
-    override fun getTask(taskId: UUID): Task {
+    override fun get(taskId: UUID): Task {
         throw NoSuchElementException("Broken: task not found")
     }
 
-    override fun getTasksByProject(projectId: UUID): List<Task> {
+    override fun getByProject(projectId: UUID): List<Task> {
         return listOf(
             Task(
                 id = UUID.randomUUID(),
@@ -37,7 +39,7 @@ class TaskRepositoryImpl(private val taskDataSource: TaskDataSource) : TaskRepos
                 title = "Fake Task",
                 description = "Does not belong to the given project",
                 state = State(id = UUID.randomUUID(), name = "Done"),
-                creationDate = LocalDateTime.now()
+                creationDate = Clock.System.now().toLocalDateTime(TimeZone.UTC)
             )
         )
     }
