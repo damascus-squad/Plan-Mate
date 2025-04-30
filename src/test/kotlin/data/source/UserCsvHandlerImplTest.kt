@@ -52,7 +52,7 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should return valid entries when reading and skipping blank lines`() {
         // Given
-        File(filePath).writeText("id,username,password,role\n11111111-1111-1111-1111-111111111111,Alice,p1,mate\n\n")
+        File(filePath).writeText("id,username,password,role\n${UUID.randomUUID()},Alice,p1,mate\n\n")
 
         // When
         val result = handler.read(filePath)
@@ -65,8 +65,8 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should write and return data correctly when reading`() {
         // Given
-        val user1 = createUser(UUID.fromString("11111111-1111-1111-1111-111111111111"), "Alice", "p1", "mate")
-        val user2 = createUser(UUID.fromString("22222222-2222-2222-2222-222222222222"), "Bob", "p2", "admin")
+        val user1 = createUser(UUID.randomUUID(), "Alice", "p1", "mate")
+        val user2 = createUser(UUID.randomUUID(), "Bob", "p2", "admin")
         writeUsers(user1, user2)
 
         // When
@@ -76,59 +76,6 @@ class UserCsvHandlerImplTest {
         assertEquals(2, result.size)
         assertEquals("Alice", result[0].username)
         assertEquals("Bob", result[1].username)
-    }
-
-    @Test
-    fun `should update user when user exists`() {
-        // Given
-        val id1 = UUID.fromString("11111111-1111-1111-1111-111111111111")
-        val id2 = UUID.fromString("22222222-2222-2222-2222-222222222222")
-        writeUsers(
-            createUser(id1, "Alice", "p", "mate"),
-            createUser(id2, "Bob", "pp", "admin")
-        )
-
-        // When
-        handler.update(filePath, id2.toString(), createUser(id2, "Bobby", "pp", "admin"))
-        val result = handler.read(filePath)
-
-        // Then
-        assertEquals("Bobby", result.find { it.id == id2 }?.username)
-    }
-
-    @Test
-    fun `should ignore update when user does not exist`() {
-        // Given
-        val id1 = UUID.fromString("11111111-1111-1111-1111-111111111111")
-        val fakeId = UUID.fromString("99999999-9999-9999-9999-999999999999")
-        writeUsers(createUser(id1, "Alice", "x", "mate"))
-
-        // When
-        handler.update(filePath, fakeId.toString(), createUser(fakeId, "Ghost", "x", "mate"))
-        val result = handler.read(filePath)
-
-        // Then
-        assertEquals(1, result.size)
-        assertEquals("Alice", result.first().username)
-    }
-
-    @Test
-    fun `should delete user when id is found`() {
-        // Given
-        val id1 = UUID.fromString("11111111-1111-1111-1111-111111111111")
-        val id2 = UUID.fromString("22222222-2222-2222-2222-222222222222")
-        writeUsers(
-            createUser(id1, "Alice", "pp", "mate"),
-            createUser(id2, "Bob", "pp", "admin")
-        )
-
-        // When
-        handler.delete(filePath, id1.toString())
-        val result = handler.read(filePath)
-
-        // Then
-        assertEquals(1, result.size)
-        assertEquals("Bob", result.first().username)
     }
 
     @Test
@@ -146,7 +93,7 @@ class UserCsvHandlerImplTest {
     @Test
     fun `should skip invalid lines when reading`() {
         // Given
-        File(filePath).writeText("id,username,password,role\n\n11111111-1111-1111-1111-111111111111,Alice,p1,mate\n")
+        File(filePath).writeText("id,username,password,role\n${UUID.randomUUID()}\n${UUID.randomUUID()},Alice,p1,mate\n")
 
         // When
         val result = handler.read(filePath)
@@ -166,6 +113,59 @@ class UserCsvHandlerImplTest {
 
         // Then
         assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should update user when user exists`() {
+        // Given
+        val id1 = UUID.randomUUID()
+        val id2 = UUID.randomUUID()
+        writeUsers(
+            createUser(id1, "Alice", "p", "mate"),
+            createUser(id2, "Bob", "pp", "admin")
+        )
+
+        // When
+        handler.update(filePath, id2.toString(), createUser(id2, "Bobby", "pp", "admin"))
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals("Bobby", result.find { it.id == id2 }?.username)
+    }
+
+    @Test
+    fun `should ignore update when user does not exist`() {
+        // Given
+        val id1 = UUID.randomUUID()
+        val fakeId = UUID.randomUUID()
+        writeUsers(createUser(id1, "Alice", "123", "mate"))
+
+        // When
+        handler.update(filePath, fakeId.toString(), createUser(fakeId, "Ghost", "123", "mate"))
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals("Alice", result.first().username)
+    }
+
+    @Test
+    fun `should delete user when id is found`() {
+        // Given
+        val id1 = UUID.randomUUID()
+        val id2 = UUID.randomUUID()
+        writeUsers(
+            createUser(id1, "Alice", "pp", "mate"),
+            createUser(id2, "Bob", "pp", "admin")
+        )
+
+        // When
+        handler.delete(filePath, id1.toString())
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals("Bob", result.first().username)
     }
 
     @Test

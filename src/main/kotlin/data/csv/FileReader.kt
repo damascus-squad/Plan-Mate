@@ -1,6 +1,5 @@
 package org.damascus.data.csv
 
-import org.damascus.utils.Constants.HEADER_LINE_COUNT
 import java.io.File
 
 class FileReader(private val file: File) {
@@ -10,5 +9,9 @@ class FileReader(private val file: File) {
         return file.readLines()
             .drop(HEADER_LINE_COUNT)
             .filter { it.isNotBlank() }
+    }
+
+    companion object {
+        const val HEADER_LINE_COUNT = 1
     }
 }

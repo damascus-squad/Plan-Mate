@@ -50,11 +50,11 @@ class StateCsvHandlerImplTest {
     @Test
     fun `should write and return data correctly when reading`() {
         // Given
-        val s1 = createState(UUID.randomUUID(), "TODO")
-        val s2 = createState(UUID.randomUUID(), "IN_PROGRESS")
+        val state1 = createState(UUID.randomUUID(), "TODO")
+        val state2 = createState(UUID.randomUUID(), "IN_PROGRESS")
 
         // When
-        handler.write(filePath, listOf(s1, s2))
+        handler.write(filePath, listOf(state1, state2))
         val result = handler.read(filePath)
 
         // Then
@@ -62,59 +62,21 @@ class StateCsvHandlerImplTest {
     }
 
     @Test
-    fun `should update state when state exists`() {
-        // Given
-        val s1 = createState(UUID.randomUUID(), "TODO")
-        val s2 = createState(UUID.randomUUID(), "DOING")
-        handler.write(filePath, listOf(s1, s2))
-
-        val updated = s2.copy(name = "IN_PROGRESS")
-
-        // When
-        handler.update(filePath, s2.id.toString(), updated)
-        val result = handler.read(filePath)
-
-        // Then
-        assertEquals("IN_PROGRESS", result.find { it.id == s2.id }?.name)
-    }
-
-    @Test
-    fun `should ignore update when state does not exist`() {
-        // Given
-        val s1 = createState(UUID.randomUUID(), "TODO")
-        handler.write(filePath, listOf(s1))
-
-        val ghost = createState(UUID.randomUUID(), "GHOST")
-
-        // When
-        handler.update(filePath, ghost.id.toString(), ghost)
-        val result = handler.read(filePath)
-
-        // Then
-        assertEquals(1, result.size)
-        assertEquals("TODO", result.first().name)
-    }
-
-    @Test
-    fun `should delete state by id`() {
-        // Given
-        val s1 = createState(UUID.randomUUID(), "TODO")
-        val s2 = createState(UUID.randomUUID(), "DONE")
-        handler.write(filePath, listOf(s1, s2))
-
-        // When
-        handler.delete(filePath, s1.id.toString())
-        val result = handler.read(filePath)
-
-        // Then
-        assertEquals(1, result.size)
-        assertEquals("DONE", result.first().name)
-    }
-
-    @Test
     fun `should return empty list if file only has header`() {
         // Given
         File(filePath).writeText("id,name\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should return empty list when file does not exist`() {
+        // Given
+        File(filePath).delete()
 
         // When
         val result = handler.read(filePath)
@@ -136,15 +98,53 @@ class StateCsvHandlerImplTest {
     }
 
     @Test
-    fun `should return empty list when file does not exist`() {
+    fun `should update state when state exists`() {
         // Given
-        File(filePath).delete()
+        val state1 = createState(UUID.randomUUID(), "TODO")
+        val state2 = createState(UUID.randomUUID(), "DOING")
+        handler.write(filePath, listOf(state1, state2))
+
+        val updated = state2.copy(name = "IN_PROGRESS")
 
         // When
+        handler.update(filePath, state2.id.toString(), updated)
         val result = handler.read(filePath)
 
         // Then
-        assertTrue(result.isEmpty())
+        assertEquals("IN_PROGRESS", result.find { it.id == state2.id }?.name)
+    }
+
+    @Test
+    fun `should ignore update when state does not exist`() {
+        // Given
+        val state1 = createState(UUID.randomUUID(), "TODO")
+        handler.write(filePath, listOf(state1))
+
+        val ghost = createState(UUID.randomUUID(), "GHOST")
+
+        // When
+        handler.update(filePath, ghost.id.toString(), ghost)
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals("TODO", result.first().name)
+    }
+
+    @Test
+    fun `should delete state by id`() {
+        // Given
+        val state1 = createState(UUID.randomUUID(), "TODO")
+        val state2 = createState(UUID.randomUUID(), "DONE")
+        handler.write(filePath, listOf(state1, state2))
+
+        // When
+        handler.delete(filePath, state1.id.toString())
+        val result = handler.read(filePath)
+
+        // Then
+        assertEquals(1, result.size)
+        assertEquals("DONE", result.first().name)
     }
 
     private fun buildHandler(): GenericCsvHandlerImpl<State> {

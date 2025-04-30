@@ -9,17 +9,18 @@ import logic.model.State
 import logic.model.Task
 import logic.model.User
 import org.damascus.logic.model.Role
-import org.damascus.utils.Constants.HISTORY_FIELD_COUNT
-import org.damascus.utils.Constants.PROJECT_FIELD_COUNT
-import org.damascus.utils.Constants.STATE_FIELD_COUNT
-import org.damascus.utils.Constants.TASK_FIELD_COUNT
-import org.damascus.utils.Constants.USER_FIELD_COUNT
-import org.damascus.utils.Constants.LIST_SEPARATOR
-import org.damascus.utils.Constants.SEPARATOR
 import java.util.*
 
 object FileDataParser {
 
+    const val SEPARATOR = ","
+    const val LIST_SEPARATOR = ";"
+    const val USER_FIELD_COUNT = 4
+    const val PROJECT_FIELD_COUNT = 4
+    const val TASK_FIELD_COUNT = 7
+    const val STATE_FIELD_COUNT = 2
+    const val HISTORY_FIELD_COUNT = 8
+    
     fun parseUser(line: String): User {
         val tokens = line.split(SEPARATOR)
         if (tokens.size < USER_FIELD_COUNT) throw CsvParsingException("Invalid user line: $line")

@@ -67,6 +67,42 @@ class HistoryCsvHandlerImplTest {
     }
 
     @Test
+    fun `should return empty list if file only has header`() {
+        // Given
+        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should skip invalid lines when reading`() {
+        // Given
+        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should return empty list when file does not exist`() {
+        // Given
+        File(filePath).delete()
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
     fun `should update history when it exists`() {
         // Given
         val h1 = createHistory()
@@ -117,47 +153,13 @@ class HistoryCsvHandlerImplTest {
     }
 
     @Test
-    fun `should return empty list if file only has header`() {
-        // Given
-        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun `should skip invalid lines when reading`() {
-        // Given
-        File(filePath).writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\ninvalid_line\n")
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun `should return empty list when file does not exist`() {
-        // Given
-        File(filePath).delete()
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
     fun `should parse history with null oldState`() {
         // Given
         val newStateId = UUID.randomUUID()
         val line =
-            "${UUID.randomUUID()},${UUID.randomUUID()},${UUID.randomUUID()},task,${UUID.randomUUID()},,${newStateId},${Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())}"
+            "${UUID.randomUUID()},${UUID.randomUUID()},${UUID.randomUUID()},task,${UUID.randomUUID()},,${newStateId},${
+                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            }"
 
         // When
         val result = FileDataParser.parseHistory(line)
@@ -199,7 +201,7 @@ class HistoryCsvHandlerImplTest {
 
         // Then
         val tokens = serialized.split(",")
-        assertEquals("", tokens[5], "oldState should be serialized as empty string")
+        assertEquals("", tokens[5])
         assertEquals("22222222-2222-2222-2222-222222222222", tokens[6])
     }
 

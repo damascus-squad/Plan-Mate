@@ -68,6 +68,42 @@ class TaskCsvHandlerImplTest {
     }
 
     @Test
+    fun `should return empty list if file only has header`() {
+        // Given
+        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should return empty list when file does not exist`() {
+        // Given
+        File(filePath).delete()
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should skip invalid lines when reading`() {
+        // Given
+        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n${UUID.randomUUID()}\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
     fun `should update task when task exists`() {
         // Given
         val task1 = createTask()
@@ -87,11 +123,11 @@ class TaskCsvHandlerImplTest {
     @Test
     fun `should ignore update when task does not exist`() {
         // Given
-        val task1 = createTask()
-        handler.write(filePath, listOf(task1))
+        val task = createTask()
+        handler.write(filePath, listOf(task))
 
         val fakeId = createTask().id
-        val ghostTask = task1.copy(id = fakeId, title = "Ghost")
+        val ghostTask = task.copy(id = fakeId, title = "Ghost")
 
         // When
         handler.update(filePath, fakeId.toString(), ghostTask)
@@ -119,47 +155,11 @@ class TaskCsvHandlerImplTest {
     }
 
     @Test
-    fun `should return empty list if file only has header`() {
-        // Given
-        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\n")
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun `should skip invalid lines when reading`() {
-        // Given
-        File(filePath).writeText("id,projectId,title,description,assigneeId,stateId,creationDate\ninvalid_line\n")
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun `should return empty list when file does not exist`() {
-        // Given
-        File(filePath).delete()
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
     fun `should serialize task with assignee having null id safely`() {
         // Given
         val assigneeWithNullId = Mate(
             id = UUID.fromString("00000000-0000-0000-0000-000000000000"),
-            username = "test",
+            username = "ali",
             password = "test",
             role = Role.MATE
         )
@@ -192,7 +192,7 @@ class TaskCsvHandlerImplTest {
 
         // Then
         val columns = serialized.split(",")
-        assertEquals("", columns[4], "Expected blank column for null id even if assignee is not null")
+        assertEquals("", columns[4])
     }
 
     @Test

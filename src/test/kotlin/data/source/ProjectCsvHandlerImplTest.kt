@@ -64,6 +64,42 @@ class ProjectCsvHandlerImplTest {
     }
 
     @Test
+    fun `should return empty list if file only has header`() {
+        // Given
+        File(filePath).writeText("id,name,assignedMates,creationDate\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should skip invalid lines when reading`() {
+        // Given
+        File(filePath).writeText("id,name,assignedMates,creationDate\ninvalid_line\n")
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `should return empty list when file does not exist`() {
+        // Given
+        File(filePath).delete()
+
+        // When
+        val result = handler.read(filePath)
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
     fun `should update project when project exists`() {
         // Given
         val project1 = createProject()
@@ -110,42 +146,6 @@ class ProjectCsvHandlerImplTest {
         // Then
         assertEquals(1, result.size)
         assertEquals(project2.id, result.first().id)
-    }
-
-    @Test
-    fun `should return empty list if file only has header`() {
-        // Given
-        File(filePath).writeText("id,name,assignedMates,creationDate\n")
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun `should skip invalid lines when reading`() {
-        // Given
-        File(filePath).writeText("id,name,assignedMates,creationDate\ninvalid_line\n")
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
-    }
-
-    @Test
-    fun `should return empty list when file does not exist`() {
-        // Given
-        File(filePath).delete()
-
-        // When
-        val result = handler.read(filePath)
-
-        // Then
-        assertTrue(result.isEmpty())
     }
 
     @Test
