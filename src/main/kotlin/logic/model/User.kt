@@ -22,8 +22,4 @@ abstract class User(
     override fun hashCode(): Int {
         return listOf(id, username, password, role).hashCode()
     }
-
-    override fun toString(): String {
-        return "Mate(id=$id, username=$username, password=$password, role=$role)"
-    }
 }
