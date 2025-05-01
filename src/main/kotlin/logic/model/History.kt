@@ -9,7 +9,7 @@ data class History(
     val taskId: UUID,
     val actionType: String,
     val changedBy: UUID,
-    val oldState: State?,
-    val newState: State,
+    val oldStateId: UUID,
+    val newStateId: UUID,
     val timestamp: LocalDateTime
 )

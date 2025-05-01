@@ -1,13 +1,14 @@
 package logic.model
 
 import kotlinx.datetime.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 data class Task(
     val id: UUID,
     val projectId: UUID,
     val title: String,
     val description: String,
-    var assignee: Mate?,
-    val state: State,
-    val creationDate: LocalDateTime)
+    var assigneeId: UUID?,
+    val stateId: UUID,
+    val creationDate: LocalDateTime
+)
