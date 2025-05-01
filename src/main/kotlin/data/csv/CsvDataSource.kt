@@ -70,7 +70,7 @@ class CsvDataSource<T>(
         overwriteAll(updated)
     }
 
-    fun readLinesSkippingHeader(): List<String> {
+    private fun readLinesSkippingHeader(): List<String> {
         if (!file.exists()) throw CsvFileNotFound("File ${file.name} does not exist")
         return file.readLines()
             .drop(HEADER_LINE_COUNT)
