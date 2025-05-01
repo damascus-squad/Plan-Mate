@@ -3,6 +3,7 @@ package org.damascus.data.csv
 import org.damascus.data.DataSource
 import java.io.File
 import java.util.*
+import java.util.Map.entry
 import kotlin.collections.indexOfFirst
 
 class CsvDataSource<T>(
@@ -16,11 +17,12 @@ class CsvDataSource<T>(
     private val file = File(filePath)
     private val header = generateHeader()
 
-    init {
+    private fun append(item: T) {
         if (!file.exists()) {
             file.parentFile.mkdirs()
             file.writeText("$header\n")
         }
+        file.appendText(serializer(item) + "\n")
     }
 
     override fun read(): List<T> {
@@ -28,7 +30,15 @@ class CsvDataSource<T>(
         return lines.mapNotNull { runCatching { parser(it) }.getOrNull() }
     }
 
-    override fun write(data: List<T>) {
+    override fun write(entry: T) {
+        append(entry)
+    }
+
+    override fun write(entriesList: List<T>) {
+        entriesList.forEach { entry -> write(entry) }
+    }
+
+    private fun overwriteAll(data: List<T>) {
         file.writer().use { writer ->
             writer.appendLine(header)
             data.forEach { writer.appendLine(serializer(it)) }
@@ -40,7 +50,7 @@ class CsvDataSource<T>(
         val index = data.indexOfFirst { extractId(it) == id }
         if (index != INDEX_NOT_FOUND) {
             data[index] = updatedData
-            write(data)
+            overwriteAll(data)
         } else {
             throw CsvEntryNotFound("Entry for id $id doesn't exist, hence can't be updated")
         }
@@ -55,7 +65,7 @@ class CsvDataSource<T>(
         }
 
         val updated = data.filter { extractId(it) != id }
-        write(updated)
+        overwriteAll(updated)
     }
 
     private companion object {

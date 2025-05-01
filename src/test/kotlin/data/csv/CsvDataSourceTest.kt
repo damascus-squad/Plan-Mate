@@ -33,29 +33,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `init should create file when file does not exist`() {
-        // Given
-        file.delete()
-
-        // When
-        csvDataSource = CsvTestHelper.getHistoryCsvHandler()
-        val result = file.exists()
-
-        // Then
-        assertTrue(result)
-    }
-
-    @Test
-    fun `init should skip creating file when it already exists`() {
-        // Given & When
-        CsvTestHelper.getHistoryCsvHandler()
-
-        // Then
-        assertTrue(file.exists())
-    }
-
-    @Test
-    fun `write should return correct number rows when taking a list`() {
+    fun `write should add correct number rows when taking a list`() {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()
@@ -66,6 +44,19 @@ class CsvDataSourceTest {
 
         // Then
         assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `write should add a row when taking exactly one valid entry`() {
+        // Given
+        val h1 = createHistory()
+
+        // When
+        csvDataSource.write(h1)
+        val result = csvDataSource.read()
+
+        // Then
+        assertEquals(1, result.size)
     }
 
     @Test
