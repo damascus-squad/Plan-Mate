@@ -6,7 +6,7 @@ import logic.model.State
 import logic.model.Task
 import logic.model.User
 
-object FileDataSerializer {
+object CsvDataSerializer {
 
     fun serializeUser(user: User): String {
         return listOf(
@@ -18,7 +18,7 @@ object FileDataSerializer {
     }
 
     fun serializeProject(project: Project): String {
-        val matesString = project.assignedMates.joinToString(";") { it.id.toString() }
+        val matesString = project.assignedMatesIds.joinToString(";")
         return listOf(
             project.id.toString(),
             project.name,
@@ -28,14 +28,14 @@ object FileDataSerializer {
     }
 
     fun serializeTask(task: Task): String {
-        val assigneeId = task.assignee?.id?.toString()
+        val assigneeId = task.assigneeId?.toString()
         return listOf(
             task.id.toString(),
             task.projectId.toString(),
             task.title,
             task.description,
             assigneeId ?: "",
-            task.state.id.toString(),
+            task.stateId.toString(),
             task.creationDate.toString()
         ).joinToString(",")
 
@@ -46,16 +46,14 @@ object FileDataSerializer {
     }
 
     fun serializeHistory(history: History): String {
-        val oldStateId = history.oldState?.id?.toString() ?: ""
-        val newStateId = history.newState.id.toString()
         return listOf(
             history.id.toString(),
             history.projectId.toString(),
             history.taskId.toString(),
             history.actionType,
             history.changedBy.toString(),
-            oldStateId,
-            newStateId,
+            history.oldStateId.toString() ,
+            history.newStateId.toString(),
             history.timestamp.toString()
         ).joinToString(",")
     }

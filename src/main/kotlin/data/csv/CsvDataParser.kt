@@ -11,10 +11,10 @@ import logic.model.User
 import org.damascus.logic.model.Role
 import java.util.*
 
-object FileDataParser {
+object CsvDataParser {
 
-    private const val SEPARATOR = ","
-    private const val LIST_SEPARATOR = ";"
+    private const val SEPARATOR = ','
+    private const val LIST_SEPARATOR = ';'
     private const val USER_FIELD_COUNT = 4
     private const val PROJECT_FIELD_COUNT = 4
     private const val TASK_FIELD_COUNT = 7
@@ -23,7 +23,7 @@ object FileDataParser {
 
     fun parseUser(line: String): User {
         val tokens = line.split(SEPARATOR)
-        if (tokens.size < USER_FIELD_COUNT) throw CsvParsingException("Invalid user line: $line")
+        if (tokens.size != USER_FIELD_COUNT) throw CsvParsingException("Invalid user line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
         val username = tokens[1].trim()
@@ -38,38 +38,37 @@ object FileDataParser {
 
     fun parseProject(line: String): Project {
         val tokens = line.split(SEPARATOR)
-        if (tokens.size < PROJECT_FIELD_COUNT) throw CsvParsingException("Invalid project line: $line")
+        if (tokens.size != PROJECT_FIELD_COUNT) throw CsvParsingException("Invalid project line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
         val name = tokens[1].trim()
-        val assignedMates = tokens[2].trim().split(LIST_SEPARATOR)
+        val assignedMatesIds = tokens[2].trim().split(LIST_SEPARATOR)
             .filter { it.isNotBlank() }
-            .map { Mate(UUID.fromString(it), "", "", Role.MATE) }
+            .map { UUID.fromString(it) }
             .toMutableList()
         val creationDate = LocalDateTime.parse(tokens[3].trim())
 
-        return Project(id, name, assignedMates, creationDate)
+        return Project(id, name, assignedMatesIds, creationDate)
     }
 
     fun parseTask(line: String): Task {
         val tokens = line.split(SEPARATOR)
-        if (tokens.size < TASK_FIELD_COUNT) throw CsvParsingException("Invalid task line: $line")
+        if (tokens.size != TASK_FIELD_COUNT) throw CsvParsingException("Invalid task line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
         val projectId = UUID.fromString(tokens[1].trim())
         val title = tokens[2].trim()
         val description = tokens[3].trim()
-        val assignee = tokens[4].trim().takeIf { it.isNotBlank() }
-            ?.let { Mate(UUID.fromString(it), "", "", Role.MATE) }
-        val state = State(UUID.fromString(tokens[5].trim()), "")
+        val assigneeId: UUID? = runCatching { UUID.fromString(tokens[4].trim()) }.getOrNull()
+        val stateId = UUID.fromString(tokens[5].trim())
         val creationDate = LocalDateTime.parse(tokens[6].trim())
 
-        return Task(id, projectId, title, description, assignee, state, creationDate)
+        return Task(id, projectId, title, description, assigneeId, stateId, creationDate)
     }
 
     fun parseState(line: String): State {
         val tokens = line.split(SEPARATOR)
-        if (tokens.size < STATE_FIELD_COUNT) throw CsvParsingException("Invalid state line: $line")
+        if (tokens.size != STATE_FIELD_COUNT) throw CsvParsingException("Invalid state line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
         val name = tokens[1].trim()
@@ -78,7 +77,7 @@ object FileDataParser {
 
     fun parseHistory(line: String): History {
         val tokens = line.split(SEPARATOR)
-        if (tokens.size < HISTORY_FIELD_COUNT) throw CsvParsingException("Invalid history line: $line")
+        if (tokens.size != HISTORY_FIELD_COUNT) throw CsvParsingException("Invalid history line: $line")
 
         return History(
             id = UUID.fromString(tokens[0].trim()),
@@ -86,8 +85,8 @@ object FileDataParser {
             taskId = UUID.fromString(tokens[2].trim()),
             actionType = tokens[3].trim(),
             changedBy = UUID.fromString(tokens[4].trim()),
-            oldState = tokens[5].trim().takeIf { it.isNotBlank() }?.let { State(UUID.fromString(it), "") },
-            newState = State(UUID.fromString(tokens[6].trim()), ""),
+            oldStateId = UUID.fromString(tokens[5].trim()),
+            newStateId = UUID.fromString(tokens[6].trim()),
             timestamp = LocalDateTime.parse(tokens[7].trim())
         )
     }
