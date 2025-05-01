@@ -10,7 +10,7 @@ data class ActionLog(
     val projectId: UUID = NO_UUID,
     val actionDate: LocalDateTime,
     val currentState: State = NO_STATE,
-    val targetedState: State = NO_STATE,
+    val newState: State = NO_STATE,
     val actionType: ActionType
 ){
     companion object {

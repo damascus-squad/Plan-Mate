@@ -19,7 +19,7 @@ fun createFakeActionLog(
     taskId = taskId,
     projectId = projectId,
     currentState = currentState,
-    targetedState = targetedState,
+    newState = targetedState,
     actionDate = actionDate,
     actionType = actionType,
     userId = userId,

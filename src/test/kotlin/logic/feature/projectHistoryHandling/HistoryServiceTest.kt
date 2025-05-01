@@ -79,7 +79,7 @@ class HistoryServiceTest {
         verify(exactly = 1) {
             historyRepository.saveLog(match {
                 it.currentState == todoState &&
-                        it.targetedState == inProgressState &&
+                        it.newState == inProgressState &&
                         it.userId == userId
             })
         }
