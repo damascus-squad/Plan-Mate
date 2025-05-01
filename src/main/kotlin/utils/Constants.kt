@@ -6,4 +6,7 @@ object Constants {
     const val PROJECTS_FILE = "assets/projects.csv"
     const val STATES_FILE = "assets/states.csv"
     const val HISTORY_FILE = "assets/history.csv"
+
+    const val SEPARATOR = ','
+    const val LIST_SEPARATOR = ';'
 }

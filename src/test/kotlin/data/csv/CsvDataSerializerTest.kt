@@ -7,7 +7,11 @@ import logic.model.History
 import logic.model.Project
 import logic.model.State
 import logic.model.Task
-import org.damascus.data.csv.CsvDataSerializer
+import org.damascus.data.csv.csvData.CsvDataHistory
+import org.damascus.data.csv.csvData.CsvDataProject
+import org.damascus.data.csv.csvData.CsvDataState
+import org.damascus.data.csv.csvData.CsvDataTask
+import org.damascus.data.csv.csvData.CsvDataUser
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -27,7 +31,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataSerializer.serializeUser(user)
+        val result = CsvDataUser.serializeUser(user)
 
         // Then
         val expected = listOf(
@@ -51,7 +55,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataSerializer.serializeProject(project)
+        val result = CsvDataProject.serializeProject(project)
 
         // Then
         val expected = listOf(
@@ -78,7 +82,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataSerializer.serializeTask(task)
+        val result = CsvDataTask.serializeTask(task)
 
         // Then
         val expected = listOf(
@@ -108,7 +112,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataSerializer.serializeTask(task)
+        val result = CsvDataTask.serializeTask(task)
 
         // Then
         val expected = listOf(
@@ -133,7 +137,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataSerializer.serializeState(state)
+        val result = CsvDataState.serializeState(state)
 
         // Then
         val expected = listOf(
@@ -160,7 +164,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataSerializer.serializeHistory(history)
+        val result = CsvDataHistory.serializeHistory(history)
 
         // Then
         val expected = listOf(

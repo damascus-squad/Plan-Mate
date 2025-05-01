@@ -1,16 +1,16 @@
 package data.csv
 
-import com.sun.beans.introspect.PropertyInfo
-import jdk.javadoc.internal.doclets.formats.html.markup.HtmlStyle
-import junit.runner.Version.id
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.model.*
-import org.damascus.data.csv.CsvDataParser
-import org.damascus.data.csv.CsvDataSerializer
 import org.damascus.data.csv.CsvDataSource
+import org.damascus.data.csv.csvData.CsvDataHistory
+import org.damascus.data.csv.csvData.CsvDataProject
+import org.damascus.data.csv.csvData.CsvDataState
+import org.damascus.data.csv.csvData.CsvDataTask
+import org.damascus.data.csv.csvData.CsvDataUser
 import org.damascus.data.csv.generateCsvHeader
 import org.damascus.logic.model.Role
 import java.util.*
@@ -114,8 +114,8 @@ object CsvTestHelper {
             filePath = HISTORY_FILE_PATH,
             generateHeader = { generateCsvHeader<History>() },
             extractId = { it.id },
-            parser = CsvDataParser::parseHistory,
-            serializer = CsvDataSerializer::serializeHistory
+            parser = CsvDataHistory::parseHistory,
+            serializer = CsvDataHistory::serializeHistory
         )
 
     fun getProjectCsvHandler(): CsvDataSource<Project> =
@@ -123,8 +123,8 @@ object CsvTestHelper {
             filePath = PROJECT_FILE_PATH,
             generateHeader = { generateCsvHeader<Project>() },
             extractId = { it.id },
-            parser = CsvDataParser::parseProject,
-            serializer = CsvDataSerializer::serializeProject
+            parser = CsvDataProject::parseProject,
+            serializer = CsvDataProject::serializeProject
         )
 
     fun getUserCsvHandler(): CsvDataSource<User> =
@@ -132,8 +132,8 @@ object CsvTestHelper {
             filePath = USER_FILE_PATH,
             generateHeader = { generateCsvHeader<User>() },
             extractId = { it.id },
-            parser = CsvDataParser::parseUser,
-            serializer = CsvDataSerializer::serializeUser
+            parser = CsvDataUser::parseUser,
+            serializer = CsvDataUser::serializeUser
         )
 
     fun getTaskCsvHandler(): CsvDataSource<Task> =
@@ -141,8 +141,8 @@ object CsvTestHelper {
             filePath = TASK_FILE_PATH,
             generateHeader = { generateCsvHeader<Task>() },
             extractId = { it.id },
-            parser = CsvDataParser::parseTask,
-            serializer = CsvDataSerializer::serializeTask
+            parser = CsvDataTask::parseTask,
+            serializer = CsvDataTask::serializeTask
         )
 
     fun getStateCsvHandler(): CsvDataSource<State> =
@@ -150,7 +150,7 @@ object CsvTestHelper {
             filePath = STATE_FILE_PATH,
             generateHeader = { generateCsvHeader<State>() },
             extractId = { it.id },
-            parser = CsvDataParser::parseState,
-            serializer = CsvDataSerializer::serializeState
+            parser = CsvDataState::parseState,
+            serializer = CsvDataState::serializeState
         )
 }

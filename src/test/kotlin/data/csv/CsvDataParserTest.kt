@@ -3,8 +3,12 @@ package data.csv
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDateTime
 import logic.model.*
-import org.damascus.data.csv.CsvDataParser
 import org.damascus.data.csv.CsvParsingException
+import org.damascus.data.csv.csvData.CsvDataHistory
+import org.damascus.data.csv.csvData.CsvDataProject
+import org.damascus.data.csv.csvData.CsvDataState
+import org.damascus.data.csv.csvData.CsvDataTask
+import org.damascus.data.csv.csvData.CsvDataUser
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -24,7 +28,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseUser(csvEntry)
+        val result = CsvDataUser.parseUser(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedUser)
@@ -40,7 +44,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseUser(csvEntry)
+        val result = CsvDataUser.parseUser(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedUser)
@@ -53,7 +57,7 @@ class CsvDataParserTest {
 
         // When && Then
         assertThrows<CsvParsingException> {
-            CsvDataParser.parseUser(csvEntry)
+            CsvDataUser.parseUser(csvEntry)
         }
     }
 
@@ -69,7 +73,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseProject(csvEntry)
+        val result = CsvDataProject.parseProject(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedProject)
@@ -90,7 +94,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseProject(csvEntry)
+        val result = CsvDataProject.parseProject(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedProject)
@@ -103,7 +107,7 @@ class CsvDataParserTest {
 
         // When && Then
         assertThrows<CsvParsingException> {
-            CsvDataParser.parseProject(csvEntry)
+            CsvDataProject.parseProject(csvEntry)
         }
     }
 
@@ -123,7 +127,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseTask(csvEntry)
+        val result = CsvDataTask.parseTask(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedTask)
@@ -145,7 +149,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseTask(csvEntry)
+        val result = CsvDataTask.parseTask(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedTask)
@@ -159,7 +163,7 @@ class CsvDataParserTest {
 
         // When && Then
         assertThrows<CsvParsingException> {
-            CsvDataParser.parseTask(csvEntry)
+            CsvDataTask.parseTask(csvEntry)
         }
     }
 
@@ -174,7 +178,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseState(csvEntry)
+        val result = CsvDataState.parseState(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedState)
@@ -187,7 +191,7 @@ class CsvDataParserTest {
 
         // When && Then
         assertThrows<CsvParsingException> {
-            CsvDataParser.parseState(csvEntry)
+            CsvDataState.parseState(csvEntry)
         }
     }
 
@@ -208,7 +212,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = CsvDataParser.parseHistory(csvEntry)
+        val result = CsvDataHistory.parseHistory(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedHistory)
@@ -222,7 +226,7 @@ class CsvDataParserTest {
 
         // When && Then
         assertThrows<CsvParsingException> {
-            CsvDataParser.parseHistory(csvEntry)
+            CsvDataHistory.parseHistory(csvEntry)
         }
     }
 }
