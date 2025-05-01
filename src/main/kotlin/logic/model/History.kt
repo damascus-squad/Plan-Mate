@@ -1,4 +1,4 @@
-package org.damascus.model
+package org.damascus.logic.model
 
 import java.util.UUID
 
