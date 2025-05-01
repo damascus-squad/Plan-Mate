@@ -9,8 +9,8 @@ enum class Role {
     companion object {
         fun fromString(value: String): Role {
             return when (value.lowercase()) {
-                "admin" -> ADMIN
-                "mate" -> MATE
+                ADMIN.name.lowercase() -> ADMIN
+                MATE.name.lowercase() -> MATE
                 else -> throw CsvParsingException("Unknown role: $value")
             }
         }
