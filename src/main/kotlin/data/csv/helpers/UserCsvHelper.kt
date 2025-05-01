@@ -1,4 +1,4 @@
-package org.damascus.data.csv.csvData
+package data.csv.helpers
 
 import logic.model.Admin
 import logic.model.Mate
@@ -8,7 +8,7 @@ import org.damascus.logic.model.Role
 import org.damascus.utils.Constants.SEPARATOR
 import java.util.UUID
 
-object CsvDataUser {
+object UserCsvHelper {
 
     const val USER_FIELD_COUNT = 4
 

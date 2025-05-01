@@ -6,11 +6,11 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.model.*
 import org.damascus.data.csv.CsvDataSource
-import org.damascus.data.csv.csvData.CsvDataHistory
-import org.damascus.data.csv.csvData.CsvDataProject
-import org.damascus.data.csv.csvData.CsvDataState
-import org.damascus.data.csv.csvData.CsvDataTask
-import org.damascus.data.csv.csvData.CsvDataUser
+import data.csv.helpers.HistoryCsvHelper
+import data.csv.helpers.ProjectCsvHelper
+import data.csv.helpers.StateCsvHelper
+import data.csv.helpers.TaskCsvHelper
+import data.csv.helpers.UserCsvHelper
 import org.damascus.data.csv.generateCsvHeader
 import org.damascus.logic.model.Role
 import java.util.*
@@ -114,8 +114,8 @@ object CsvTestHelper {
             filePath = HISTORY_FILE_PATH,
             generateHeader = { generateCsvHeader<History>() },
             extractId = { it.id },
-            parser = CsvDataHistory::parseHistory,
-            serializer = CsvDataHistory::serializeHistory
+            parser = HistoryCsvHelper::parseHistory,
+            serializer = HistoryCsvHelper::serializeHistory
         )
 
     fun getProjectCsvHandler(): CsvDataSource<Project> =
@@ -123,8 +123,8 @@ object CsvTestHelper {
             filePath = PROJECT_FILE_PATH,
             generateHeader = { generateCsvHeader<Project>() },
             extractId = { it.id },
-            parser = CsvDataProject::parseProject,
-            serializer = CsvDataProject::serializeProject
+            parser = ProjectCsvHelper::parseProject,
+            serializer = ProjectCsvHelper::serializeProject
         )
 
     fun getUserCsvHandler(): CsvDataSource<User> =
@@ -132,8 +132,8 @@ object CsvTestHelper {
             filePath = USER_FILE_PATH,
             generateHeader = { generateCsvHeader<User>() },
             extractId = { it.id },
-            parser = CsvDataUser::parseUser,
-            serializer = CsvDataUser::serializeUser
+            parser = UserCsvHelper::parseUser,
+            serializer = UserCsvHelper::serializeUser
         )
 
     fun getTaskCsvHandler(): CsvDataSource<Task> =
@@ -141,8 +141,8 @@ object CsvTestHelper {
             filePath = TASK_FILE_PATH,
             generateHeader = { generateCsvHeader<Task>() },
             extractId = { it.id },
-            parser = CsvDataTask::parseTask,
-            serializer = CsvDataTask::serializeTask
+            parser = TaskCsvHelper::parseTask,
+            serializer = TaskCsvHelper::serializeTask
         )
 
     fun getStateCsvHandler(): CsvDataSource<State> =
@@ -150,7 +150,7 @@ object CsvTestHelper {
             filePath = STATE_FILE_PATH,
             generateHeader = { generateCsvHeader<State>() },
             extractId = { it.id },
-            parser = CsvDataState::parseState,
-            serializer = CsvDataState::serializeState
+            parser = StateCsvHelper::parseState,
+            serializer = StateCsvHelper::serializeState
         )
 }

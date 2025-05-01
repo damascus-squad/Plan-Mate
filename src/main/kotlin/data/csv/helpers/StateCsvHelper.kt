@@ -1,14 +1,13 @@
-package org.damascus.data.csv.csvData
+package data.csv.helpers
 
 import logic.model.State
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.utils.Constants.SEPARATOR
 import java.util.UUID
 
-object CsvDataState {
+object StateCsvHelper {
 
     const val STATE_FIELD_COUNT = 2
-
 
     fun parseState(line: String): State {
         val tokens = line.split(SEPARATOR)

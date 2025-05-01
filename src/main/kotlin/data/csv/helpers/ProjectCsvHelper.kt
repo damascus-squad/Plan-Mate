@@ -1,4 +1,4 @@
-package org.damascus.data.csv.csvData
+package data.csv.helpers
 
 import kotlinx.datetime.LocalDateTime
 import logic.model.Project
@@ -7,8 +7,7 @@ import org.damascus.utils.Constants.LIST_SEPARATOR
 import org.damascus.utils.Constants.SEPARATOR
 import java.util.UUID
 
-object CsvDataProject {
-
+object ProjectCsvHelper {
 
     const val PROJECT_FIELD_COUNT = 4
 

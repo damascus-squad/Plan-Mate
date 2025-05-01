@@ -1,4 +1,4 @@
-package org.damascus.data.csv.csvData
+package data.csv.helpers
 
 import kotlinx.datetime.LocalDateTime
 import logic.model.Task
@@ -6,7 +6,7 @@ import org.damascus.data.csv.CsvParsingException
 import org.damascus.utils.Constants.SEPARATOR
 import java.util.UUID
 
-object CsvDataTask {
+object TaskCsvHelper {
 
     const val TASK_FIELD_COUNT = 7
 

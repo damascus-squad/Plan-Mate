@@ -7,11 +7,11 @@ import logic.model.History
 import logic.model.Project
 import logic.model.State
 import logic.model.Task
-import org.damascus.data.csv.csvData.CsvDataHistory
-import org.damascus.data.csv.csvData.CsvDataProject
-import org.damascus.data.csv.csvData.CsvDataState
-import org.damascus.data.csv.csvData.CsvDataTask
-import org.damascus.data.csv.csvData.CsvDataUser
+import data.csv.helpers.HistoryCsvHelper
+import data.csv.helpers.ProjectCsvHelper
+import data.csv.helpers.StateCsvHelper
+import data.csv.helpers.TaskCsvHelper
+import data.csv.helpers.UserCsvHelper
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -31,7 +31,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataUser.serializeUser(user)
+        val result = UserCsvHelper.serializeUser(user)
 
         // Then
         val expected = listOf(
@@ -55,7 +55,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataProject.serializeProject(project)
+        val result = ProjectCsvHelper.serializeProject(project)
 
         // Then
         val expected = listOf(
@@ -82,7 +82,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataTask.serializeTask(task)
+        val result = TaskCsvHelper.serializeTask(task)
 
         // Then
         val expected = listOf(
@@ -112,7 +112,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataTask.serializeTask(task)
+        val result = TaskCsvHelper.serializeTask(task)
 
         // Then
         val expected = listOf(
@@ -137,7 +137,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataState.serializeState(state)
+        val result = StateCsvHelper.serializeState(state)
 
         // Then
         val expected = listOf(
@@ -164,7 +164,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = CsvDataHistory.serializeHistory(history)
+        val result = HistoryCsvHelper.serializeHistory(history)
 
         // Then
         val expected = listOf(
