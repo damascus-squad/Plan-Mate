@@ -1,13 +1,13 @@
-package org.damascus.logic
+package org.damascus.data
 
-import org.damascus.utils.MD5_HASHING_ALGORITHM
+import org.damascus.logic.HashingService
 import java.security.MessageDigest
 
 class MD5HashingService : HashingService {
 
     override fun <T> hashData(data: T): String {
-        val md = MessageDigest.getInstance(MD5_HASHING_ALGORITHM)
-        val hashedBytes = md.digest(data.toString().toByteArray())
+        val messageDigest = MessageDigest.getInstance(MD5_HASHING_ALGORITHM)
+        val hashedBytes = messageDigest.digest(data.toString().toByteArray())
         return bytesToHex(hashedBytes)
     }
 
@@ -22,5 +22,9 @@ class MD5HashingService : HashingService {
             sb.append(String.format("%02x", b))
         }
         return sb.toString()
+    }
+
+    companion object{
+        val MD5_HASHING_ALGORITHM = "MD5"
     }
 }
