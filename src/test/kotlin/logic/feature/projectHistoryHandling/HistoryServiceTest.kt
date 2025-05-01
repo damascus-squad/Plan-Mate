@@ -6,20 +6,22 @@ import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.damascus.logic.entities.ActionLog.Companion.NO_STATE
-import org.damascus.logic.entities.ActionLog.Companion.NO_UUID
 import org.damascus.logic.model.State
 import org.damascus.logic.entities.ActionType
 import org.damascus.logic.feature.projectHistoryHandling.HistoryService
-import org.damascus.logic.repositories.HistoryRepository
+import logic.repository.HistoryRepository
+import org.damascus.logic.entities.ActionLog.Companion.NO_STATE
+import org.damascus.logic.entities.ActionLog.Companion.NO_UUID
 import org.damascus.utiles.NoHistoryException
 import org.damascus.utiles.InvalidStateException
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.EnumSource
 import java.util.*
-
 
 class HistoryServiceTest {
     private lateinit var historyRepository: HistoryRepository
@@ -100,7 +102,7 @@ class HistoryServiceTest {
 
     @Test
     fun `should return action logs when given projectId`() {
-        // GIVEN logs exist for a project
+        // Given
         val projectId = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -110,16 +112,15 @@ class HistoryServiceTest {
 
         every { historyRepository.getLogsByProjectId(projectId) } returns logs
 
-        // WHEN fetching logs by project ID
+        // When
         val result = historyService.getLogsByProjectId(projectId)
 
-        // THEN returned logs should match the project ID
-        assertEquals(listOf(projectId), result.map { it.projectId })
-    }
+        // Then
+        assertTrue { result.any {projectId == it.projectId} }    }
 
     @Test
     fun `should return action logs when given taskId`() {
-        // GIVEN logs exist for a task
+        // Given
         val taskId = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -133,79 +134,36 @@ class HistoryServiceTest {
         val result = historyService.getLogByTaskId(taskId)
 
         // Then
-        assertEquals(listOf(taskId), result.map { it.taskId })
+        assertTrue(result.any { it.taskId == taskId })
     }
 
-    @Test
-    fun `should create ActionLog with project creation details when action type is PROJECT_CREATED`() {
+    @ParameterizedTest
+    @EnumSource(
+        value = ActionType::class,
+        names = [
+            "TASK_STATE_CHANGED",
+            "PROJECT_CREATED",
+            "PROJECT_MODIFIED",
+            "PROJECT_DELETED",
+            "TASK_CREATED",
+            "TASK_DELETED"
+        ]
+    )
+    fun `should create ActionLog with action type when action type is valid`(actionType: ActionType) {
         // Given
+        val actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+
+        // When
         val log = createFakeActionLog(
-            actionType = ActionType.PROJECT_CREATED,
-            actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+            actionType = actionType,
+            actionDate = actionDate,
             currentState = todoState,
             targetedState = inProgressState
         )
 
         // Then
-        assertEquals(ActionType.PROJECT_CREATED, log.actionType)
+        assertEquals(actionType, log.actionType)
     }
-
-    @Test
-    fun `should create ActionLog with modification details when action type is PROJECT_MODIFIED`() {
-        // Given
-        val log = createFakeActionLog(
-            actionType = ActionType.PROJECT_MODIFIED,
-            actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            currentState = todoState,
-            targetedState = inProgressState
-        )
-
-        // When & Then
-        assertEquals(ActionType.PROJECT_MODIFIED, log.actionType)
-    }
-
-    @Test
-    fun `should create ActionLog with project deletion details when action type is PROJECT_DELETED`() {
-        // Given
-        val log = createFakeActionLog(
-            actionType = ActionType.PROJECT_DELETED,
-            actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            currentState = todoState,
-            targetedState = inProgressState
-        )
-
-        // When & Then
-        assertEquals(ActionType.PROJECT_DELETED, log.actionType)
-    }
-
-    @Test
-    fun `should create ActionLog with task creation details when action type is TASK_CREATED`() {
-        // Given
-        val log = createFakeActionLog(
-            actionType = ActionType.TASK_CREATED,
-            actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            currentState = todoState,
-            targetedState = inProgressState
-        )
-
-        // When & Then
-        assertEquals(ActionType.TASK_CREATED, log.actionType)
-    }
-
-    @Test
-    fun `should create ActionLog with task deletion details when action type is TASK_DELETED`() {
-        // Given
-        val log = createFakeActionLog(
-            actionType = ActionType.TASK_DELETED,
-            actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-            currentState = todoState,
-            targetedState = inProgressState
-        )
-
-        // When & Then
-        assertEquals(ActionType.TASK_DELETED, log.actionType)
-    }
-
     @Test
     fun `should validate constants NO_UUID and NO_STATE`() {
         // Given

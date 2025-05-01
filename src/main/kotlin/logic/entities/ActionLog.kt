@@ -6,13 +6,12 @@ import org.damascus.logic.model.State
 
 data class ActionLog(
     val userId: UUID,
-    val taskId: UUID = NO_UUID,
-    val projectId: UUID = NO_UUID,
+    val taskId: UUID,
+    val projectId: UUID,
     val actionDate: LocalDateTime,
-    val currentState: State = NO_STATE,
-    val newState: State = NO_STATE,
-    val actionType: ActionType
-){
+    val currentState: State,
+    val newState: State,
+    val actionType: ActionType) {
     companion object {
         val NO_UUID: UUID = UUID(0, 0)
         val NO_STATE = State(

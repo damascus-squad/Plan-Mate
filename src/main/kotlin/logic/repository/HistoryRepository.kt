@@ -1,4 +1,4 @@
-package org.damascus.logic.repositories
+package logic.repository
 
 import org.damascus.logic.entities.ActionLog
 import java.util.UUID
@@ -9,5 +9,4 @@ interface HistoryRepository {
     fun getLogsByProjectId(projectId: UUID): List<ActionLog>
 
     fun getLogByTaskId(taskId: UUID): List<ActionLog>
-
 }

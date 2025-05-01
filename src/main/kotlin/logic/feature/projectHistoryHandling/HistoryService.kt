@@ -4,7 +4,7 @@ package org.damascus.logic.feature.projectHistoryHandling
 import org.damascus.logic.entities.ActionLog
 import org.damascus.utiles.NoHistoryException
 import org.damascus.utiles.InvalidStateException
-import org.damascus.logic.repositories.HistoryRepository
+import logic.repository.HistoryRepository
 import java.util.UUID
 
 class HistoryService(
