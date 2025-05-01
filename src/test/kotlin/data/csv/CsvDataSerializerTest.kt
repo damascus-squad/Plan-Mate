@@ -12,6 +12,7 @@ import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.StateCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
+import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -61,7 +62,7 @@ class CsvDataSerializerTest {
         val expected = listOf(
             listOfUUIDs[0],
             "Project",
-            listOf(listOfUUIDs[1], listOfUUIDs[2]).joinToString(";"),
+            listOf(listOfUUIDs[1], listOfUUIDs[2]).joinToString(LIST_SEPARATOR),
             "2024-05-01T12:00"
         ).joinToString(",")
 

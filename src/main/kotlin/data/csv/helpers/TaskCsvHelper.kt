@@ -3,7 +3,7 @@ package data.csv.helpers
 import kotlinx.datetime.LocalDateTime
 import logic.model.Task
 import org.damascus.data.csv.CsvParsingException
-import org.damascus.utils.Constants.SEPARATOR
+import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import java.util.UUID
 
 object TaskCsvHelper {
@@ -11,7 +11,7 @@ object TaskCsvHelper {
     const val TASK_FIELD_COUNT = 7
 
     fun parseTask(line: String): Task {
-        val tokens = line.split(SEPARATOR)
+        val tokens = line.split(COMMA_SEPARATOR)
         if (tokens.size != TASK_FIELD_COUNT) throw CsvParsingException("Invalid task line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
@@ -35,7 +35,7 @@ object TaskCsvHelper {
             assigneeId ?: "",
             task.stateId.toString(),
             task.creationDate.toString()
-        ).joinToString(",")
+        ).joinToString(COMMA_SEPARATOR)
 
     }
 }

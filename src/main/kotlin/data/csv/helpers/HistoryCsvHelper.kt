@@ -3,7 +3,7 @@ package data.csv.helpers
 import kotlinx.datetime.LocalDateTime
 import logic.model.History
 import org.damascus.data.csv.CsvParsingException
-import org.damascus.utils.Constants.SEPARATOR
+import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import java.util.UUID
 
 object HistoryCsvHelper {
@@ -11,7 +11,7 @@ object HistoryCsvHelper {
     const val HISTORY_FIELD_COUNT = 8
 
     fun parseHistory(line: String): History {
-        val tokens = line.split(SEPARATOR)
+        val tokens = line.split(COMMA_SEPARATOR)
         if (tokens.size != HISTORY_FIELD_COUNT) throw CsvParsingException("Invalid history line: $line")
 
         return History(
@@ -36,6 +36,6 @@ object HistoryCsvHelper {
             history.oldStateId.toString() ,
             history.newStateId.toString(),
             history.timestamp.toString()
-        ).joinToString(",")
+        ).joinToString(COMMA_SEPARATOR)
     }
 }

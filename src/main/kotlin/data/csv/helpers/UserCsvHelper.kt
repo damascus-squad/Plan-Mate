@@ -4,8 +4,8 @@ import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
 import org.damascus.data.csv.CsvParsingException
+import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import org.damascus.logic.model.Role
-import org.damascus.utils.Constants.SEPARATOR
 import java.util.UUID
 
 object UserCsvHelper {
@@ -13,7 +13,7 @@ object UserCsvHelper {
     const val USER_FIELD_COUNT = 4
 
     fun parseUser(line: String): User {
-        val tokens = line.split(SEPARATOR)
+        val tokens = line.split(COMMA_SEPARATOR)
         if (tokens.size != USER_FIELD_COUNT) throw CsvParsingException("Invalid user line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
@@ -33,7 +33,7 @@ object UserCsvHelper {
             user.username,
             user.password,
             user.role
-        ).joinToString(",")
+        ).joinToString(COMMA_SEPARATOR)
     }
 
 }
