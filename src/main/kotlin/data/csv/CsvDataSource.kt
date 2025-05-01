@@ -1,6 +1,8 @@
 package org.damascus.data.csv
 
 import org.damascus.data.DataSource
+import org.damascus.data.csv.CsvDataSource.Companion.HEADER_LINE_COUNT
+import org.damascus.data.csv.CsvDataSource.Companion.INDEX_NOT_FOUND
 import java.io.File
 import java.util.*
 import java.util.Map.entry
@@ -26,7 +28,7 @@ class CsvDataSource<T>(
     }
 
     override fun read(): List<T> {
-        val lines = CsvFileReader(file).readLinesSkippingHeader()
+        val lines = readLinesSkippingHeader()
         return lines.mapNotNull { runCatching { parser(it) }.getOrNull() }
     }
 
@@ -68,7 +70,15 @@ class CsvDataSource<T>(
         overwriteAll(updated)
     }
 
+    fun readLinesSkippingHeader(): List<String> {
+        if (!file.exists()) throw CsvFileNotFound("File ${file.name} does not exist")
+        return file.readLines()
+            .drop(HEADER_LINE_COUNT)
+            .filter { it.isNotBlank() }
+    }
+
     private companion object {
+        const val HEADER_LINE_COUNT = 1
         const val INDEX_NOT_FOUND = -1
     }
 }

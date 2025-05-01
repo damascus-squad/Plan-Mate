@@ -11,6 +11,7 @@ import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.StateCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
+import junit.runner.Version.id
 import org.damascus.data.csv.generateCsvHeader
 import org.damascus.logic.model.Role
 import java.util.*
@@ -39,74 +40,6 @@ object CsvTestHelper {
         )
     }
 
-    fun createUser(
-        id: UUID = UUID.randomUUID(),
-        username: String = "defaultUser",
-        password: String = "defaultPass",
-        role: Role = Role.MATE
-    ): User {
-        return when (role) {
-            Role.ADMIN -> Admin(id = id, username = username, password = password, role = Role.ADMIN)
-            Role.MATE -> Mate(id = id, username = username, password = password, role = Role.MATE)
-        }
-    }
-
-    fun createMate(
-        id: UUID = UUID.randomUUID(),
-        username: String = "defaultUser",
-        password: String = "defaultPass"
-    ): Mate {
-        return Mate(id = id, username = username, password = password, role = Role.MATE)
-    }
-
-    fun createTask(
-        id: UUID = UUID.randomUUID(),
-        projectId: UUID = UUID.randomUUID(),
-        title: String = "Test Task",
-        description: String = "This is a test task",
-        assigneeId: UUID? = null,
-        stateId: UUID = UUID.randomUUID(),
-        creationDate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-
-    ): Task {
-        return Task(
-            id = id,
-            projectId = projectId,
-            title = title,
-            description = description,
-            assigneeId = assigneeId,
-            stateId = stateId,
-            creationDate = creationDate
-        )
-    }
-
-    fun createState(
-        id: UUID = UUID.randomUUID(),
-        name: String = "Test State"
-    ) = State(
-        id = id,
-        name = name
-    )
-
-    fun createProject(
-        id: UUID = UUID.randomUUID(),
-        name: String = "Test Project",
-        assignedMates: MutableList<UUID> = mutableListOf(),
-        creationDate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-
-    ): Project {
-        return Project(
-            id = id,
-            name = name,
-            assignedMatesIds = assignedMates,
-            creationDate = creationDate
-        )
-    }
-
-    const val PROJECT_FILE_PATH = "test_assets/projects.csv"
-    const val STATE_FILE_PATH = "test_assets/states.csv"
-    const val TASK_FILE_PATH = "test_assets/tasks.csv"
-    const val USER_FILE_PATH = "test_assets/users.csv"
     const val HISTORY_FILE_PATH = "test_assets/history.csv"
 
     fun getHistoryCsvHandler(): CsvDataSource<History> =
@@ -116,41 +49,5 @@ object CsvTestHelper {
             extractId = { it.id },
             parser = HistoryCsvHelper::parseHistory,
             serializer = HistoryCsvHelper::serializeHistory
-        )
-
-    fun getProjectCsvHandler(): CsvDataSource<Project> =
-        CsvDataSource(
-            filePath = PROJECT_FILE_PATH,
-            generateHeader = { generateCsvHeader<Project>() },
-            extractId = { it.id },
-            parser = ProjectCsvHelper::parseProject,
-            serializer = ProjectCsvHelper::serializeProject
-        )
-
-    fun getUserCsvHandler(): CsvDataSource<User> =
-        CsvDataSource(
-            filePath = USER_FILE_PATH,
-            generateHeader = { generateCsvHeader<User>() },
-            extractId = { it.id },
-            parser = UserCsvHelper::parseUser,
-            serializer = UserCsvHelper::serializeUser
-        )
-
-    fun getTaskCsvHandler(): CsvDataSource<Task> =
-        CsvDataSource(
-            filePath = TASK_FILE_PATH,
-            generateHeader = { generateCsvHeader<Task>() },
-            extractId = { it.id },
-            parser = TaskCsvHelper::parseTask,
-            serializer = TaskCsvHelper::serializeTask
-        )
-
-    fun getStateCsvHandler(): CsvDataSource<State> =
-        CsvDataSource(
-            filePath = STATE_FILE_PATH,
-            generateHeader = { generateCsvHeader<State>() },
-            extractId = { it.id },
-            parser = StateCsvHelper::parseState,
-            serializer = StateCsvHelper::serializeState
         )
 }
