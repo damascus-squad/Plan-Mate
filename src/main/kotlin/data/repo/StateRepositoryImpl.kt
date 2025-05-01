@@ -22,6 +22,7 @@ class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) :
             throw DuplicateStateException(state.id)
         }
         stateDataSource.write(state)
+
         return true
     }
 
@@ -30,8 +31,8 @@ class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) :
             throw StateNotFoundException(state.id)
         }
         stateDataSource.update(state.id, state)
-        return true
 
+        return true
     }
 
     override fun delete(state: State): Boolean {
@@ -39,6 +40,7 @@ class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) :
             throw StateNotFoundException(state.id)
         }
         stateDataSource.delete(state.id)
+
         return true
     }
 
