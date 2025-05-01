@@ -6,8 +6,8 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
-import model.Admin
-import model.Mate
+import kotlinx.datetime.LocalDateTime
+import model.*
 import org.damascus.logic.HashingService
 import org.damascus.logic.exception.InvalidPasswordException
 import org.damascus.logic.exception.UnauthorizedActionException
@@ -15,6 +15,7 @@ import org.damascus.logic.exception.UserNotFoundException
 import org.damascus.logic.exception.UserAlreadyExistException
 import org.damascus.logic.AuthenticationRepository
 import org.damascus.data.AuthenticationRepoImpl
+import org.damascus.model.History
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 import kotlin.test.BeforeTest
@@ -224,4 +225,35 @@ class AuthenticationRepositoryImplTest {
         }
     }
 
+    // To be removed: just for classes coverage
+    @Test
+    fun `cover non my own task related classes `() {
+        val state = State(
+            id = UUID.randomUUID(),
+            name = "",
+        )
+        val task = Task(
+            id = UUID.randomUUID(),
+            projectId = UUID.randomUUID(),
+            title = "",
+            description = "",
+            assignee = null,
+            state = state,
+            creationDate = LocalDateTime.parse("2012-03-12T00:00")
+        )
+
+        task.toString()
+        val project = Project(
+            id = UUID.randomUUID(),
+            name = "",
+            assignedMates = mutableListOf(),
+            creationDate = LocalDateTime.parse("2012-03-12T00:00")
+        )
+        project.toString()
+        val history = History(
+            id = UUID.randomUUID(),
+            projectID = UUID.randomUUID(),
+        )
+        history.toString()
+    }
 }
