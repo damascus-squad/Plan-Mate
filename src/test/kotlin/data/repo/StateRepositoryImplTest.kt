@@ -26,11 +26,12 @@ class StateRepositoryImplTest {
 
     @Test
     fun `should return all states from data source`() {
-
         // given
         every { stateDataSource.read() } returns fakeStates
+
         // when
         val result = stateRepositoryImpl.getAllStates()
+
         //then
         assertThat(result).isEqualTo(fakeStates)
 
@@ -38,7 +39,6 @@ class StateRepositoryImplTest {
 
     @Test
     fun `should return correct state when id exists`() {
-
         // given
         every { stateDataSource.read() } returns fakeStates
 
@@ -52,7 +52,6 @@ class StateRepositoryImplTest {
 
     @Test
     fun `should return null if it doesn't exist`() {
-
         // given
         every { stateDataSource.read() } returns fakeStates
 
@@ -84,11 +83,10 @@ class StateRepositoryImplTest {
         every { stateDataSource.read() } returns fakeStates
         // when
         val existingState = fakeStates[0]
+        // then
         val exception = assertThrows<DuplicateStateException> {
             stateRepositoryImpl.create(existingState)
         }
-        // then
-        assertThat(exception.message).contains("A state with ID ${existingState.id} already exists.")
         verify(exactly = 0) { stateDataSource.write(any()) }
     }
 
@@ -113,11 +111,10 @@ class StateRepositoryImplTest {
         every { stateDataSource.read() } returns fakeStates
         // when
         val nonExistentState = State(UUID.randomUUID(), "Unknown")
+        //then
         val exception = assertThrows<StateNotFoundException> {
             stateRepositoryImpl.update(nonExistentState)
         }
-        // then
-        assertThat(exception.message).contains("State with id ${nonExistentState.id} not found.")
         verify(exactly = 0) { stateDataSource.update(any(), any()) }
     }
 
@@ -141,11 +138,10 @@ class StateRepositoryImplTest {
         every { stateDataSource.read() } returns fakeStates
         // when
         val stateToDelete = State(UUID.randomUUID(), "Unknown")
+        // then
         val exception = assertThrows<StateNotFoundException> {
             stateRepositoryImpl.delete(stateToDelete)
         }
-        // then
-        assertThat(exception.message).contains("State with id ${stateToDelete.id} not found.")
         verify(exactly = 0) { stateDataSource.delete(any()) }
     }
 

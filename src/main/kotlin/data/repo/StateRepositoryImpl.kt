@@ -18,7 +18,7 @@ class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) :
     }
 
     override fun create(state: State): Boolean {
-        if (exist(state.id)){
+        if (exist(state.id)) {
             throw DuplicateStateException(state.id)
         }
         stateDataSource.write(state)
@@ -26,14 +26,16 @@ class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) :
     }
 
     override fun update(state: State): Boolean {
-        if(!exist(state.id)) { throw StateNotFoundException(state.id)}
-        stateDataSource.update(state.id,state)
+        if (!exist(state.id)) {
+            throw StateNotFoundException(state.id)
+        }
+        stateDataSource.update(state.id, state)
         return true
 
     }
 
     override fun delete(state: State): Boolean {
-       if(!exist(state.id)){
+        if (!exist(state.id)) {
             throw StateNotFoundException(state.id)
         }
         stateDataSource.delete(state.id)
