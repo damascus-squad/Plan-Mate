@@ -4,10 +4,12 @@ import org.junit.jupiter.api.Assertions.*
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import io.mockk.slot
 import io.mockk.verify
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
+import org.damascus.data.DataSource
 import org.damascus.logic.HashingService
 import org.damascus.logic.exception.InvalidPasswordException
 import org.damascus.logic.exception.UnauthorizedActionException
@@ -27,13 +29,13 @@ class AuthenticationRepositoryImplTest {
 
     private lateinit var hashingService: HashingService
     private lateinit var authRepo: AuthenticationRepository
-    private lateinit var users: MutableList<User>
+    private lateinit var usersDataSource: DataSource<User>
 
     @BeforeTest
     fun setup() {
         hashingService = mockk()
-        users = mutableListOf()
-        authRepo = AuthenticationRepoImpl(hashingService, users)
+        usersDataSource = mockk()
+        authRepo = AuthenticationRepoImpl(hashingService, usersDataSource)
     }
 
     @Test
@@ -43,7 +45,8 @@ class AuthenticationRepositoryImplTest {
         val rawPassword = "pass123"
         val hashedPassword = "hashed-pass"
         val storedUser = Mate(id = UUID.randomUUID(), username, hashedPassword, Role.MATE)
-        users.add(storedUser)
+
+        every { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(rawPassword, hashedPassword) } returns true
 
         // When
@@ -58,6 +61,7 @@ class AuthenticationRepositoryImplTest {
         // Given
         val username = "unknown"
         val password = "somepass"
+        every { usersDataSource.read() } returns emptyList()
 
         // When, Then
         val exception = assertFailsWith<UserNotFoundException> {
@@ -73,7 +77,7 @@ class AuthenticationRepositoryImplTest {
         val correctHashed = "hashed-pass"
         val wrongInput = "wrong-pass"
         val storedUser = Mate(id = UUID.randomUUID(), username, correctHashed, Role.MATE)
-        users.add(storedUser)
+        every { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(wrongInput, correctHashed) } returns false
 
 
@@ -89,7 +93,7 @@ class AuthenticationRepositoryImplTest {
         val admin = Admin(id = UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
         val existingUsername = "mate1"
         val newMate = Mate(id = UUID.randomUUID(), existingUsername, "pass", Role.MATE)
-        users.add(newMate)
+        every { usersDataSource.read() } returns listOf(newMate)
 
         // When , Then
         assertFailsWith<UserAlreadyExistException> {
@@ -104,7 +108,9 @@ class AuthenticationRepositoryImplTest {
         val username = "newMate"
         val rawPassword = "password"
         val expectedHash = "hashedPassword"
+        every { usersDataSource.read() } returns emptyList()
         every { hashingService.hashData(rawPassword) } returns expectedHash
+        every { usersDataSource.write(any<Mate>()) } returns Unit
 
         // When
         val mate = authRepo.createMate(admin, username, rawPassword)
@@ -122,13 +128,26 @@ class AuthenticationRepositoryImplTest {
         val username = "newMate"
         val rawPassword = "password"
         val expectedHash = "hashedPassword"
+
+        val capturedMate = slot<Mate>()
+        var called = false
+
+        every { usersDataSource.read() } answers {
+            if (!called) {
+                called = true
+                emptyList()
+            } else {
+                listOf(capturedMate.captured)
+            }
+        }
         every { hashingService.hashData(rawPassword) } returns expectedHash
+        every { usersDataSource.write(capture(capturedMate)) } returns Unit
 
         // When
         val mate = authRepo.createMate(admin, username, rawPassword)
 
         // Then
-        assertTrue(users.contains(mate))
+        assertTrue(usersDataSource.read().contains(mate))
     }
 
 
@@ -147,10 +166,10 @@ class AuthenticationRepositoryImplTest {
     fun `findByUsername should return user when user exists`() {
         // Given
         val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123", Role.MATE)
-        users.add(user)
+        every { usersDataSource.read() } returns listOf(user)
 
         // When
-        val result = authRepo.findByUsername("testUser")
+        val result = authRepo.getUserByUsername("testUser")
 
         // Then
         assertEquals(user.username, result?.username)
@@ -160,10 +179,10 @@ class AuthenticationRepositoryImplTest {
     fun `findByUsername should return null when user does not exist`() {
         // Given
         val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123", Role.MATE)
-        users.add(user)
+        every { usersDataSource.read() } returns listOf(user)
 
         // When
-        val result = authRepo.findByUsername("nonExistingUser")
+        val result = authRepo.getUserByUsername("nonExistingUser")
 
         // Then
         assertNull(result)
@@ -172,55 +191,11 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `findByUsername should return null when list is empty`() {
         // Given : empty list
-
+        every { usersDataSource.read() } returns emptyList()
         // When
-        val result = authRepo.findByUsername("nonExistingUser")
+        val result = authRepo.getUserByUsername("nonExistingUser")
 
         // Then
         assertNull(result)
-    }
-
-    @Test
-    fun `createAdmin should succeed when requester is admin and username is new`() {
-        // Given
-        val requester = Admin(id = UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
-        val newUsername = "admin2"
-        val rawPassword = "123456"
-        val hashedPassword = "hashed456"
-        every { hashingService.hashData(rawPassword) } returns hashedPassword
-
-        // When
-        val result = authRepo.createAdmin(requester, newUsername, rawPassword)
-
-        // Then
-        assertEquals(newUsername, result.username)
-        assertEquals(hashedPassword, result.password)
-        assertTrue(users.contains(result))
-    }
-
-    @Test
-    fun `createAdmin should throw UnauthorizedActionException when requester is a mate`() {
-        // Given
-        val requester = Mate(id = UUID.randomUUID(), "mate1", "hashedPass", Role.MATE)
-        val newUsername = "admin2"
-        val rawPassword = "123456"
-
-        // When, Then
-        assertFailsWith<UnauthorizedActionException> {
-            authRepo.createAdmin(requester, newUsername, rawPassword)
-        }
-    }
-
-    @Test
-    fun `createAdmin should throw UserAlreadyExistException when username already exists`() {
-        // Given
-        val requester = Admin(id = UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
-        val existingUsername = "admin2"
-        users.add(Admin(id = UUID.randomUUID(), existingUsername, "hashedExist", Role.ADMIN))
-
-        // When, Then
-        assertFailsWith<UserAlreadyExistException> {
-            authRepo.createAdmin(requester, existingUsername, "any")
-        }
     }
 }

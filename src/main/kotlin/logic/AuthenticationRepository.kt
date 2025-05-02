@@ -7,6 +7,5 @@ import logic.model.User
 interface AuthenticationRepository {
     fun login(username: String, password: String): User
     fun createMate(requester: User, newUsername: String, rawPassword: String): Mate
-    fun createAdmin(requester: User, newUsername: String, rawPassword: String): Admin
-    fun findByUsername(username: String): User?
+    fun getUserByUsername(username: String): User?
 }

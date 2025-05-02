@@ -1,5 +1,10 @@
 package org.damascus
 
-fun main() {
+import org.damascus.di.appModule
+import org.koin.core.context.startKoin
 
+fun main() {
+    startKoin {
+        modules(appModule)
+    }
 }

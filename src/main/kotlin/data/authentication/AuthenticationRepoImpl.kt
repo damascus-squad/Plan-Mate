@@ -3,6 +3,7 @@ package org.damascus.data.authentication
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
+import org.damascus.data.DataSource
 import org.damascus.logic.HashingService
 import org.damascus.logic.exception.InvalidPasswordException
 import org.damascus.logic.exception.UnauthorizedActionException
@@ -14,11 +15,11 @@ import java.util.*
 
 class AuthenticationRepoImpl(
     private val hashingService: HashingService,
-    val users: MutableList<User>
+    val usersDataSource: DataSource<User>
 ) : AuthenticationRepository {
 
     override fun login(username: String, password: String): User {
-        val searchedUser = findByUsername(username) ?: throw UserNotFoundException(username)
+        val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException(username)
 
         if (!hashingService.verifyData(password, searchedUser.password)) {
             throw InvalidPasswordException(password)
@@ -31,34 +32,18 @@ class AuthenticationRepoImpl(
         if (requester !is Admin) {
             throw UnauthorizedActionException("create a mate")
         }
-        if (findByUsername(newUsername) != null) {
+        if (getUserByUsername(newUsername) != null) {
             throw UserAlreadyExistException(newUsername)
         }
 
         val hashedPassword = hashingService.hashData(rawPassword)
         val newMate = Mate(id = UUID.randomUUID(), newUsername, hashedPassword, Role.MATE)
-        users.add(newMate)
+        usersDataSource.write(newMate)
 
         return newMate
     }
 
-    override fun createAdmin(requester: User, newUsername: String, rawPassword: String): Admin {
-        if (requester !is Admin) {
-            throw UnauthorizedActionException("create an admin")
-        }
-        if (findByUsername(newUsername) != null) {
-            throw UserAlreadyExistException(newUsername)
-        }
-
-        val hashedPassword = hashingService.hashData(rawPassword)
-        val newAdmin = Admin(id = UUID.randomUUID(), newUsername, hashedPassword, Role.ADMIN)
-        users.add(newAdmin)
-
-        return newAdmin
-    }
-
-
-    override fun findByUsername(username: String): User? {
-        return users.find { it.username == username }
+    override fun getUserByUsername(username: String): User? {
+        return usersDataSource.read().find { it.username == username }
     }
 }
