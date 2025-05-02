@@ -11,7 +11,6 @@ import java.util.UUID
 
 class AuditLogUseCase(
     private val historyRepository: AuditLogRepository,
-    private val stateRepository: DataSource<State>
 ) {
     fun saveLog(history: History){
         val allowedStates = listOf("TODO", "In-progress", "Done")

@@ -23,7 +23,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
 import java.util.*
 
-class HistoryServiceTest {
+class AuditLogUseCaseTest {
     private lateinit var auditLogRepository: AuditLogRepository
     private lateinit var auditLogUseCase: AuditLogUseCase
 
@@ -34,7 +34,10 @@ class HistoryServiceTest {
     @BeforeEach
     fun setup() {
         auditLogRepository = mockk(relaxed = true)
-        auditLogUseCase = AuditLogUseCase(auditLogRepository)
+        auditLogUseCase = AuditLogUseCase(
+            auditLogRepository,
+            stateRepository = TODO()
+        )
     }
 
     @Test
