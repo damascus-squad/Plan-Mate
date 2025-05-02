@@ -1,6 +1,6 @@
 package org.damascus.logic.model
 
-import org.junit.jupiter.params.provider.CsvParsingException
+import org.damascus.data.csv.CsvParsingException
 
 enum class Role {
     ADMIN,
