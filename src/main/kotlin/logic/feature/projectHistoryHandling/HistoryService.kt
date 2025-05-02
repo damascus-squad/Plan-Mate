@@ -12,18 +12,22 @@ class HistoryService(
 ) {
     fun saveLog(actionLog: ActionLog){
         val allowedStates = listOf("TODO", "In-progress", "Done")
+
         if (actionLog.currentState.name !in allowedStates) {
             throw InvalidStateException("State ${actionLog.currentState.name} is not allowed")
         }
         historyRepository.saveLog(actionLog)
     }
+
     fun getLogsByProjectId(projectId: UUID): List<ActionLog> {
         val logs = historyRepository.getLogsByProjectId(projectId)
+
         if (logs.isEmpty()) {
             throw NoHistoryException("No history found for project $projectId")
         }
         return logs
     }
+
     fun getLogByTaskId(taskId: UUID): List<ActionLog> {
         return historyRepository.getLogByTaskId(taskId)
     }

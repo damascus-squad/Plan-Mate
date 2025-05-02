@@ -11,7 +11,8 @@ data class ActionLog(
     val actionDate: LocalDateTime,
     val currentState: State,
     val newState: State,
-    val actionType: ActionType) {
+    val actionType: ActionType)
+{
     companion object {
         val NO_UUID: UUID = UUID(0, 0)
         val NO_STATE = State(
