@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class MateCreationUseCaseTest {
+class CreateMateUseCaseTest {
 
     private lateinit var authRepo: AuthenticationRepository
     private lateinit var hashingService: MD5HashingService
