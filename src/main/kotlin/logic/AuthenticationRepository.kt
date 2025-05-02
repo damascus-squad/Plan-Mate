@@ -1,6 +1,5 @@
 package org.damascus.logic
 
-import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
 
