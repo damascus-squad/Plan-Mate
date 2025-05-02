@@ -1,4 +1,4 @@
-package org.damascus.logic.model
+package logic.model
 
 import kotlinx.datetime.LocalDateTime
 import java.util.*
@@ -8,7 +8,7 @@ data class Task(
     val projectId: UUID,
     val title: String,
     val description: String,
-    var assignee: Mate? = null,
-    val state: State,
+    var assigneeId: UUID?,
+    val stateId: UUID,
     val creationDate: LocalDateTime
 )
