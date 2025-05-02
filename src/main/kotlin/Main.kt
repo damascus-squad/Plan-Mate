@@ -1,5 +1,7 @@
 package org.damascus
 
-fun main() {
+import org.damascus.ui.mateCreationView
 
+fun main() {
+    mateCreationView()
 }
