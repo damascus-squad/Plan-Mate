@@ -1,27 +1,28 @@
 package org.damascus.data.repo
 
-import org.damascus.logic.model.State
+import logic.model.State
+import org.damascus.data.DataSource
 import org.damascus.data.source.StateDataSource
 import org.damascus.logic.StateRepository
 import org.damascus.logic.exception.DuplicateStateException
 import org.damascus.logic.exception.StateNotFoundException
 import java.util.*
 
-class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) : StateRepository {
+class StateRepositoryImpl(private val dataSource: DataSource<State>) : StateRepository {
 
     override fun getAllStates(): List<State> {
-        return stateDataSource.read()
+        return dataSource.read()
     }
 
     override fun getStateById(id: UUID): State? {
-        return stateDataSource.read().firstOrNull { it.id == id }
+        return dataSource.read().firstOrNull { it.id == id }
     }
 
     override fun create(state: State): Boolean {
         if (exist(state.id)) {
             throw DuplicateStateException(state.id)
         }
-        stateDataSource.write(state)
+        dataSource.write(state)
 
         return true
     }
@@ -30,7 +31,7 @@ class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) :
         if (!exist(state.id)) {
             throw StateNotFoundException(state.id)
         }
-        stateDataSource.update(state.id, state)
+        dataSource.update(state.id, state)
 
         return true
     }
@@ -39,12 +40,12 @@ class StateRepositoryImpl(private val stateDataSource: StateDataSource<State>) :
         if (!exist(state.id)) {
             throw StateNotFoundException(state.id)
         }
-        stateDataSource.delete(state.id)
+        dataSource.delete(state.id)
 
         return true
     }
 
     override fun exist(id: UUID): Boolean {
-        return stateDataSource.read().any { it.id == id }
+        return dataSource.read().any { it.id == id }
     }
 }

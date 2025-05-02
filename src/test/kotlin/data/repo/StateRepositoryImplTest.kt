@@ -1,12 +1,10 @@
 package data.repo
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
-import org.damascus.logic.model.State
+import io.mockk.*
+import logic.model.State
+import org.damascus.data.DataSource
 import org.damascus.data.repo.StateRepositoryImpl
-import org.damascus.data.source.StateDataSource
 import org.damascus.logic.exception.DuplicateStateException
 import org.damascus.logic.exception.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
@@ -15,32 +13,33 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class StateRepositoryImplTest {
-    private lateinit var stateDataSource: StateDataSource<State>
+    private lateinit var dataSource: DataSource<State>
     private lateinit var stateRepositoryImpl: StateRepositoryImpl
 
     @BeforeEach
     fun setup() {
-        stateDataSource = mockk(relaxed = true)
-        stateRepositoryImpl = StateRepositoryImpl(stateDataSource)
+        dataSource = mockk(relaxed = true)
+        stateRepositoryImpl = StateRepositoryImpl(dataSource)
     }
 
     @Test
     fun `should return all states from data source`() {
         // given
-        every { stateDataSource.read() } returns fakeStates
+        every { dataSource.read() } returns fakeStates
 
         // when
         val result = stateRepositoryImpl.getAllStates()
 
         //then
         assertThat(result).isEqualTo(fakeStates)
+        verify(exactly = 1) { dataSource.read() }
 
     }
 
     @Test
     fun `should return correct state when id exists`() {
         // given
-        every { stateDataSource.read() } returns fakeStates
+        every { dataSource.read() } returns fakeStates
 
         //when
         val targetId = fakeStates[0].id
@@ -48,12 +47,14 @@ class StateRepositoryImplTest {
 
         //then
         assertThat(result).isEqualTo(fakeStates[0])
+        verify(exactly = 1) { dataSource.read() }
+
     }
 
     @Test
     fun `should return null if it doesn't exist`() {
         // given
-        every { stateDataSource.read() } returns fakeStates
+        every { dataSource.read() } returns fakeStates
 
         // when
         val nonExistentID = UUID.randomUUID()
@@ -61,59 +62,64 @@ class StateRepositoryImplTest {
 
         //then
         assertThat(result).isNull()
+        verify(exactly = 1) { dataSource.read() }
     }
 
     @Test
     fun `should create new state when it doesn't exist`() {
+        val newState = State(UUID.randomUUID(), "New")
+
         //given
-        every { stateDataSource.read() } returns fakeStates
-        every { stateDataSource.write(any()) } returns true
+        every { dataSource.read() } returns fakeStates
+        every { dataSource.write(newState) } just runs
 
         //when
-        val newState = State(UUID.randomUUID(), "New")
         val result = stateRepositoryImpl.create(newState)
 
         //then
         assertThat(result).isTrue()
+        verify(exactly = 1) { dataSource.read() }
+        verify(exactly = 1) { dataSource.write(newState) }
 
-        verify { stateDataSource.write(newState) }
     }
 
     @Test
     fun `should throw DuplicateStateException when state already exists`() {
-        // given
-        every { stateDataSource.read() } returns fakeStates
-        // when
         val existingState = fakeStates[0]
-        // then
+
+        // given
+        every { dataSource.read() } returns fakeStates
+
+        // when && then
         val exception = assertThrows<DuplicateStateException> {
             stateRepositoryImpl.create(existingState)
         }
-
-        verify(exactly = 0) { stateDataSource.write(any()) }
+        verify(exactly = 1) { dataSource.read() }
+        verify(exactly = 0) { dataSource.write(any<State>()) }
     }
 
     @Test
     fun `should update existing state`() {
+        val updatedState = fakeStates[1].copy(name = "Deleted")
+
         //give
-        every { stateDataSource.read() } returns fakeStates
-        every { stateDataSource.update(any(), any()) } returns true
+        every { dataSource.read() } returns fakeStates
+        every { dataSource.update(updatedState.id, updatedState) } just runs
 
         //when
-        val updatedState = fakeStates[1].copy(name = "Deleted")
         val result = stateRepositoryImpl.update(updatedState)
 
         //then
         assertThat(result).isTrue()
-
-        verify { stateDataSource.update(updatedState.id, updatedState) }
+        verify(exactly = 1) { dataSource.read() }
+        verify(exactly = 1) { dataSource.update(updatedState.id, updatedState) }
 
     }
 
     @Test
     fun `should throw StateNotFoundException when state does not exist for update`() {
         // given
-        every { stateDataSource.read() } returns fakeStates
+        every { dataSource.read() } returns fakeStates
 
         // when
         val nonExistentState = State(UUID.randomUUID(), "Unknown")
@@ -122,8 +128,8 @@ class StateRepositoryImplTest {
         val exception = assertThrows<StateNotFoundException> {
             stateRepositoryImpl.update(nonExistentState)
         }
-
-        verify(exactly = 0) { stateDataSource.update(any(), any()) }
+        verify(exactly = 1) { dataSource.read() }
+        verify(exactly = 0) { dataSource.update(any(), any()) }
     }
 
     @Test
@@ -131,22 +137,22 @@ class StateRepositoryImplTest {
         val stateToDelete = fakeStates[2]
 
         //given
-        every { stateDataSource.read() } returns fakeStates
-        every { stateDataSource.delete(stateToDelete.id) } returns true
+        every { dataSource.read() } returns fakeStates
+        every { dataSource.delete(stateToDelete.id) } just runs
 
         // when
         val result = stateRepositoryImpl.delete(stateToDelete)
 
         //then
         assertThat(result).isTrue()
-
-        verify { stateDataSource.delete(stateToDelete.id) }
+        verify(exactly = 1) { dataSource.read() }
+        verify (exactly = 1){ dataSource.delete(stateToDelete.id) }
     }
 
     @Test
     fun `should throw StateNotFoundException when state does not exist for delete`() {
         // given
-        every { stateDataSource.read() } returns fakeStates
+        every { dataSource.read() } returns fakeStates
 
         // when
         val stateToDelete = State(UUID.randomUUID(), "Unknown")
@@ -155,10 +161,37 @@ class StateRepositoryImplTest {
         val exception = assertThrows<StateNotFoundException> {
             stateRepositoryImpl.delete(stateToDelete)
         }
-
-        verify(exactly = 0) { stateDataSource.delete(any()) }
+        verify(exactly = 1) { dataSource.read() }
+        verify(exactly = 0) { dataSource.delete(any()) }
     }
 
+    @Test
+    fun `should return true when state exists`() {
+        // given
+        val existingState = fakeStates[0]
+        every { dataSource.read() } returns fakeStates
+
+        // when
+        val result = stateRepositoryImpl.exist(existingState.id)
+
+        // then
+        assertThat(result).isTrue()
+        verify(exactly = 1) { dataSource.read() }
+    }
+
+    @Test
+    fun `should return false when state does not exist`() {
+        // given
+        val nonExistentId = UUID.randomUUID()
+        every { dataSource.read() } returns fakeStates
+
+        // when
+        val result = stateRepositoryImpl.exist(nonExistentId)
+
+        // then
+        assertThat(result).isFalse()
+        verify(exactly = 1) { dataSource.read() }
+    }
 
     private val fakeStates = listOf(
         State(UUID.fromString("00000000-0000-0000-0000-000000000001"), "In Progress"),
