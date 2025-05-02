@@ -1,46 +1,40 @@
-package org.damascus.data.repo
+package data.repo
 
-
-import model.*
-import org.damascus.data.source.TaskDataSource
-import org.damascus.logic.repository.TaskRepository
+import data.source.DataSource
+import logic.TaskAlreadyExistsException
+import logic.TaskNotFoundException
+import logic.model.Task
+import logic.repository.TaskRepository
 import java.util.*
 
-class TaskRepositoryImpl(private val taskDataSource: TaskDataSource<Task>) : TaskRepository {
+class TaskRepositoryImpl(
+    private val taskDataSource: DataSource<Task>
+) : TaskRepository {
 
-    override fun create(task: Task): Boolean {
-        if (exists(task.id)) return false
-        return taskDataSource.save(taskDataSource.load() + task)
+    override fun create(task: Task) {
+        if (exists(task.id)) throw TaskAlreadyExistsException(task.id)
+        taskDataSource.write(task)
     }
 
-    override fun update(taskId: UUID, task: Task): Boolean {
-        val updatedTasks = taskDataSource.load().map {
-            if (it.id == taskId) task else it
-        }
-
-        val isUpdated = updatedTasks.any { it.id == taskId }
-        return if (isUpdated) taskDataSource.save(updatedTasks) else false
+    override fun update(taskId: UUID, task: Task) {
+        if (exists(taskId).not()) throw TaskNotFoundException(task.id)
+        taskDataSource.update(taskId, task)
     }
 
-    override fun delete(taskId: UUID): Boolean {
-        val currentTasks = taskDataSource.load()
-        val remainingTasks = currentTasks.filterNot { it.id == taskId }
-
-        if (remainingTasks.size == currentTasks.size) return false // No deletion occurred
-        return taskDataSource.save(remainingTasks)
-    }
-
-    override fun exists(taskId: UUID): Boolean {
-        return taskDataSource.load().any { it.id == taskId }
+    override fun delete(taskId: UUID) {
+        if (exists(taskId).not()) throw TaskNotFoundException(taskId)
+        taskDataSource.delete(taskId)
     }
 
     override fun get(taskId: UUID): Task {
-        return taskDataSource.load()
+        return taskDataSource.read()
             .firstOrNull { it.id == taskId }
-            ?: throw NoSuchElementException("Task with ID $taskId not found.")
+            ?: throw TaskNotFoundException(taskId)
     }
 
-    override fun getByProject(projectId: UUID): List<Task> {
-        return taskDataSource.load().filter { it.projectId == projectId }
-    }
+    override fun getByProject(projectId: UUID): List<Task> =
+        taskDataSource.read().filter { it.projectId == projectId }
+
+    private fun exists(taskId: UUID): Boolean =
+        taskDataSource.read().any { it.id == taskId }
 }

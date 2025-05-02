@@ -1,13 +1,12 @@
-package org.damascus.logic.repository
+package logic.repository
 
-import model.Task
+import logic.model.Task
 import java.util.UUID
 
 interface TaskRepository {
-    fun create(task: Task) : Boolean
-    fun update(taskId: UUID, task: Task): Boolean
-    fun delete(taskId: UUID): Boolean
-    fun exists(taskId: UUID): Boolean
+    fun create(task: Task)
+    fun update(taskId: UUID, task: Task)
+    fun delete(taskId: UUID)
     fun get(taskId: UUID): Task
     fun getByProject(projectId: UUID): List<Task>
 }
