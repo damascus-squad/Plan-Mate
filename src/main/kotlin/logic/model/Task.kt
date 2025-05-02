@@ -1,4 +1,4 @@
-package model
+package org.damascus.logic.model
 
 import kotlinx.datetime.LocalDateTime
 import java.util.*

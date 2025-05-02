@@ -4,7 +4,7 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import model.State
+import org.damascus.logic.model.State
 import org.damascus.data.repo.StateRepositoryImpl
 import org.damascus.data.source.StateDataSource
 import org.damascus.logic.exception.DuplicateStateException

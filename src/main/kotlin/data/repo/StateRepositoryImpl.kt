@@ -1,6 +1,6 @@
 package org.damascus.data.repo
 
-import model.State
+import org.damascus.logic.model.State
 import org.damascus.data.source.StateDataSource
 import org.damascus.logic.StateRepository
 import org.damascus.logic.exception.DuplicateStateException
