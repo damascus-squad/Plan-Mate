@@ -1,8 +1,8 @@
 package org.damascus.logic
 
-import User
-import model.Admin
-import model.Mate
+import logic.model.Admin
+import logic.model.Mate
+import logic.model.User
 
 interface AuthenticationRepository {
     fun login(username: String, password: String): User

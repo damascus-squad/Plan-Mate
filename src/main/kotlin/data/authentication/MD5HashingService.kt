@@ -1,4 +1,4 @@
-package org.damascus.data
+package org.damascus.data.authentication
 
 import org.damascus.logic.HashingService
 import java.security.MessageDigest

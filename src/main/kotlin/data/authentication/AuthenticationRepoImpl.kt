@@ -1,14 +1,15 @@
-package org.damascus.data
+package org.damascus.data.authentication
 
-import User
-import model.Admin
-import model.Mate
+import logic.model.Admin
+import logic.model.Mate
+import logic.model.User
 import org.damascus.logic.HashingService
 import org.damascus.logic.exception.InvalidPasswordException
 import org.damascus.logic.exception.UnauthorizedActionException
 import org.damascus.logic.exception.UserAlreadyExistException
 import org.damascus.logic.exception.UserNotFoundException
 import org.damascus.logic.AuthenticationRepository
+import org.damascus.logic.model.Role
 import java.util.*
 
 class AuthenticationRepoImpl(
@@ -35,7 +36,7 @@ class AuthenticationRepoImpl(
         }
 
         val hashedPassword = hashingService.hashData(rawPassword)
-        val newMate = Mate(id = UUID.randomUUID(), newUsername, hashedPassword)
+        val newMate = Mate(id = UUID.randomUUID(), newUsername, hashedPassword, Role.MATE)
         users.add(newMate)
 
         return newMate
@@ -50,7 +51,7 @@ class AuthenticationRepoImpl(
         }
 
         val hashedPassword = hashingService.hashData(rawPassword)
-        val newAdmin = Admin(id = UUID.randomUUID(), newUsername, hashedPassword)
+        val newAdmin = Admin(id = UUID.randomUUID(), newUsername, hashedPassword, Role.ADMIN)
         users.add(newAdmin)
 
         return newAdmin

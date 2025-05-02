@@ -1,21 +1,21 @@
 package data
 
-import User
 import org.junit.jupiter.api.Assertions.*
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.datetime.LocalDateTime
-import model.*
+import logic.model.Admin
+import logic.model.Mate
+import logic.model.User
 import org.damascus.logic.HashingService
 import org.damascus.logic.exception.InvalidPasswordException
 import org.damascus.logic.exception.UnauthorizedActionException
 import org.damascus.logic.exception.UserNotFoundException
 import org.damascus.logic.exception.UserAlreadyExistException
 import org.damascus.logic.AuthenticationRepository
-import org.damascus.data.AuthenticationRepoImpl
-import org.damascus.model.History
+import org.damascus.data.authentication.AuthenticationRepoImpl
+import org.damascus.logic.model.Role
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*
 import kotlin.test.BeforeTest
@@ -42,7 +42,7 @@ class AuthenticationRepositoryImplTest {
         val username = "abdo"
         val rawPassword = "pass123"
         val hashedPassword = "hashed-pass"
-        val storedUser = Mate(id = UUID.randomUUID(), username, hashedPassword)
+        val storedUser = Mate(id = UUID.randomUUID(), username, hashedPassword, Role.MATE)
         users.add(storedUser)
         every { hashingService.verifyData(rawPassword, hashedPassword) } returns true
 
@@ -72,7 +72,7 @@ class AuthenticationRepositoryImplTest {
         val username = "ahmed"
         val correctHashed = "hashed-pass"
         val wrongInput = "wrong-pass"
-        val storedUser = Mate(id = UUID.randomUUID(), username, correctHashed)
+        val storedUser = Mate(id = UUID.randomUUID(), username, correctHashed, Role.MATE)
         users.add(storedUser)
         every { hashingService.verifyData(wrongInput, correctHashed) } returns false
 
@@ -86,9 +86,9 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `createMate should fail if user already exists`() {
         // Given
-        val admin = Admin(id = UUID.randomUUID(), "admin1", "hashed123")
+        val admin = Admin(id = UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
         val existingUsername = "mate1"
-        val newMate = Mate(id = UUID.randomUUID(), existingUsername, "pass")
+        val newMate = Mate(id = UUID.randomUUID(), existingUsername, "pass", Role.MATE)
         users.add(newMate)
 
         // When , Then
@@ -100,7 +100,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `createMate should hash password and return correct Mate`() {
         // Given
-        val admin = Admin(UUID.randomUUID(), "admin1", "hashed123")
+        val admin = Admin(UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
         val username = "newMate"
         val rawPassword = "password"
         val expectedHash = "hashedPassword"
@@ -118,7 +118,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `createMate should add mate to users list`() {
         // Given
-        val admin = Admin(UUID.randomUUID(), "admin1", "hashed123")
+        val admin = Admin(UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
         val username = "newMate"
         val rawPassword = "password"
         val expectedHash = "hashedPassword"
@@ -134,7 +134,7 @@ class AuthenticationRepositoryImplTest {
 
     @Test
     fun `createMate should fail when mate is the creator`() {
-        val mate = Mate(id = UUID.randomUUID(), "mate1", "hashedMatePass")
+        val mate = Mate(id = UUID.randomUUID(), "mate1", "hashedMatePass", Role.MATE)
         val username = "newMate"
         val rawPassword = "123"
 
@@ -146,7 +146,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `findByUsername should return user when user exists`() {
         // Given
-        val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123")
+        val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123", Role.MATE)
         users.add(user)
 
         // When
@@ -159,7 +159,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `findByUsername should return null when user does not exist`() {
         // Given
-        val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123")
+        val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123", Role.MATE)
         users.add(user)
 
         // When
@@ -183,7 +183,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `createAdmin should succeed when requester is admin and username is new`() {
         // Given
-        val requester = Admin(id = UUID.randomUUID(), "admin1", "hashed123")
+        val requester = Admin(id = UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
         val newUsername = "admin2"
         val rawPassword = "123456"
         val hashedPassword = "hashed456"
@@ -201,7 +201,7 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `createAdmin should throw UnauthorizedActionException when requester is a mate`() {
         // Given
-        val requester = Mate(id = UUID.randomUUID(), "mate1", "hashedPass")
+        val requester = Mate(id = UUID.randomUUID(), "mate1", "hashedPass", Role.MATE)
         val newUsername = "admin2"
         val rawPassword = "123456"
 
@@ -211,49 +211,16 @@ class AuthenticationRepositoryImplTest {
         }
     }
 
-
     @Test
     fun `createAdmin should throw UserAlreadyExistException when username already exists`() {
         // Given
-        val requester = Admin(id = UUID.randomUUID(), "admin1", "hashed123")
+        val requester = Admin(id = UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
         val existingUsername = "admin2"
-        users.add(Admin(id = UUID.randomUUID(), existingUsername, "hashedExist"))
+        users.add(Admin(id = UUID.randomUUID(), existingUsername, "hashedExist", Role.ADMIN))
 
         // When, Then
         assertFailsWith<UserAlreadyExistException> {
             authRepo.createAdmin(requester, existingUsername, "any")
         }
-    }
-
-    // To be removed: just for classes coverage
-    @Test
-    fun `cover non my own task related classes `() {
-        val state = State(
-            id = UUID.randomUUID(),
-            name = "",
-        )
-        val task = Task(
-            id = UUID.randomUUID(),
-            projectId = UUID.randomUUID(),
-            title = "",
-            description = "",
-            assignee = null,
-            state = state,
-            creationDate = LocalDateTime.parse("2012-03-12T00:00")
-        )
-
-        task.toString()
-        val project = Project(
-            id = UUID.randomUUID(),
-            name = "",
-            assignedMates = mutableListOf(),
-            creationDate = LocalDateTime.parse("2012-03-12T00:00")
-        )
-        project.toString()
-        val history = History(
-            id = UUID.randomUUID(),
-            projectID = UUID.randomUUID(),
-        )
-        history.toString()
     }
 }
