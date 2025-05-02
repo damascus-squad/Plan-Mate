@@ -13,8 +13,10 @@ import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
 import junit.runner.Version.id
 import org.damascus.data.csv.generateCsvHeader
+import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.Role
 import java.util.*
+import org.damascus.logic.model.History
 
 object CsvTestHelper {
 
@@ -22,21 +24,21 @@ object CsvTestHelper {
         id: UUID = UUID.randomUUID(),
         projectId: UUID = UUID.randomUUID(),
         taskId: UUID = UUID.randomUUID(),
-        actionType: String = "TASK",
+        actionType: ActionType = ActionType.TASK_STATE_CHANGED,
         changedBy: UUID = UUID.randomUUID(),
-        oldStateId: UUID = UUID.randomUUID(),
-        newStateId: UUID = UUID.randomUUID(),
-        timestamp: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        currentState: State = State(UUID.randomUUID(), "TODO"),
+        newState: State = State(UUID.randomUUID(), "In-progress"),
+        actionDate: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     ): History {
         return History(
             id = id,
             projectId = projectId,
             taskId = taskId,
             actionType = actionType,
-            changedBy = changedBy,
-            oldStateId = oldStateId,
-            newStateId = newStateId,
-            timestamp = timestamp
+            userId = changedBy,
+            currentState = currentState,
+            newState = newState,
+            actionDate = actionDate
         )
     }
 

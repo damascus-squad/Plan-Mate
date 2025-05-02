@@ -3,16 +3,17 @@ package data.csv
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDateTime
 import logic.model.Admin
-import logic.model.History
 import logic.model.Project
 import logic.model.State
 import logic.model.Task
+import org.damascus.logic.model.History
 import data.csv.helpers.HistoryCsvHelper
 import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.StateCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
 import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
+import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -153,15 +154,17 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeHistory should return csv entry when history is passed`() {
         // Given
+        val currentState = State(listOfUUIDs[4], "To Do")
+        val newState = State(listOfUUIDs[5], "In Progress")
         val history = History(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             taskId = listOfUUIDs[2],
-            actionType = "task",
-            changedBy = listOfUUIDs[3],
-            oldStateId = listOfUUIDs[4],
-            newStateId = listOfUUIDs[5],
-            timestamp = date1
+            actionType = ActionType.TASK_CREATED,
+            userId = listOfUUIDs[3],
+            currentState = currentState,
+            newState = newState,
+            actionDate = date1
         )
 
         // When

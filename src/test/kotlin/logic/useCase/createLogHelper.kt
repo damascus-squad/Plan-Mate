@@ -1,13 +1,13 @@
-package logic.feature.projectHistoryHandling
+package logic.useCase
 
 import kotlinx.datetime.LocalDateTime
-
-import org.damascus.logic.model.State
-import org.damascus.logic.entities.ActionLog
-import org.damascus.logic.entities.ActionType
+import logic.model.State
+import org.damascus.logic.model.History
+import org.damascus.logic.model.ActionType
 import java.util.UUID
 
 fun createFakeActionLog(
+    id: UUID = UUID.randomUUID(),
     userId: UUID = UUID.randomUUID(),
     taskId: UUID = UUID.randomUUID(),
     projectId: UUID = UUID.randomUUID(),
@@ -15,7 +15,8 @@ fun createFakeActionLog(
     currentState: State,
     targetedState: State,
     actionType: ActionType = ActionType.TASK_STATE_CHANGED,
-): ActionLog = ActionLog(
+): History = History(
+    id = id,
     taskId = taskId,
     projectId = projectId,
     currentState = currentState,

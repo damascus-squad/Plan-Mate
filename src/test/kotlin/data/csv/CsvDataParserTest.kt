@@ -9,6 +9,8 @@ import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.StateCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.History
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -204,11 +206,11 @@ class CsvDataParserTest {
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             taskId = listOfUUIDs[2],
-            actionType = "ChangedTask",
-            changedBy = listOfUUIDs[3],
-            oldStateId = listOfUUIDs[4],
-            newStateId = listOfUUIDs[5],
-            timestamp = date1,
+            actionType = ActionType.TASK_CREATED,
+            userId = listOfUUIDs[3],
+            currentState = listOfUUIDs[4],
+            newState = listOfUUIDs[5],
+            actionDate = date1,
         )
 
         // When

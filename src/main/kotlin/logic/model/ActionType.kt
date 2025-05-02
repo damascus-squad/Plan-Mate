@@ -1,4 +1,4 @@
-package org.damascus.logic.entities
+package org.damascus.logic.model
 
 enum class ActionType {
     PROJECT_CREATED,

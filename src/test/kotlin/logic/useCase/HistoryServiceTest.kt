@@ -1,4 +1,4 @@
-package logic.feature.projectHistoryHandling
+package logic.useCase
 
 import io.mockk.every
 import io.mockk.mockk
@@ -6,12 +6,12 @@ import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.damascus.logic.model.State
-import org.damascus.logic.entities.ActionType
-import org.damascus.logic.feature.projectHistoryHandling.HistoryService
-import logic.repository.HistoryRepository
-import org.damascus.logic.entities.ActionLog.Companion.NO_STATE
-import org.damascus.logic.entities.ActionLog.Companion.NO_UUID
+import logic.model.State
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.useCase.AuditLogUseCase
+import logic.repository.AuditLogRepository
+import org.damascus.logic.model.History.Companion.NO_STATE
+import org.damascus.logic.model.History.Companion.NO_UUID
 import org.damascus.utiles.NoHistoryException
 import org.damascus.utiles.InvalidStateException
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -24,8 +24,8 @@ import org.junit.jupiter.params.provider.EnumSource
 import java.util.*
 
 class HistoryServiceTest {
-    private lateinit var historyRepository: HistoryRepository
-    private lateinit var historyService: HistoryService
+    private lateinit var auditLogRepository: AuditLogRepository
+    private lateinit var auditLogUseCase: AuditLogUseCase
 
     private val todoState = State(UUID.randomUUID(), "TODO")
     private val inProgressState = State(UUID.randomUUID(), "In-progress")
@@ -33,23 +33,24 @@ class HistoryServiceTest {
 
     @BeforeEach
     fun setup() {
-        historyRepository = mockk(relaxed = true)
-        historyService = HistoryService(historyRepository)
+        auditLogRepository = mockk(relaxed = true)
+        auditLogUseCase = AuditLogUseCase(auditLogRepository)
     }
 
     @Test
     fun `should return action logs when history is not empty`() {
         // Given
+        val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val projectId = UUID.randomUUID()
-        every { historyRepository.getLogsByProjectId(projectId) } returns listOf(
-            createFakeActionLog(userId, UUID.randomUUID(), projectId, fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED),
-            createFakeActionLog(userId, UUID.randomUUID(), projectId, fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED)
+        every { auditLogRepository.getLogsByProjectId(projectId) } returns listOf(
+            createFakeActionLog(id, userId, UUID.randomUUID(), projectId, fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED),
+            createFakeActionLog(id, userId, UUID.randomUUID(), projectId, fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED)
         )
 
         // When
-        val historyLog = historyService.getLogsByProjectId(projectId)
+        val historyLog = auditLogUseCase.getLogsByProjectId(projectId)
 
         // Then
         assertEquals(2, historyLog.size)
@@ -59,27 +60,28 @@ class HistoryServiceTest {
     fun `should throw NoHistoryException when no logs are found`() {
         // Given
         val projectId = UUID.randomUUID()
-        every { historyRepository.getLogsByProjectId(projectId) } returns emptyList()
+        every { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
 
         // When & Then
         assertThrows<NoHistoryException> {
-            historyService.getLogsByProjectId(projectId)
+            auditLogUseCase.getLogsByProjectId(projectId)
         }
     }
 
     @Test
     fun `should save action log when the action is valid`() {
         // Given
+        val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val userAction = createFakeActionLog(userId, UUID.randomUUID(), UUID.randomUUID(), fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED)
+        val userAction = createFakeActionLog(id, userId, UUID.randomUUID(), UUID.randomUUID(), fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED)
 
         // When
-        historyService.saveLog(userAction)
+        auditLogUseCase.saveLog(userAction)
 
         // Then
         verify(exactly = 1) {
-            historyRepository.saveLog(match {
+            auditLogRepository.saveLog(match {
                 it.currentState == todoState &&
                         it.newState == inProgressState &&
                         it.userId == userId
@@ -90,30 +92,32 @@ class HistoryServiceTest {
     @Test
     fun `should throw InvalidStateException when state is not allowed`() {
         // Given
+        val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val invalidState = State(UUID.randomUUID(), "Unknown")
-        val invalidAction = createFakeActionLog(userId, UUID.randomUUID(), UUID.randomUUID(), Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()), invalidState, doneState, ActionType.TASK_STATE_CHANGED)
+        val invalidAction = createFakeActionLog(id, userId, UUID.randomUUID(), UUID.randomUUID(), Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()), invalidState, doneState, ActionType.TASK_STATE_CHANGED)
 
         // When & Then
         assertThrows<InvalidStateException> {
-            historyService.saveLog(invalidAction)
+            auditLogUseCase.saveLog(invalidAction)
         }
     }
 
     @Test
     fun `should return action logs when given projectId`() {
         // Given
+        val id = UUID.randomUUID()
         val projectId = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val logs = listOf(
-            createFakeActionLog(userId, UUID.randomUUID(), projectId, fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED)
+            createFakeActionLog(id, userId, UUID.randomUUID(), projectId, fakeDate, todoState, inProgressState, ActionType.TASK_STATE_CHANGED)
         )
 
-        every { historyRepository.getLogsByProjectId(projectId) } returns logs
+        every { auditLogRepository.getLogsByProjectId(projectId) } returns logs
 
         // When
-        val result = historyService.getLogsByProjectId(projectId)
+        val result = auditLogUseCase.getLogsByProjectId(projectId)
 
         // Then
         assertTrue { result.any {projectId == it.projectId} }    }
@@ -121,17 +125,18 @@ class HistoryServiceTest {
     @Test
     fun `should return action logs when given taskId`() {
         // Given
+        val id = UUID.randomUUID()
         val taskId = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val logs = listOf(
-            createFakeActionLog(userId, taskId, UUID.randomUUID(), fakeDate, inProgressState, doneState, ActionType.TASK_STATE_CHANGED)
+            createFakeActionLog(id, userId, taskId, UUID.randomUUID(), fakeDate, inProgressState, doneState, ActionType.TASK_STATE_CHANGED)
         )
 
-        every { historyRepository.getLogByTaskId(taskId) } returns logs
+        every { auditLogRepository.getLogByTaskId(taskId) } returns logs
 
         // When
-        val result = historyService.getLogByTaskId(taskId)
+        val result = auditLogUseCase.getLogByTaskId(taskId)
 
         // Then
         assertTrue(result.any { it.taskId == taskId })
