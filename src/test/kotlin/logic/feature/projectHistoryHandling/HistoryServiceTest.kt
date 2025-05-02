@@ -146,7 +146,8 @@ class HistoryServiceTest {
             "PROJECT_MODIFIED",
             "PROJECT_DELETED",
             "TASK_CREATED",
-            "TASK_DELETED"
+            "TASK_DELETED",
+            "ASSIGNMENT_CHANGED"
         ]
     )
     fun `should create ActionLog with action type when action type is valid`(actionType: ActionType) {
