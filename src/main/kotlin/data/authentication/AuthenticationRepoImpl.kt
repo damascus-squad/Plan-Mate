@@ -5,7 +5,7 @@ import logic.model.Mate
 import logic.model.User
 import org.damascus.data.DataSource
 import org.damascus.logic.HashingService
-import org.damascus.logic.exception.InvalidPasswordException
+import org.damascus.logic.exception.InvalidCredentialsException
 import org.damascus.logic.exception.UnauthorizedActionException
 import org.damascus.logic.exception.UserAlreadyExistException
 import org.damascus.logic.exception.UserNotFoundException
@@ -22,7 +22,7 @@ class AuthenticationRepoImpl(
         val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException(username)
 
         if (!hashingService.verifyData(password, searchedUser.password)) {
-            throw InvalidPasswordException(password)
+            throw InvalidCredentialsException()
         }
 
         return searchedUser
