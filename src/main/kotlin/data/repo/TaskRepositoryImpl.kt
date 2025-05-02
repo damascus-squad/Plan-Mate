@@ -1,6 +1,6 @@
 package data.repo
 
-import data.source.DataSource
+import org.damascus.data.DataSource
 import logic.TaskAlreadyExistsException
 import logic.TaskNotFoundException
 import logic.model.Task
