@@ -1,7 +1,10 @@
 package org.damascus
 
-import org.damascus.ui.mateCreationView
+import org.damascus.di.appModule
+import org.koin.core.context.startKoin
 
 fun main() {
-    mateCreationView()
+    startKoin {
+        modules(appModule)
+    }
 }

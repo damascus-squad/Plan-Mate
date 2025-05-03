@@ -1,0 +1,24 @@
+package org.damascus.logic.model
+
+import kotlinx.datetime.LocalDateTime
+import logic.model.State
+import java.util.*
+
+data class History(
+    val id: UUID,
+    val projectId: UUID,
+    val taskId: UUID,
+    val actionType: ActionType,
+    val userId: UUID,
+    val currentStateId: UUID,
+    val newStateId: UUID,
+    val actionDate: LocalDateTime,
+) {
+    companion object {
+        val NO_UUID: UUID = UUID(0, 0)
+        val NO_STATE = State(
+            id = NO_UUID,
+            name = "Nothing"
+        )
+    }
+}

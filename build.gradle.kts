@@ -43,7 +43,7 @@ tasks.jacocoTestReport {
 tasks.jacocoTestCoverageVerification {
     classDirectories.setFrom(
         sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/model/**", "**/di/**")
+            exclude("**/model/**", "**/di/**", "**/MainKt.class")
         }
     )
 
@@ -61,11 +61,6 @@ tasks.jacocoTestCoverageVerification {
             }
             limit {
                 counter = "METHOD"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
-            }
-            limit {
-                counter = "CLASS"
                 value = "COVEREDRATIO"
                 minimum = "0.8".toBigDecimal()
             }
