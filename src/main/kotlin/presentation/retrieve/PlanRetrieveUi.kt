@@ -61,9 +61,8 @@ class PlanRetrieveUi(
         }
 
         println("📋 Select a project to manage:")
-        projects.forEachIndexed { index, project ->
-            println("${index + 1}. ${project.name} (ID: ${project.id})")
-        }
+        consoleDisplay.displayProjectsAsTable(projects)
+
 
         val choice = consoleUserInput.readInt("Enter project number:", 1, projects.size)
         val selected = projects[choice - 1]
@@ -75,7 +74,7 @@ class PlanRetrieveUi(
         val actions = listOf(
             UiAction("🗑️ Delete Project") {
                 if (deleteProjectUseCase(project.id)) {
-                    printMessageBox("✅ Project deleted!")
+                    printMessageBox("Project deleted!")
                 } else {
                     printMessageBox("Failed to delete project.", TerminalColor.Red)
                 }
@@ -98,7 +97,7 @@ class PlanRetrieveUi(
     }
 
     private fun printMessageBox(message: String, color: TerminalColor = TerminalColor.Green) {
-        val border = "=".repeat(message.length + 2)
+        val border = "=".repeat(message.length + 2).withStyle(color)
         println("╔$border╗")
         println("║ ${message.withStyle(color)} ║")
         println("╚$border╝")

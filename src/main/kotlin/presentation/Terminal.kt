@@ -22,32 +22,37 @@ fun String.center(width: Int): String {
 }
 
 fun String.removeStyle(): String {
-    return this.replace(Regex("\u001B\\[[;\\d]*m"), "") // Remove ANSI colors
+    return this.replace(Regex("\u001B\\[[;\\d]*m"), "")
 }
 
-fun printTable(headers: List<String>, meals: List<List<Any>>) {
-    val keyCol = "Key"
-    val valueCol = "Value"
+fun printTable(headers: List<String>, rows: List<List<Any>>, color: TerminalColor = TerminalColor.Yellow) {
+    val colWidths = headers.indices.map { i ->
+        (listOf(headers[i]) + rows.mapNotNull { it.getOrNull(i)?.toString() }).maxOf { it.length }
+    }
 
-    val keyWidth = (listOf(keyCol) + headers).maxOf { it.length }
-    val valueWidth = maxOf(valueCol.length, meals.flatten().maxOfOrNull { it.toString().length } ?: 0)
+    fun drawLine(left: String, mid: String, right: String): String {
+        return left + colWidths.joinToString(mid) { "═".repeat(it + 2) } + right
+    }
 
-    val topBorder = "╔${"═".repeat(keyWidth + 2)}╦${"═".repeat(valueWidth + 2)}╗"
-    val midBorder = "╠${"═".repeat(keyWidth + 2)}╬${"═".repeat(valueWidth + 2)}╣"
-    val bottomBorder = "╚${"═".repeat(keyWidth + 2)}╩${"═".repeat(valueWidth + 2)}╝"
+
+    val topBorder = drawLine("╔", "╦", "╗")
+    val midBorder = drawLine("╠", "╬", "╣")
+    val bottomBorder = drawLine("╚", "╩", "╝")
+
 
     println(topBorder.withStyle(TerminalColor.Magenta))
-    println("║ ${keyCol.padEnd(keyWidth)} ║ ${valueCol.padEnd(valueWidth)} ║".withStyle(TerminalColor.Cyan))
+
+    val headerRow = headers.mapIndexed { i, h -> " ${h.padEnd(colWidths[i])} " }
+    println("║" + headerRow.joinToString("║") + "║".withStyle(TerminalColor.Cyan))
+
     println(midBorder.withStyle(TerminalColor.Magenta))
 
-    meals.forEachIndexed { i, row ->
-        headers.forEachIndexed { j, header ->
-            val valueStr = row.getOrNull(j)?.toString() ?: "-"
-            println("║ ${header.padEnd(keyWidth)} ║ ${valueStr.padEnd(valueWidth)} ║".withStyle(TerminalColor.Yellow))
+    rows.forEach { row ->
+        val dataRow = headers.indices.map { i ->
+            val cell = row.getOrNull(i)?.toString() ?: "-"
+            " ${cell.padEnd(colWidths[i])} "
         }
-        if (i != meals.lastIndex) {
-            println(midBorder.withStyle(TerminalColor.Magenta))
-        }
+        println("║" + dataRow.joinToString("║") + "║".withStyle(color))
     }
 
     println(bottomBorder.withStyle(TerminalColor.Magenta))

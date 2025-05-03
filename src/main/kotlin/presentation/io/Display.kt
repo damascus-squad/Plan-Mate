@@ -10,4 +10,6 @@ interface Display {
         contentSelector: ((Project) -> Map<String, Any?>)? = null
     )
 
+    fun displayProjectsAsTable(projects: List<Project>)
+
 }

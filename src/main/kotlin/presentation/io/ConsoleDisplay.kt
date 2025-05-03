@@ -44,4 +44,23 @@ class ConsoleDisplay : Display {
 
         printTable(headers, data)
     }
+
+    override fun displayProjectsAsTable(projects: List<Project>) {
+        if (projects.isEmpty()) {
+            println("❌ No projects available.")
+            return
+        }
+
+        val headers = listOf("No", "Project Name", "ID")
+        val rows = projects.mapIndexed { index, project ->
+            listOf(
+                (index + 1).toString(),
+                project.name,
+                project.id.toString()
+            )
+        }
+
+        printTable(headers, rows)
+    }
+
 }
