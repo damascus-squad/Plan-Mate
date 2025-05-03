@@ -33,7 +33,7 @@ class AuditLogView(
         if (input.trim().lowercase() in quitCommands) return
 
         try {
-            val projectId = UUID.fromString(input)
+            val projectId = parseUUID(input)
             val log = auditUseCase.getLogsByProjectId(projectId)
             println("📄 Log for Project ID [$projectId]:\n$log".withStyle(TerminalColor.Blue))
         } catch (e: InputException) {
@@ -48,7 +48,7 @@ class AuditLogView(
         if (input.trim().lowercase() in quitCommands) return
 
         try {
-            val taskId = UUID.fromString(input)
+            val taskId = parseUUID(input)
             val log = auditUseCase.getLogByTaskId(taskId)
             println("📄 Log for Task ID [$taskId]:\n$log".withStyle(TerminalColor.Blue))
         } catch (e: InputException) {
@@ -58,7 +58,15 @@ class AuditLogView(
         }
     }
 
+    private fun parseUUID(input: String): UUID {
+        return try {
+            UUID.fromString(input)
+        } catch (e: IllegalArgumentException) {
+            throw InputException("Invalid UUID format.")
+        }
+    }
+
     private fun displayError(message: String?) {
-        println("⚠️ ${message ?: "Unknown error"}".withStyle(TerminalColor.Red))
+        println("⚠️ $message".withStyle(TerminalColor.Red))
     }
 }

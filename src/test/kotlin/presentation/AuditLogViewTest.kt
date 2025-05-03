@@ -38,6 +38,7 @@ class AuditLogViewTest {
 
  @Test
  fun `should call getLogByTaskId when user selects task`() {
+
   val uuid = UUID.randomUUID()
   val fakeHistory = mockk<History>()
 
@@ -51,6 +52,7 @@ class AuditLogViewTest {
 
  @Test
  fun `should not call use case when user quits`() {
+
   every { inputReader.readString(any()) } returns "quit"
 
   auditLogView.runAuditLogView()
@@ -61,6 +63,7 @@ class AuditLogViewTest {
  @Test
  fun `should not crash on NoLogsException for project`() {
   val uuid = UUID.randomUUID()
+
   every { inputReader.readString(any()) } returnsMany listOf("1", uuid.toString())
   every { auditUseCase.getLogsByProjectId(uuid) } throws NoLogsException("No logs")
 
@@ -72,6 +75,7 @@ class AuditLogViewTest {
  @Test
  fun `should not crash on NoLogsException for task`() {
   val uuid = UUID.randomUUID()
+
   every { inputReader.readString(any()) } returnsMany listOf("2", uuid.toString())
   every { auditUseCase.getLogByTaskId(uuid) } throws NoLogsException("No logs")
 
@@ -79,4 +83,55 @@ class AuditLogViewTest {
 
   verify { auditUseCase.getLogByTaskId(uuid) }
  }
+
+ @Test
+ fun `should display error on invalid UUID for project`() {
+
+  every { inputReader.readString(any()) } returnsMany listOf("1", "not-uuid")
+
+  auditLogView.runAuditLogView()
+
+  verify { auditUseCase wasNot Called }
+ }
+
+ @Test
+ fun `should display error on invalid UUID for task`() {
+
+  every { inputReader.readString(any()) } returnsMany listOf("2", "not-uuid")
+
+  auditLogView.runAuditLogView()
+
+  verify { auditUseCase wasNot Called }
+ }
+
+ @Test
+ fun `should display error on invalid menu choice`() {
+
+  every { inputReader.readString(any()) } returns "invalid-option"
+
+  auditLogView.runAuditLogView()
+
+  verify { auditUseCase wasNot Called }
+ }
+
+ @Test
+ fun `should quit early when user types quit at project ID prompt`() {
+
+  every { inputReader.readString(any()) } returnsMany listOf("1", "quit")
+
+  auditLogView.runAuditLogView()
+
+  verify { auditUseCase wasNot Called }
+ }
+
+ @Test
+ fun `should quit early when user types quit at task ID prompt`() {
+
+  every { inputReader.readString(any()) } returnsMany listOf("2", "exit")
+
+  auditLogView.runAuditLogView()
+
+  verify { auditUseCase wasNot Called }
+ }
+
 }
