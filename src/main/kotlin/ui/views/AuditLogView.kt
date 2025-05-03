@@ -14,10 +14,8 @@ class AuditLogView(
 ) {
     private val quitCommands = setOf("quit", "exit", "q")
 
-    fun runAuditLogView() {
-        val choice = inputReader.readString("Type 'project' to view a project log or 'task' for a task log (or 'quit' to cancel):")
-            .trim()
-            .lowercase()
+    fun runAuditLogView(choice: String) {
+        choice.trim().lowercase()
 
         if (choice in quitCommands) return
 
