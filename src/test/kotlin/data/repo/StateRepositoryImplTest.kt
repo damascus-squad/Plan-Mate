@@ -2,11 +2,11 @@ package data.repo
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.*
+import logic.exception.DuplicateStateException
+import logic.exception.StateNotFoundException
 import logic.model.State
-import org.damascus.data.DataSource
-import org.damascus.data.repo.StateRepositoryImpl
-import org.damascus.logic.exception.DuplicateStateException
-import org.damascus.logic.exception.StateNotFoundException
+import logic.repo.DataSource
+import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -14,12 +14,12 @@ import java.util.*
 
 class StateRepositoryImplTest {
     private lateinit var dataSource: DataSource<State>
-    private lateinit var stateRepositoryImpl: StateRepositoryImpl
+    private lateinit var stateRepositoryImpl: TaskStateRepositoryImpl
 
     @BeforeEach
     fun setup() {
         dataSource = mockk(relaxed = true)
-        stateRepositoryImpl = StateRepositoryImpl(dataSource)
+        stateRepositoryImpl = TaskStateRepositoryImpl(dataSource)
     }
 
     @Test

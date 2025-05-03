@@ -1,7 +1,7 @@
 package logic.model
 
 import org.damascus.logic.model.Role
-import java.util.UUID
+import java.util.*
 
 class Mate(
     id: UUID,

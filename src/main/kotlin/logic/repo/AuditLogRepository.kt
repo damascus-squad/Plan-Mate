@@ -1,7 +1,7 @@
-package logic.repository
+package logic.repo
 
 import org.damascus.logic.model.History
-import java.util.UUID
+import java.util.*
 
 interface AuditLogRepository {
     fun saveLog(history: History)

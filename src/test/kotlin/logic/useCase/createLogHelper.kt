@@ -1,10 +1,9 @@
 package logic.useCase
 
 import kotlinx.datetime.LocalDateTime
-import logic.model.State
-import org.damascus.logic.model.History
 import org.damascus.logic.model.ActionType
-import java.util.UUID
+import org.damascus.logic.model.History
+import java.util.*
 
 fun createFakeActionLog(
     id: UUID = UUID.randomUUID(),
@@ -12,15 +11,15 @@ fun createFakeActionLog(
     taskId: UUID = UUID.randomUUID(),
     projectId: UUID = UUID.randomUUID(),
     actionDate: LocalDateTime,
-    currentState: State,
-    targetedState: State,
+    currentStateId: UUID,
+    targetedStateId: UUID,
     actionType: ActionType = ActionType.TASK_STATE_CHANGED,
 ): History = History(
     id = id,
     taskId = taskId,
     projectId = projectId,
-    currentState = currentState,
-    newState = targetedState,
+    currentStateId = currentStateId,
+    newStateId = targetedStateId,
     actionDate = actionDate,
     actionType = actionType,
     userId = userId,

@@ -1,7 +1,7 @@
-package logic.repository
+package logic.repo
 
 import logic.model.Task
-import java.util.UUID
+import java.util.*
 
 interface TaskRepository {
     fun create(task: Task)
