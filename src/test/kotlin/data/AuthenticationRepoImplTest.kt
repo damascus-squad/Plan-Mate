@@ -6,10 +6,7 @@ import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import io.mockk.slot
 import io.mockk.verify
-import logic.exception.InvalidCredentialsException
-import logic.exception.UnauthorizedActionException
-import logic.exception.UserAlreadyExistException
-import logic.exception.UserNotFoundException
+
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
@@ -17,6 +14,10 @@ import logic.repo.DataSource
 import org.damascus.logic.service.HashingService
 import logic.repo.AuthenticationRepository
 import org.damascus.data.authentication.AuthenticationRepoImpl
+import org.damascus.logic.exception.InvalidCredentialsException
+import org.damascus.logic.exception.UnauthorizedActionException
+import org.damascus.logic.exception.UserAlreadyExistException
+import org.damascus.logic.exception.UserNotFoundException
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.extension.ExtendWith
 import java.util.*

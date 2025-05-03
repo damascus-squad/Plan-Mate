@@ -2,11 +2,12 @@ package data.repo
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.*
-import logic.exception.DuplicateStateException
-import logic.exception.StateNotFoundException
+
 import logic.model.State
 import logic.repo.DataSource
 import org.damascus.data.repo.TaskStateRepositoryImpl
+import org.damascus.logic.exception.DuplicateStateException
+import org.damascus.logic.exception.StateNotFoundException
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
