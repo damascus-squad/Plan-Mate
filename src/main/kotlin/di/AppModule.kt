@@ -34,6 +34,6 @@ val appModule = module {
 
     // UI
     single { ConsoleUserInput() }
-    single { ConsoleDisplay() }
+    single { ConsoleDisplay(get()) }
     single { PlanMateConsoleUi(get()) }
 }

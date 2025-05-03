@@ -19,7 +19,7 @@ class ConsoleDisplay(
                 val number = (index + 1).toString().padStart(2, '0')
                 println("${number}. ${action.name}".withStyle(TerminalColor.entries.random()))
             }
-            println("00. Exit".withStyle(TerminalColor.Yellow))
+            println("0. Exit".withStyle(TerminalColor.Yellow))
 
             try {
                 // User-friendly input prompt
