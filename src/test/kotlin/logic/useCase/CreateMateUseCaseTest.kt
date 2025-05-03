@@ -5,8 +5,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import logic.model.Admin
 import logic.model.Mate
+import logic.repo.AuthenticationRepository
 import org.damascus.data.authentication.MD5HashingService
-import org.damascus.logic.AuthenticationRepository
 import org.damascus.logic.exception.*
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Assertions.*

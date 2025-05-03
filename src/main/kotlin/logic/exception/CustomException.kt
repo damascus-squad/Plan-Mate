@@ -1,4 +1,4 @@
-package logic.exception
+package org.damascus.logic.exception
 
 import java.util.*
 
