@@ -3,8 +3,6 @@ package logic.useCase.mate
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
-import org.damascus.data.authentication.MD5HashingService
-import org.damascus.logic.AuthenticationRepository
 import org.damascus.logic.exception.*
 
 class CreateMateUseCase(
