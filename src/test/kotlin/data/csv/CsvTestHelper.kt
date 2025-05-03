@@ -7,14 +7,11 @@ import kotlinx.datetime.toLocalDateTime
 import logic.model.*
 import org.damascus.data.csv.CsvDataSource
 import data.csv.helpers.HistoryCsvHelper
-import data.csv.helpers.ProjectCsvHelper
-import data.csv.helpers.StateCsvHelper
-import data.csv.helpers.TaskCsvHelper
-import data.csv.helpers.UserCsvHelper
-import junit.runner.Version.id
 import org.damascus.data.csv.generateCsvHeader
-import org.damascus.logic.model.Role
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.History
 import java.util.*
+import javax.swing.Action
 
 object CsvTestHelper {
 
@@ -22,8 +19,8 @@ object CsvTestHelper {
         id: UUID = UUID.randomUUID(),
         projectId: UUID = UUID.randomUUID(),
         taskId: UUID = UUID.randomUUID(),
-        actionType: String = "TASK",
-        changedBy: UUID = UUID.randomUUID(),
+        actionType: ActionType = ActionType.TASK_STATE_CHANGED,
+        userId: UUID = UUID.randomUUID(),
         oldStateId: UUID = UUID.randomUUID(),
         newStateId: UUID = UUID.randomUUID(),
         timestamp: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -33,10 +30,10 @@ object CsvTestHelper {
             projectId = projectId,
             taskId = taskId,
             actionType = actionType,
-            changedBy = changedBy,
-            oldStateId = oldStateId,
+            userId = userId,
+            currentStateId = oldStateId,
             newStateId = newStateId,
-            timestamp = timestamp
+            actionDate = timestamp,
         )
     }
 
