@@ -19,6 +19,7 @@ import org.damascus.ui.PlanMateConsoleUi
 import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.io.ConsoleUserInput
 import org.damascus.ui.retrieve.PlanRetrieve
+import org.damascus.ui.views.project.ProjectViewCli
 import org.koin.dsl.module
 
 val appModule = module {
@@ -50,6 +51,7 @@ val appModule = module {
     // UI
     single { ConsoleUserInput() }
     single { ConsoleDisplay(get()) }
+    single { ProjectViewCli() }
     single { PlanMateConsoleUi(get(), get()) }
 
     single<PlanRetrieve> {
@@ -59,7 +61,8 @@ val appModule = module {
             createProjectUseCase = get(),
             getAllProjectsUseCase = get(),
             deleteProjectUseCase = get(),
-            updateProjectUseCase = get()
+            updateProjectUseCase = get(),
+            projectViewCli = get()
         )
     }
 

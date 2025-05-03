@@ -12,11 +12,13 @@ import logic.model.Project
 import org.damascus.ui.io.ConsoleUserInput
 import org.damascus.ui.util.TerminalColor
 import org.damascus.ui.util.UiAction
+import org.damascus.ui.views.project.ProjectViewCli
 import java.util.*
 
 class PlanRetrieveUi(
     private val consoleDisplay: ConsoleDisplay,
     private val consoleUserInput: ConsoleUserInput,
+    private val projectViewCli: ProjectViewCli,
     private val createProjectUseCase: CreateProjectUseCase,
     private val getAllProjectsUseCase: GetAllProjectsUseCase,
     private val deleteProjectUseCase: DeleteProjectUseCase,
@@ -26,11 +28,11 @@ class PlanRetrieveUi(
     override fun displayProjects() {
         val projects = getAllProjectsUseCase()
         if (projects.isEmpty()) {
-            consoleDisplay.printMessageBox("No projects available.", TerminalColor.Red)
+            projectViewCli.printMessageBox("No projects available.", TerminalColor.Red)
             return
         }
 
-        consoleDisplay.displayAllProjects(
+        projectViewCli.displayAllProjects(
             projects = projects,
             label = "Basic Info",
             contentSelector = { project ->
@@ -53,20 +55,20 @@ class PlanRetrieveUi(
         )
 
         if (createProjectUseCase(project)) {
-            consoleDisplay.printMessageBox("Added Project ${project.name}")
+            projectViewCli.printMessageBox("Added Project ${project.name}")
         } else {
-            consoleDisplay.printMessageBox("Project already exists.", TerminalColor.Red)
+            projectViewCli.printMessageBox("Project already exists.", TerminalColor.Red)
         }
     }
 
     override fun manageProject() {
         val projects = getAllProjectsUseCase()
         if (projects.isEmpty()) {
-            consoleDisplay.printMessageBox("No projects available.", TerminalColor.Red)
+            projectViewCli.printMessageBox("No projects available.", TerminalColor.Red)
             return
         }
 
-        consoleDisplay.displayProjectsAsTable(projects)
+        projectViewCli.displayProjectsAsTable(projects)
 
         val choice = consoleUserInput.readInt("👉 Enter project number:", 1, projects.size)
         val selected = projects[choice - 1]
@@ -74,18 +76,18 @@ class PlanRetrieveUi(
         val actions = listOf(
             UiAction("🗑️ Delete Project") {
                 if (deleteProjectUseCase(selected.id)) {
-                    consoleDisplay.printMessageBox("Project deleted!")
+                    projectViewCli.printMessageBox("Project deleted!")
                 } else {
-                    consoleDisplay.printMessageBox("Failed to delete project.", TerminalColor.Red)
+                    projectViewCli.printMessageBox("Failed to delete project.", TerminalColor.Red)
                 }
             },
             UiAction("✏️ Update Project Name") {
                 val newName = consoleUserInput.readString("Enter new project name:")
                 val updated = selected.copy(name = newName)
                 if (updateProjectUseCase(selected.id, updated)) {
-                    consoleDisplay.printMessageBox("Project updated successfully")
+                    projectViewCli.printMessageBox("Project updated successfully")
                 } else {
-                    consoleDisplay.printMessageBox("Update failed.", TerminalColor.Red)
+                    projectViewCli.printMessageBox("Update failed.", TerminalColor.Red)
                 }
             }
         )
