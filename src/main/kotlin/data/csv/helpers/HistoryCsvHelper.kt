@@ -11,7 +11,6 @@ object HistoryCsvHelper {
 
     const val HISTORY_FIELD_COUNT = 8
 
-
     fun parseHistory(line: String): History {
         val tokens = line.split(COMMA_SEPARATOR)
         if (tokens.size != HISTORY_FIELD_COUNT) throw CsvParsingException("Invalid history line: $line")
