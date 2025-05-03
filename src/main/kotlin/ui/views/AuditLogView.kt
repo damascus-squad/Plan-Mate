@@ -15,14 +15,12 @@ class AuditLogView(
     private val quitCommands = setOf("quit", "exit", "q")
 
     fun runAuditLogView(projectOrTask: String) {
-        projectOrTask.trim().lowercase()
+        val choice = projectOrTask.trim().lowercase()
 
-        if (projectOrTask in quitCommands) return
-
-        when (projectOrTask) {
+        when (choice) {
             "project" -> handleProjectLog()
             "task" -> handleTaskLog()
-            else -> displayError("$projectOrTask is invalid choice. Please type 'project' or 'task'.")
+            else -> displayError("$choice is invalid choice. Please type 'project' or 'task'.")
         }
     }
 
