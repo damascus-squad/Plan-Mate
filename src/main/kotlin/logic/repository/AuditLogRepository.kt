@@ -1,6 +1,6 @@
 package logic.repository
 
-import logic.model.History
+import org.damascus.logic.model.History
 import java.util.UUID
 
 interface AuditLogRepository {

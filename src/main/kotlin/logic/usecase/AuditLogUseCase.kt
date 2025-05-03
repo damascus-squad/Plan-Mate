@@ -1,21 +1,14 @@
-package logic.usecase
+package org.damascus.logic.usecase
 
-
-import logic.model.History
-import logic.model.State
-import logic.repository.AuditLogRepository
-import logic.usecase.util.NoHistoryException
-import java.util.UUID
+import logic.exception.NoHistoryException
+import logic.repo.AuditLogRepository
+import org.damascus.logic.model.History
+import java.util.*
 
 class AuditLogUseCase(
-    private val historyRepository: AuditLogRepository,
+    private val historyRepository: AuditLogRepository
 ) {
-    fun saveLog(history: History){
-        val allowedStates = listOf("TODO", "In-progress", "Done")
-
-//        if (history.currentState !in allowedStates) {
-//            throw InvalidStateException("State ${history.currentState.name} is not allowed")
-//        }
+    fun saveLog(history: History) {
         historyRepository.saveLog(history)
     }
 
@@ -28,7 +21,7 @@ class AuditLogUseCase(
         return logs
     }
 
-    fun getLogsByTaskId(taskId: UUID): List<History> {
+    fun getLogByTaskId(taskId: UUID): List<History> {
         return historyRepository.getLogByTaskId(taskId)
     }
 }

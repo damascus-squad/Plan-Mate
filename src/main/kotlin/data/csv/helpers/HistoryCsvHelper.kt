@@ -1,10 +1,11 @@
 package data.csv.helpers
 
 import kotlinx.datetime.LocalDateTime
-import logic.model.History
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
-import java.util.UUID
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.History
+import java.util.*
 
 object HistoryCsvHelper {
 
@@ -18,11 +19,11 @@ object HistoryCsvHelper {
             id = UUID.fromString(tokens[0].trim()),
             projectId = UUID.fromString(tokens[1].trim()),
             taskId = UUID.fromString(tokens[2].trim()),
-            actionType = tokens[3].trim(),
-            changedBy = UUID.fromString(tokens[4].trim()),
-            oldStateId = UUID.fromString(tokens[5].trim()),
+            actionType = ActionType.entries[tokens[3].trim().toInt()],
+            userId = UUID.fromString(tokens[4].trim()),
+            currentStateId = UUID.fromString(tokens[5].trim()),
             newStateId = UUID.fromString(tokens[6].trim()),
-            timestamp = LocalDateTime.parse(tokens[7].trim())
+            actionDate = LocalDateTime.parse(tokens[7].trim())
         )
     }
 
@@ -31,11 +32,11 @@ object HistoryCsvHelper {
             history.id.toString(),
             history.projectId.toString(),
             history.taskId.toString(),
-            history.actionType,
-            history.changedBy.toString(),
-            history.oldStateId.toString() ,
+            history.actionType.ordinal.toString(),
+            history.userId.toString(),
+            history.currentStateId.toString(),
             history.newStateId.toString(),
-            history.timestamp.toString()
+            history.actionDate.toString()
         ).joinToString(COMMA_SEPARATOR)
     }
 }
