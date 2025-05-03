@@ -1,19 +1,14 @@
 package org.damascus.ui
 
-import org.damascus.ui.io.ConsoleDisplay
+import org.damascus.ui.views.LoginView
 
 class PlanMateConsoleUi(
-    private val consoleUserDisplay: ConsoleDisplay
+    private val loginView: LoginView
 ) {
 
     fun start() {
-        consoleUserDisplay.displayMenu(
-            uiActionList = emptyList(),
-            menuTitle = MENU_TITLE
-        )
-    }
-
-    private companion object {
-        const val MENU_TITLE = "Welcome to The Plan Mate App"
+        while (true) {
+            val user = loginView.getLoggedUser()
+        }
     }
 }
