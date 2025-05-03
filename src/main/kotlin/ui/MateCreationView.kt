@@ -1,17 +1,15 @@
 package org.damascus.ui
 
 import model.Mate
-import org.damascus.ui.input.passwordInputChecker
-import org.damascus.ui.input.usernameInputCheck
+import org.damascus.ui.input.checkPasswordInput
+import org.damascus.ui.input.checkUsernameInput
 import java.util.UUID
 
-fun mateCreationView() {
+fun viewMateCreation() {
     println("Creating new mate, please fill the following fields")
-
 
     val usernameInput: String = getUsernameInput()
     val passwordInput: String = getPasswordInput()
-
 
     val newMate = Mate(
         username = usernameInput,
@@ -22,10 +20,10 @@ fun mateCreationView() {
     // TODO: add the new mate to data
 }
 
-fun getUsernameInput() : String {
+fun getUsernameInput(): String {
     print("Enter username: ")
     var usernameInput: String = readln()
-    while (!usernameInputCheck(usernameInput)){
+    while (!checkUsernameInput(usernameInput)) {
         print("enter username: ")
         usernameInput = readln()
     }
@@ -35,7 +33,7 @@ fun getUsernameInput() : String {
 fun getPasswordInput(): String {
     print("Enter password: ")
     var passwordInput: String = readln()
-    while (!passwordInputChecker(passwordInput)){
+    while (!checkPasswordInput(passwordInput)) {
         print("enter password: ")
         passwordInput = readln()
     }
