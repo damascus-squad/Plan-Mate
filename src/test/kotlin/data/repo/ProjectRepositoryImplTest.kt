@@ -2,7 +2,6 @@ package data.repo
 
 import io.mockk.mockk
 import logic.model.Project
-import org.damascus.data.DataSource
 import org.damascus.data.repo.ProjectRepositoryImpl
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDateTime
@@ -11,6 +10,7 @@ import org.junit.jupiter.api.Test
 import io.mockk.every
 import org.junit.jupiter.api.assertThrows
 import io.mockk.verify
+import logic.repo.DataSource
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
 
