@@ -1,4 +1,4 @@
-package org.damascus.presentation.retrieve
+package org.damascus.ui.retrieve
 
 interface PlanRetrieve {
     fun displayProjects()

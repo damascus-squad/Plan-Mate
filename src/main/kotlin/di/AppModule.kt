@@ -14,13 +14,11 @@ import org.damascus.logic.repository.AuthenticationRepository
 import logic.repo.DataSource
 import org.damascus.logic.service.HashingService
 import org.damascus.logic.usecase.AuthenticationUseCase
-import org.damascus.presentation.PlanMateMoodUi
-import org.damascus.presentation.io.ConsoleDisplay
-import org.damascus.presentation.io.ConsoleUserInput
-import org.damascus.presentation.retrieve.PlanRetrieveUi
+import org.damascus.ui.retrieve.PlanRetrieveUi
+import org.damascus.ui.PlanMateConsoleUi
 import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.PlanMateConsoleUi
+import org.damascus.ui.retrieve.PlanRetrieve
 import org.koin.dsl.module
 
 val appModule = module {
@@ -35,15 +33,6 @@ val appModule = module {
         )
     }
 
-    single<AuthenticationRepository> { AuthenticationRepoImpl(get(), get()) }
-    single<HashingService> { MD5HashingService() }
-    single { AuthenticationUseCase(get()) }
-
-    // UI
-    single { ConsoleUserInput() }
-    single { ConsoleDisplay(get()) }
-    single { PlanMateConsoleUi(get()) }
-
     single<DataSource<Project>> {
         CsvDataSource(
             PROJECTS_FILE,
@@ -54,10 +43,16 @@ val appModule = module {
         )
     }
 
-    single { ConsoleUserInput() }
-    single { ConsoleDisplay() }
+    single<AuthenticationRepository> { AuthenticationRepoImpl(get(), get()) }
+    single<HashingService> { MD5HashingService() }
+    single { AuthenticationUseCase(get()) }
 
-    single {
+    // UI
+    single { ConsoleUserInput() }
+    single { ConsoleDisplay(get()) }
+    single { PlanMateConsoleUi(get(), get()) }
+
+    single<PlanRetrieve> {
         PlanRetrieveUi(
             consoleDisplay = get(),
             consoleUserInput = get(),
@@ -69,7 +64,7 @@ val appModule = module {
     }
 
     single {
-        PlanMateMoodUi(
+        PlanMateConsoleUi(
             get(),
             get()
         )
