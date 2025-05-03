@@ -1,4 +1,4 @@
-package org.damascus.logic.usecase
+package org.damascus.logic.usecase.ProjectUseCase
 
 import org.damascus.logic.repository.ProjectRepository
 import java.util.*
