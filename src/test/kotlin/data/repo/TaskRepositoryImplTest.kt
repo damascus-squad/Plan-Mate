@@ -5,8 +5,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import io.mockk.*
-import logic.TaskAlreadyExistsException
-import logic.TaskNotFoundException
+import logic.exception.TaskAlreadyExistsException
+import logic.exception.TaskNotFoundException
 import logic.model.*
 import org.damascus.data.csv.CsvDataSource
 import org.junit.jupiter.api.BeforeEach

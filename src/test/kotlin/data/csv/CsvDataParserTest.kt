@@ -9,6 +9,8 @@ import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.StateCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.History
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -198,17 +200,17 @@ class CsvDataParserTest {
     @Test
     fun `parseHistory should return a valid history when csv entry is a valid history`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},${listOfUUIDs[1]},${listOfUUIDs[2]},ChangedTask,${listOfUUIDs[3]},${listOfUUIDs[4]},${listOfUUIDs[5]},$date1"
+        val csvEntry = "${listOfUUIDs[0]},${listOfUUIDs[1]},${listOfUUIDs[2]},5,${listOfUUIDs[3]},${listOfUUIDs[4]},${listOfUUIDs[5]},$date1"
 
         val expectedHistory = History(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             taskId = listOfUUIDs[2],
-            actionType = "ChangedTask",
-            changedBy = listOfUUIDs[3],
-            oldStateId = listOfUUIDs[4],
+            actionType = ActionType.TASK_STATE_CHANGED,
+            userId = listOfUUIDs[3],
+            currentStateId = listOfUUIDs[4],
             newStateId = listOfUUIDs[5],
-            timestamp = date1,
+            actionDate = date1
         )
 
         // When

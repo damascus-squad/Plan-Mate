@@ -1,9 +1,9 @@
-package org.damascus.logic
+package logic.repo
 
 import logic.model.State
 import java.util.*
 
-interface StateRepository {
+interface TaskStateRepository {
     fun getAllStates(): List<State>
     fun getStateById(id: UUID): State?
     fun create(state: State): Boolean
