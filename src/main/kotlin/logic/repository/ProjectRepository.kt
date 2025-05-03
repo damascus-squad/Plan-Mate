@@ -10,7 +10,5 @@ interface ProjectRepository {
     fun exists(projectId: UUID): Boolean
     fun get(projectId: UUID): Project
     fun getAll(): List<Project>
-    fun assignMate(projectId: UUID, mateId: UUID): Boolean
-    fun unassignMate(projectId: UUID, mateId: UUID): Boolean
-
+    fun getAllProjectsByMateId(mateId: UUID): List<Project>
 }
