@@ -11,6 +11,9 @@ import org.damascus.logic.repository.AuthenticationRepository
 import logic.repo.DataSource
 import org.damascus.logic.service.HashingService
 import org.damascus.logic.usecase.AuthenticationUseCase
+import org.damascus.ui.io.ConsoleDisplay
+import org.damascus.ui.io.ConsoleUserInput
+import org.damascus.ui.PlanMateConsoleUi
 import org.koin.dsl.module
 
 val appModule = module {
@@ -28,4 +31,9 @@ val appModule = module {
     single<AuthenticationRepository> { AuthenticationRepoImpl(get(), get()) }
     single<HashingService> { MD5HashingService() }
     single { AuthenticationUseCase(get()) }
+
+    // UI
+    single { ConsoleUserInput() }
+    single { ConsoleDisplay() }
+    single { PlanMateConsoleUi(get()) }
 }
