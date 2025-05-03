@@ -1,15 +1,16 @@
 package org.damascus.data.authentication
 
-import logic.exception.InvalidCredentialsException
-import logic.exception.UnauthorizedActionException
-import logic.exception.UserAlreadyExistException
-import logic.exception.UserNotFoundException
+
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
 import org.damascus.logic.model.Role
 import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
+import org.damascus.logic.exception.InvalidCredentialsException
+import org.damascus.logic.exception.UnauthorizedActionException
+import org.damascus.logic.exception.UserAlreadyExistException
+import org.damascus.logic.exception.UserNotFoundException
 import org.damascus.logic.service.HashingService
 import java.util.*
 

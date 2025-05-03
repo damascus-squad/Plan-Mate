@@ -1,10 +1,11 @@
 package data.repo
 
-import logic.exception.TaskAlreadyExistsException
-import logic.exception.TaskNotFoundException
+
 import logic.model.Task
 import logic.repo.TaskRepository
 import logic.repo.DataSource
+import org.damascus.logic.exception.TaskAlreadyExistsException
+import org.damascus.logic.exception.TaskNotFoundException
 import java.util.*
 
 class TaskRepositoryImpl(

@@ -1,10 +1,11 @@
 package org.damascus.data.repo
 
-import logic.exception.DuplicateStateException
-import logic.exception.StateNotFoundException
+
 import logic.model.State
 import logic.repo.DataSource
 import logic.repo.TaskStateRepository
+import org.damascus.logic.exception.DuplicateStateException
+import org.damascus.logic.exception.StateNotFoundException
 import java.util.*
 
 class TaskStateRepositoryImpl(private val dataSource: DataSource<State>) : TaskStateRepository {
