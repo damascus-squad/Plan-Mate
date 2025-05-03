@@ -6,9 +6,6 @@ import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.LoginView
 
 class PlanMateConsoleUi(
-    private val consoleUserDisplay: ConsoleDisplay,
-    private val planRetrieve: PlanRetrieve
-
     private val loginView: LoginView
 ) {
 
@@ -16,21 +13,6 @@ class PlanMateConsoleUi(
         while (true) {
             val user = loginView.getLoggedUser()
         }
-        consoleUserDisplay.displayMenu(
-            uiActionList = listOf(
-                UiAction("📁 Projects") {
-                    consoleUserDisplay.displayMenu(
-                        uiActionList = listOf(
-                            UiAction("🔧 Create New Project") { planRetrieve.createProject() },
-                            UiAction("📋 Show All Projects") { planRetrieve.displayProjects() },
-                            UiAction("⚙️ Manage Existing Project") { planRetrieve.manageProject() }
-                        ),
-                        menuTitle = "🗂️ Projects Menu"
-                    )
-                }
-            ),
-            menuTitle = MENU_TITLE
-        )
     }
 
 
