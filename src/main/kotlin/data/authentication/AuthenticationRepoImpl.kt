@@ -1,16 +1,16 @@
 package org.damascus.data.authentication
 
+import logic.exception.InvalidCredentialsException
+import logic.exception.UnauthorizedActionException
+import logic.exception.UserAlreadyExistException
+import logic.exception.UserNotFoundException
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
-import org.damascus.data.DataSource
-import org.damascus.logic.HashingService
-import org.damascus.logic.exception.InvalidCredentialsException
-import org.damascus.logic.exception.UnauthorizedActionException
-import org.damascus.logic.exception.UserAlreadyExistException
-import org.damascus.logic.exception.UserNotFoundException
-import org.damascus.logic.AuthenticationRepository
 import org.damascus.logic.model.Role
+import logic.repo.AuthenticationRepository
+import logic.repo.DataSource
+import org.damascus.logic.service.HashingService
 import java.util.*
 
 class AuthenticationRepoImpl(
@@ -19,7 +19,7 @@ class AuthenticationRepoImpl(
 ) : AuthenticationRepository {
 
     override fun login(username: String, password: String): User {
-        val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException(username)
+        val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException(username) as Throwable
 
         if (!hashingService.verifyData(password, searchedUser.password)) {
             throw InvalidCredentialsException()

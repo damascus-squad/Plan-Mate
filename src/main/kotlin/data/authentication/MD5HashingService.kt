@@ -1,6 +1,6 @@
 package org.damascus.data.authentication
 
-import org.damascus.logic.HashingService
+import org.damascus.logic.service.HashingService
 import java.security.MessageDigest
 
 class MD5HashingService : HashingService {
@@ -24,7 +24,7 @@ class MD5HashingService : HashingService {
         return sb.toString()
     }
 
-    companion object{
-        val MD5_HASHING_ALGORITHM = "MD5"
+    private companion object {
+        const val MD5_HASHING_ALGORITHM = "MD5"
     }
 }

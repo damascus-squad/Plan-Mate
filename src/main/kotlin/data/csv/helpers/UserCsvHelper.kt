@@ -6,7 +6,7 @@ import logic.model.User
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import org.damascus.logic.model.Role
-import java.util.UUID
+import java.util.*
 
 object UserCsvHelper {
 

@@ -1,18 +1,15 @@
 package data.csv
 
 import com.google.common.truth.Truth.assertThat
+import data.csv.helpers.*
 import kotlinx.datetime.LocalDateTime
 import logic.model.Admin
-import logic.model.History
 import logic.model.Project
 import logic.model.State
 import logic.model.Task
-import data.csv.helpers.HistoryCsvHelper
-import data.csv.helpers.ProjectCsvHelper
-import data.csv.helpers.StateCsvHelper
-import data.csv.helpers.TaskCsvHelper
-import data.csv.helpers.UserCsvHelper
 import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.History
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -157,11 +154,11 @@ class CsvDataSerializerTest {
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             taskId = listOfUUIDs[2],
-            actionType = "task",
-            changedBy = listOfUUIDs[3],
-            oldStateId = listOfUUIDs[4],
+            actionType = ActionType.TASK_STATE_CHANGED,
+            userId = listOfUUIDs[3],
+            currentStateId = listOfUUIDs[4],
             newStateId = listOfUUIDs[5],
-            timestamp = date1
+            actionDate = date1
         )
 
         // When
@@ -172,7 +169,7 @@ class CsvDataSerializerTest {
             listOfUUIDs[0],
             listOfUUIDs[1],
             listOfUUIDs[2],
-            "task",
+            ActionType.TASK_STATE_CHANGED.ordinal,
             listOfUUIDs[3],
             listOfUUIDs[4],
             listOfUUIDs[5],

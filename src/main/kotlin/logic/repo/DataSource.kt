@@ -1,6 +1,6 @@
-package org.damascus.data
+package logic.repo
 
-import java.util.UUID
+import java.util.*
 
 interface DataSource<T> {
     fun read(): List<T>

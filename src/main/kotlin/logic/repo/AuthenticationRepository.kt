@@ -1,4 +1,4 @@
-package org.damascus.logic
+package logic.repo
 
 import logic.model.Mate
 import logic.model.User
