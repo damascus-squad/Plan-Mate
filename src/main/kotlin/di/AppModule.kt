@@ -18,6 +18,9 @@ import org.damascus.presentation.PlanMateMoodUi
 import org.damascus.presentation.io.ConsoleDisplay
 import org.damascus.presentation.io.ConsoleUserInput
 import org.damascus.presentation.retrieve.PlanRetrieveUi
+import org.damascus.ui.io.ConsoleDisplay
+import org.damascus.ui.io.ConsoleUserInput
+import org.damascus.ui.PlanMateConsoleUi
 import org.koin.dsl.module
 
 val appModule = module {
@@ -35,6 +38,11 @@ val appModule = module {
     single<AuthenticationRepository> { AuthenticationRepoImpl(get(), get()) }
     single<HashingService> { MD5HashingService() }
     single { AuthenticationUseCase(get()) }
+
+    // UI
+    single { ConsoleUserInput() }
+    single { ConsoleDisplay(get()) }
+    single { PlanMateConsoleUi(get()) }
 
     single<DataSource<Project>> {
         CsvDataSource(
