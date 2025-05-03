@@ -3,6 +3,8 @@ package logic.useCase.mate
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
+import org.damascus.data.authentication.MD5HashingService
+import org.damascus.logic.AuthenticationRepository
 import org.damascus.logic.exception.*
 
 class CreateMateUseCase(
@@ -40,7 +42,7 @@ class CreateMateUseCase(
             username.contains(" ") ->
                 throw InvalidUserNameInputException("Username cannot contain spaces")
 
-            authRepository.findByUsername(username) != null ->
+            authRepository.getUserByUsername(username) != null ->
                 throw UserAlreadyExistException(username)
         }
     }

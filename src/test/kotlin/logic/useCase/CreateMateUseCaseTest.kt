@@ -5,6 +5,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import logic.model.Admin
 import logic.model.Mate
+import org.damascus.data.authentication.MD5HashingService
+import org.damascus.logic.AuthenticationRepository
 import org.damascus.logic.exception.*
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Assertions.*
@@ -34,7 +36,7 @@ class CreateMateUseCaseTest {
         val hashedPassword = "hashed-pass"
         val expectedMate = Mate(UUID.randomUUID(), username, hashedPassword, Role.MATE)
 
-        every { authRepo.findByUsername(username) } returns null
+        every { authRepo.getUserByUsername(username) } returns null
         every { hashingService.hashData(password) } returns hashedPassword
         every { authRepo.createMate(admin, username, hashedPassword) } returns expectedMate
 
@@ -65,7 +67,7 @@ class CreateMateUseCaseTest {
         val admin = Admin(UUID.randomUUID(), "admin1", "hash123", Role.ADMIN)
         val existingUser = Mate(UUID.randomUUID(), "existing", "hash456", Role.MATE)
 
-        every { authRepo.findByUsername("existing") } returns existingUser
+        every { authRepo.getUserByUsername("existing") } returns existingUser
 
         // When/Then
         assertThrows(UserAlreadyExistException::class.java) {
@@ -99,7 +101,7 @@ class CreateMateUseCaseTest {
     fun `should throw BlankInputException when password is blank`() {
         // Given
         val admin = Admin(UUID.randomUUID(), "admin1", "hash123", Role.ADMIN)
-        every { authRepo.findByUsername("user1") } returns null
+        every { authRepo.getUserByUsername("user1") } returns null
 
         // When/Then
         assertThrows(BlankInputException::class.java) {
@@ -113,7 +115,7 @@ class CreateMateUseCaseTest {
         val admin = Admin(UUID.randomUUID(), "admin1", "hash123", Role.ADMIN)
         val hashedPassword = "5f4dcc3b5aa765d61d8327deb882cf99" // MD5 of "password"
 
-        every { authRepo.findByUsername("user1") } returns null
+        every { authRepo.getUserByUsername("user1") } returns null
 
         // When/Then
         assertThrows(InvalidPasswordException::class.java) {
@@ -130,7 +132,7 @@ class CreateMateUseCaseTest {
         val hashedPassword = "hashed-with-spaces"
         val expectedMate = Mate(UUID.randomUUID(), username, hashedPassword, Role.MATE)
 
-        every { authRepo.findByUsername(username) } returns null
+        every { authRepo.getUserByUsername(username) } returns null
         every { hashingService.hashData(passwordWithSpaces) } returns hashedPassword
         every { authRepo.createMate(admin, username, hashedPassword) } returns expectedMate
 
