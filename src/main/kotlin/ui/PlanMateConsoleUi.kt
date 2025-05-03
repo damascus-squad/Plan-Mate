@@ -3,14 +3,19 @@ package org.damascus.ui
 import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.retrieve.PlanRetrieve
 import org.damascus.ui.util.UiAction
+import org.damascus.ui.views.LoginView
 
 class PlanMateConsoleUi(
     private val consoleUserDisplay: ConsoleDisplay,
     private val planRetrieve: PlanRetrieve
 
+    private val loginView: LoginView
 ) {
 
     fun start() {
+        while (true) {
+            val user = loginView.getLoggedUser()
+        }
         consoleUserDisplay.displayMenu(
             uiActionList = listOf(
                 UiAction("📁 Projects") {

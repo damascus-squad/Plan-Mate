@@ -15,7 +15,7 @@ import logic.model.Mate
 import logic.model.User
 import logic.repo.DataSource
 import org.damascus.logic.service.HashingService
-import org.damascus.logic.repository.AuthenticationRepository
+import logic.repo.AuthenticationRepository
 import org.damascus.data.authentication.AuthenticationRepoImpl
 import org.damascus.logic.model.Role
 import org.junit.jupiter.api.extension.ExtendWith

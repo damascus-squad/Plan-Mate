@@ -8,7 +8,7 @@ import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
 import org.damascus.logic.model.Role
-import org.damascus.logic.repository.AuthenticationRepository
+import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
 import org.damascus.logic.service.HashingService
 import java.util.*

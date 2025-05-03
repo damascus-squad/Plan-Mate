@@ -7,6 +7,9 @@ import logic.model.Project
 import data.repo.TaskRepositoryImpl
 import logic.model.Task
 import logic.model.User
+import logic.repo.DataSource
+import logic.repo.TaskRepository
+import logic.repo.TaskStateRepository
 import org.damascus.data.authentication.AuthenticationRepoImpl
 import org.damascus.data.authentication.MD5HashingService
 import org.damascus.data.csv.CsvDataSource
@@ -14,9 +17,6 @@ import org.damascus.data.csv.generateCsvHeader
 import org.damascus.data.csv.utils.CsvConstants.PROJECTS_FILE
 import org.damascus.data.csv.utils.CsvConstants.USERS_FILE
 import org.damascus.logic.repository.AuthenticationRepository
-import logic.repo.DataSource
-import logic.repo.TaskRepository
-import logic.repo.TaskStateRepository
 import org.damascus.data.csv.utils.CsvConstants.TASKS_FILE
 import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.damascus.logic.service.HashingService
@@ -28,7 +28,9 @@ import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.io.ConsoleUserInput
 import org.damascus.ui.retrieve.PlanRetrieve
 import org.damascus.ui.views.project.ProjectViewCli
-import org.damascus.ui.PlanMateConsoleUi
+import org.damascus.ui.io.Display
+import org.damascus.ui.io.InputReader
+import org.damascus.ui.views.LoginView
 import org.damascus.ui.views.task.TaskCLI
 import org.koin.dsl.module
 
@@ -68,7 +70,10 @@ val appModule = module {
     single<TaskStateRepository> { TaskStateRepositoryImpl(get()) }
     single<TaskRepository> { TaskRepositoryImpl(get()) }
     single<HashingService> { MD5HashingService() }
+
+    // Use cases
     single { AuthenticationUseCase(get()) }
+    single { AuthenticateUserLoginUseCase(get()) }
     single { UpdateTaskUseCase(get()) }
     single { CreateTaskUseCase(get()) }
     single { DeleteTaskUseCase(get()) }
@@ -76,8 +81,8 @@ val appModule = module {
     single { GetTasksByProjectUseCase(get()) }
 
     // UI
-    single { ConsoleUserInput() }
-    single { ConsoleDisplay(get()) }
+    single<InputReader> { ConsoleUserInput() }
+    single<Display> { ConsoleDisplay(get()) }
     single { ProjectViewCli() }
     single { PlanMateConsoleUi(get(), get()) }
 
@@ -100,5 +105,6 @@ val appModule = module {
         )
     }
     single { PlanMateConsoleUi(get()) }
+    single { LoginView(get(), get()) }
     single { TaskCLI(get(),get(),get(),get(),get(),get() )}
 }
