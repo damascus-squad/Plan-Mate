@@ -1,6 +1,6 @@
 package logic.usecase.project
 
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -9,7 +9,7 @@ import logic.model.Project
 import logic.repo.ProjectRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 class ModifyMateAssignmentUseCaseTest {
 
@@ -31,7 +31,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(UUID.randomUUID(), UUID.randomUUID(), shouldAssign = true)
 
         // Then
-        Truth.assertThat(result).isFalse()
+        assertThat(result).isFalse()
     }
 
     @Test
@@ -45,7 +45,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = true)
 
         // Then
-        Truth.assertThat(result).isFalse()
+        assertThat(result).isFalse()
     }
 
     @Test
@@ -60,7 +60,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = true)
 
         // Then
-        Truth.assertThat(result).isTrue()
+        assertThat(result).isTrue()
         verify { repository.update(project.id, match { mateId in it.assignedMatesIds }) }
     }
 
@@ -73,7 +73,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(UUID.randomUUID(), UUID.randomUUID(), shouldAssign = false)
 
         // Then
-        Truth.assertThat(result).isFalse()
+        assertThat(result).isFalse()
     }
 
     @Test
@@ -87,7 +87,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = false)
 
         // Then
-        Truth.assertThat(result).isFalse()
+        assertThat(result).isFalse()
     }
 
     @Test
@@ -102,7 +102,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = false)
 
         // Then
-        Truth.assertThat(result).isTrue()
+        assertThat(result).isTrue()
         verify { repository.update(project.id, match { mateId !in it.assignedMatesIds }) }
     }
 
