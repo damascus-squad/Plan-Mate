@@ -1,6 +1,6 @@
 package org.damascus.ui.views
 
-import logic.usecase.util.NoLogsException
+import logic.exception.NoLogsException
 import org.damascus.logic.usecase.AuditLogUseCase
 import org.damascus.ui.util.TerminalColor
 import org.damascus.ui.util.withStyle

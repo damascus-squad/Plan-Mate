@@ -1,7 +1,7 @@
 package org.damascus.logic.usecase
 
 import logic.exception.NoLogsException
-import logic.repo.AuditLogRepository
+import logic.repository.AuditLogRepository
 import org.damascus.logic.model.History
 import java.util.*
 

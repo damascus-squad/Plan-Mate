@@ -7,7 +7,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.exception.NoLogsException
-import logic.repo.AuditLogRepository
+import logic.repository.AuditLogRepository
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History.Companion.NO_STATE
 import org.damascus.logic.model.History.Companion.NO_UUID
