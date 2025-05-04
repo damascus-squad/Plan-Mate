@@ -1,11 +1,11 @@
 package org.damascus.di
 
+import logic.usecase.project.ModifyMateAssignmentUseCase
 import org.damascus.logic.usecase.ProjectUseCase.CreateProjectUseCase
 import org.damascus.logic.usecase.ProjectUseCase.DeleteProjectUseCase
 import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsByMateIdUseCase
 import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsUseCase
 import org.damascus.logic.usecase.ProjectUseCase.GetProjectUseCase
-import org.damascus.logic.usecase.ProjectUseCase.ModifyMateAssignmentUseCase
 import org.damascus.logic.usecase.ProjectUseCase.UpdateProjectUseCase
 import org.koin.dsl.module
 

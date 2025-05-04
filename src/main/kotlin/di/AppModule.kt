@@ -22,16 +22,15 @@ import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.damascus.logic.service.HashingService
 import logic.usecase.auth.CreateMateUseCase
 import org.damascus.logic.usecase.auth.AuthenticateUserLoginUseCase
-import org.damascus.ui.retrieve.PlanRetrieveUi
 import org.damascus.ui.PlanMateConsoleUi
 import org.damascus.logic.usecase.task.*
 import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.retrieve.PlanRetrieve
 import org.damascus.ui.views.project.ProjectViewCli
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.LoginView
+import org.damascus.ui.views.project.ProjectView
 import org.damascus.ui.views.task.TaskCLI
 import org.koin.dsl.module
 
@@ -87,21 +86,11 @@ val appModule = module {
     single<Display> { get<ConsoleDisplay>() }
     single<InputReader> { get<ConsoleUserInput>() }
 
-    single { ProjectViewCli() }
+    single { ProjectViewCli(get(), get(), get()) }
+    single<ProjectView> { get<ProjectViewCli>() }
     single { LoginView(get(), get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
 
-    single<PlanRetrieve> {
-        PlanRetrieveUi(
-            consoleDisplay = get(),
-            consoleUserInput = get(),
-            createProjectUseCase = get(),
-            getAllProjectsUseCase = get(),
-            deleteProjectUseCase = get(),
-            updateProjectUseCase = get(),
-            projectViewCli = get()
-        )
-    }
 
     single {
         PlanMateConsoleUi(

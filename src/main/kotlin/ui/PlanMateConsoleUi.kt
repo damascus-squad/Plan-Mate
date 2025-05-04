@@ -1,8 +1,5 @@
 package org.damascus.ui
 
-import org.damascus.ui.io.ConsoleDisplay
-import org.damascus.ui.retrieve.PlanRetrieve
-import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.LoginView
 
 class PlanMateConsoleUi(
