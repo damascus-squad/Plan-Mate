@@ -18,6 +18,4 @@ class DuplicateStateException(id: UUID) : Exception("A state with ID ${id} alrea
 
 class StateNotFoundException(id: UUID) : Exception("State with id ${id} not found.")
 
-class InvalidStateException(message: String) : Exception(message)
-
-class NoHistoryException(message: String) : Exception(message)
+class NoLogsException(message: String) : Exception(message)
