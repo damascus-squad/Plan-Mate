@@ -44,7 +44,7 @@ class AuditLogUseCaseTest {
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val projectId = UUID.randomUUID()
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns listOf(
+        every { auditLogRepository.getLogByProjectId(projectId) } returns listOf(
             createFakeActionLog(
                 id,
                 userId,
@@ -68,7 +68,7 @@ class AuditLogUseCaseTest {
         )
 
         // When
-        val historyLog = auditLogUseCase.getLogsByProjectId(projectId)
+        val historyLog = auditLogUseCase.getLogByProjectId(projectId)
 
         // Then
         assertEquals(2, historyLog.size)
@@ -78,11 +78,11 @@ class AuditLogUseCaseTest {
     fun `should throw NoHistoryException when no logs are found`() {
         // Given
         val projectId = UUID.randomUUID()
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
+        every { auditLogRepository.getLogByProjectId(projectId) } returns emptyList()
 
         // When & Then
         assertThrows<NoLogsException> {
-            auditLogUseCase.getLogsByProjectId(projectId)
+            auditLogUseCase.getLogByProjectId(projectId)
         }
     }
 
@@ -136,10 +136,10 @@ class AuditLogUseCaseTest {
             )
         )
 
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns logs
+        every { auditLogRepository.getLogByProjectId(projectId) } returns logs
 
         // When
-        val result = auditLogUseCase.getLogsByProjectId(projectId)
+        val result = auditLogUseCase.getLogByProjectId(projectId)
 
         // Then
         assertTrue { result.any { projectId == it.projectId } }
