@@ -1,6 +1,6 @@
 package org.damascus.logic.usecase.ProjectUseCase
 
-import org.damascus.logic.repository.ProjectRepository
+import logic.repo.ProjectRepository
 import java.util.UUID
 
 class CheckProjectExistsUseCase(private val repository: ProjectRepository) {

@@ -1,4 +1,4 @@
-package logic.usecase
+package logic.usecase.project
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
@@ -6,8 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.datetime.LocalDateTime
 import logic.model.Project
-import org.damascus.logic.repository.ProjectRepository
-import org.damascus.logic.usecase.ProjectUseCase.ModifyMateAssignmentUseCase
+import logic.repo.ProjectRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
