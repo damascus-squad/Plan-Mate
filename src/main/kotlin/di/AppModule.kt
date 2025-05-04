@@ -9,15 +9,15 @@ import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
 import logic.repo.TaskRepository
 import logic.repo.TaskStateRepository
-import org.damascus.data.authentication.AuthenticationRepoImpl
-import org.damascus.data.authentication.MD5HashingService
+import org.damascus.data.repo.AuthenticationRepoImpl
+import org.damascus.logic.service.MD5HashingService
 import org.damascus.data.csv.CsvDataSource
 import org.damascus.data.csv.generateCsvHeader
 import org.damascus.data.csv.utils.CsvConstants.TASKS_FILE
 import org.damascus.data.csv.utils.CsvConstants.USERS_FILE
 import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.damascus.logic.service.HashingService
-import org.damascus.logic.usecase.AuthenticationUseCase
+import logic.usecase.auth.CreateMateUseCase
 import org.damascus.logic.usecase.auth.AuthenticateUserLoginUseCase
 import org.damascus.logic.usecase.task.*
 import org.damascus.ui.PlanMateConsoleUi
@@ -57,7 +57,7 @@ val appModule = module {
     single<HashingService> { MD5HashingService() }
 
     // Use cases
-    single { AuthenticationUseCase(get()) }
+    single { CreateMateUseCase(get()) }
     single { AuthenticateUserLoginUseCase(get()) }
     single { UpdateTaskUseCase(get()) }
     single { CreateTaskUseCase(get()) }

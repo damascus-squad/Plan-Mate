@@ -174,7 +174,7 @@ class CsvDataParserTest {
         // Given
         val csvEntry = "${listOfUUIDs[0]},Backlog"
 
-        val expectedState = State(
+        val expectedTaskState = TaskState(
             id = listOfUUIDs[0],
             name = "Backlog",
         )
@@ -183,7 +183,7 @@ class CsvDataParserTest {
         val result = StateCsvHelper.parseState(csvEntry)
 
         // Then
-        assertThat(result).isEqualTo(expectedState)
+        assertThat(result).isEqualTo(expectedTaskState)
     }
 
     @Test

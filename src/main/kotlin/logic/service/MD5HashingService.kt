@@ -1,6 +1,5 @@
-package org.damascus.data.authentication
+package org.damascus.logic.service
 
-import org.damascus.logic.service.HashingService
 import java.security.MessageDigest
 
 class MD5HashingService : HashingService {

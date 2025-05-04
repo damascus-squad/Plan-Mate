@@ -5,7 +5,7 @@ import data.csv.helpers.*
 import kotlinx.datetime.LocalDateTime
 import logic.model.Admin
 import logic.model.Project
-import logic.model.State
+import logic.model.TaskState
 import logic.model.Task
 import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
 import org.damascus.logic.model.ActionType
@@ -129,13 +129,13 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeState should return csv entry when state is passed`() {
         // Given
-        val state = State(
+        val taskState = TaskState(
             id = listOfUUIDs[0],
             name = "Backlog",
         )
 
         // When
-        val result = StateCsvHelper.serializeState(state)
+        val result = StateCsvHelper.serializeState(taskState)
 
         // Then
         val expected = listOf(

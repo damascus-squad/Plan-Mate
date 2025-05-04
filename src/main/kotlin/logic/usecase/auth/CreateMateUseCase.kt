@@ -1,14 +1,13 @@
-package org.damascus.logic.usecase
+package logic.usecase.auth
 
 import logic.model.Admin
 import logic.model.Mate
 import logic.repo.AuthenticationRepository
 
-class AuthenticationUseCase(
+class CreateMateUseCase(
     private val authRepo: AuthenticationRepository
 ) {
-    fun createMate(admin: Admin, newUsername: String, newPassword: String): Result<Mate> {
+    operator fun invoke(admin: Admin, newUsername: String, newPassword: String): Result<Mate> {
         return runCatching { authRepo.createMate(admin, newUsername, newPassword) }
     }
 }
-

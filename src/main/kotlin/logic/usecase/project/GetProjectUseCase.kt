@@ -1,7 +1,7 @@
 package org.damascus.logic.usecase.ProjectUseCase
 
 import logic.model.Project
-import org.damascus.logic.repository.ProjectRepository
+import logic.repo.ProjectRepository
 import java.util.UUID
 
 class GetProjectUseCase(private val repository: ProjectRepository) {

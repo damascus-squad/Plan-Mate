@@ -1,7 +1,7 @@
 package org.damascus.logic.usecase.ProjectUseCase
 
 import logic.model.Project
-import org.damascus.logic.repository.ProjectRepository
+import logic.repo.ProjectRepository
 
 class GetAllProjectsUseCase(private val repository: ProjectRepository) {
     operator fun invoke(): List<Project> {

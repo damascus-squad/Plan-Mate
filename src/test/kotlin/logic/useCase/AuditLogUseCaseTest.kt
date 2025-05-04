@@ -6,14 +6,12 @@ import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.exception.InvalidStateException
 import logic.exception.NoHistoryException
 import logic.repo.AuditLogRepository
 import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History.Companion.NO_STATE
+import org.damascus.logic.model.History.Companion.NO_TASK_STATE
 import org.damascus.logic.model.History.Companion.NO_UUID
 import org.damascus.logic.usecase.AuditLogUseCase
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -211,6 +209,6 @@ class AuditLogUseCaseTest {
 
         // When & Then
         assertEquals(UUID(0, 0), NO_UUID)
-        assertEquals(name, NO_STATE.name)
+        assertEquals(name, NO_TASK_STATE.name)
     }
 }

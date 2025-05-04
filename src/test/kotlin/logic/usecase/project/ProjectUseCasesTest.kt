@@ -6,7 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.datetime.LocalDateTime
 import logic.model.Project
-import org.damascus.logic.repository.ProjectRepository
+import logic.repo.ProjectRepository
 import org.damascus.logic.usecase.ProjectUseCase.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

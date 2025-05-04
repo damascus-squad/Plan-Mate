@@ -1,4 +1,4 @@
-package org.damascus.logic.repository
+package logic.repo
 
 import logic.model.Project
 import java.util.UUID
