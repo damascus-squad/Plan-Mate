@@ -29,6 +29,9 @@ import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.LoginView
 import org.damascus.ui.views.task.TaskCLI
 import org.koin.dsl.module
+import org.damascus.data.repo.AuditLogRepositoryImpl
+import org.damascus.data.authentication.AuthenticationRepoImpl
+import org.damascus.data.authentication.MD5HashingService
 
 val appModule = module {
 
