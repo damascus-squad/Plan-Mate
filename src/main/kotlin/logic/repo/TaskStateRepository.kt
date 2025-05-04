@@ -1,13 +1,13 @@
 package logic.repo
 
-import logic.model.State
+import logic.model.TaskState
 import java.util.*
 
 interface TaskStateRepository {
-    fun getAllStates(): List<State>
-    fun getStateById(id: UUID): State?
-    fun create(state: State): Boolean
-    fun update(state: State): Boolean
-    fun delete(state: State): Boolean
+    fun getAllStates(): List<TaskState>
+    fun getStateById(id: UUID): TaskState?
+    fun create(taskState: TaskState): Boolean
+    fun update(taskState: TaskState): Boolean
+    fun delete(taskState: TaskState): Boolean
     fun exist(id: UUID): Boolean
 }

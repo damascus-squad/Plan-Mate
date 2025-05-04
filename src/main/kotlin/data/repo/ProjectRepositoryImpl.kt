@@ -3,7 +3,7 @@ package org.damascus.data.repo
 
 import logic.model.Project
 import logic.repo.DataSource
-import org.damascus.logic.repository.ProjectRepository
+import logic.repo.ProjectRepository
 import java.util.*
 
 

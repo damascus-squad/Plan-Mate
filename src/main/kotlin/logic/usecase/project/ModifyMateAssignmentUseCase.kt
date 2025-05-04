@@ -1,6 +1,6 @@
-package org.damascus.logic.usecase.ProjectUseCase
+package logic.usecase.project
 
-import org.damascus.logic.repository.ProjectRepository
+import logic.repo.ProjectRepository
 import java.util.*
 
 class ModifyMateAssignmentUseCase(
