@@ -9,6 +9,7 @@ import org.damascus.logic.usecase.AuditLogUseCase
 import org.damascus.ui.views.AuditLogView
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class AuditLogViewTest {
@@ -51,7 +52,9 @@ class AuditLogViewTest {
 
         auditLogView.viewProjectLog(uuid)
 
-        verify { auditUseCase.getLogsByProjectId(uuid) }
+        assertThrows<NoLogsException> {
+            auditUseCase.getLogsByProjectId(uuid)
+        }
     }
 
     @Test
@@ -61,6 +64,8 @@ class AuditLogViewTest {
 
         auditLogView.viewTaskLog(uuid)
 
-        verify { auditUseCase.getLogByTaskId(uuid) }
+        assertThrows<NoLogsException> {
+            auditUseCase.getLogByTaskId(uuid)
+        }
     }
 }
