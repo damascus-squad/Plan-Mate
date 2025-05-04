@@ -2,6 +2,8 @@ package org.damascus.di
 
 import data.csv.helpers.UserCsvHelper
 import logic.model.User
+import logic.repo.AuditLogRepository
+import org.damascus.data.repo.AuditLogRepositoryImpl
 import org.damascus.data.authentication.AuthenticationRepoImpl
 import org.damascus.data.authentication.MD5HashingService
 import org.damascus.data.csv.CsvDataSource
@@ -31,6 +33,8 @@ val appModule = module {
     single<AuthenticationRepository> { AuthenticationRepoImpl(get(), get()) }
     single<HashingService> { MD5HashingService() }
     single { AuthenticationUseCase(get()) }
+
+    single<AuditLogRepository> { AuditLogRepositoryImpl(get()) }
 
     // UI
     single { ConsoleUserInput() }
