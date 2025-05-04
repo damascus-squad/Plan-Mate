@@ -6,14 +6,12 @@ import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.exception.InvalidStateException
-import logic.exception.NoHistoryException
+import logic.exception.NoLogException
 import logic.repo.AuditLogRepository
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History.Companion.NO_STATE
 import org.damascus.logic.model.History.Companion.NO_UUID
 import org.damascus.logic.usecase.AuditLogUseCase
-import org.junit.Ignore
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -40,13 +38,13 @@ class AuditLogUseCaseTest {
     }
 
     @Test
-    fun `should return action logs when history is not empty`() {
+    fun `should return action log when history is not empty`() {
         // Given
         val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val projectId = UUID.randomUUID()
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns listOf(
+        every { auditLogRepository.getLogByProjectId(projectId) } returns listOf(
             createFakeActionLog(
                 id,
                 userId,
@@ -70,21 +68,21 @@ class AuditLogUseCaseTest {
         )
 
         // When
-        val historyLog = auditLogUseCase.getLogsByProjectId(projectId)
+        val historyLog = auditLogUseCase.getLogByProjectId(projectId)
 
         // Then
         assertEquals(2, historyLog.size)
     }
 
     @Test
-    fun `should throw NoHistoryException when no logs are found`() {
+    fun `should throw NoHistoryException when no log are found`() {
         // Given
         val projectId = UUID.randomUUID()
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
+        every { auditLogRepository.getLogByProjectId(projectId) } returns emptyList()
 
         // When & Then
-        assertThrows<NoHistoryException> {
-            auditLogUseCase.getLogsByProjectId(projectId)
+        assertThrows<NoLogException> {
+            auditLogUseCase.getLogByProjectId(projectId)
         }
     }
 
@@ -119,13 +117,13 @@ class AuditLogUseCaseTest {
     }
 
     @Test
-    fun `should return action logs when given projectId`() {
+    fun `should return action log when given projectId`() {
         // Given
         val id = UUID.randomUUID()
         val projectId = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val logs = listOf(
+        val log = listOf(
             createFakeActionLog(
                 id,
                 userId,
@@ -138,23 +136,23 @@ class AuditLogUseCaseTest {
             )
         )
 
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns logs
+        every { auditLogRepository.getLogByProjectId(projectId) } returns log
 
         // When
-        val result = auditLogUseCase.getLogsByProjectId(projectId)
+        val result = auditLogUseCase.getLogByProjectId(projectId)
 
         // Then
         assertTrue { result.any { projectId == it.projectId } }
     }
 
     @Test
-    fun `should return action logs when given taskId`() {
+    fun `should return action log when given taskId`() {
         // Given
         val id = UUID.randomUUID()
         val taskId = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val logs = listOf(
+        val log = listOf(
             createFakeActionLog(
                 id,
                 userId,
@@ -167,7 +165,7 @@ class AuditLogUseCaseTest {
             )
         )
 
-        every { auditLogRepository.getLogByTaskId(taskId) } returns logs
+        every { auditLogRepository.getLogByTaskId(taskId) } returns log
 
         // When
         val result = auditLogUseCase.getLogByTaskId(taskId)
