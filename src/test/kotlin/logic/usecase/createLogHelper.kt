@@ -1,4 +1,4 @@
-package logic.usecase
+package logic.useCase
 
 import kotlinx.datetime.LocalDateTime
 import org.damascus.logic.model.ActionType
