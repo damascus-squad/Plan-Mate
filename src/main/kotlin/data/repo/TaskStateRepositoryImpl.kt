@@ -2,44 +2,44 @@ package org.damascus.data.repo
 
 import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
-import logic.model.State
+import logic.model.TaskState
 import logic.repo.DataSource
 import logic.repo.TaskStateRepository
 import java.util.*
 
-class TaskStateRepositoryImpl(private val dataSource: DataSource<State>) : TaskStateRepository {
+class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : TaskStateRepository {
 
-    override fun getAllStates(): List<State> {
+    override fun getAllStates(): List<TaskState> {
         return dataSource.read()
     }
 
-    override fun getStateById(id: UUID): State? {
+    override fun getStateById(id: UUID): TaskState? {
         return dataSource.read().firstOrNull { it.id == id }
     }
 
-    override fun create(state: State): Boolean {
-        if (exist(state.id)) {
-            throw DuplicateStateException(state.id)
+    override fun create(taskState: TaskState): Boolean {
+        if (exist(taskState.id)) {
+            throw DuplicateStateException(taskState.id)
         }
-        dataSource.write(state)
+        dataSource.write(taskState)
 
         return true
     }
 
-    override fun update(state: State): Boolean {
-        if (!exist(state.id)) {
-            throw StateNotFoundException(state.id)
+    override fun update(taskState: TaskState): Boolean {
+        if (!exist(taskState.id)) {
+            throw StateNotFoundException(taskState.id)
         }
-        dataSource.update(state.id, state)
+        dataSource.update(taskState.id, taskState)
 
         return true
     }
 
-    override fun delete(state: State): Boolean {
-        if (!exist(state.id)) {
-            throw StateNotFoundException(state.id)
+    override fun delete(taskState: TaskState): Boolean {
+        if (!exist(taskState.id)) {
+            throw StateNotFoundException(taskState.id)
         }
-        dataSource.delete(state.id)
+        dataSource.delete(taskState.id)
 
         return true
     }

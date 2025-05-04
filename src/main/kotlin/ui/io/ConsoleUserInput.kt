@@ -4,7 +4,6 @@ import org.damascus.ui.exception.InputException
 import org.damascus.ui.util.TerminalColor
 import org.damascus.ui.util.withStyle
 
-
 class ConsoleUserInput : InputReader {
     override fun readString(prompt: String): String {
         print("$prompt ".withStyle(TerminalColor.Blue))
