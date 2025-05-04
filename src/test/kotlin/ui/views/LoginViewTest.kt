@@ -4,9 +4,8 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import logic.model.Mate
-import logic.model.User
 import org.damascus.logic.model.Role
-import org.damascus.logic.usecase.auth.AuthenticateUserLoginUseCase
+import logic.usecase.auth.AuthenticateUserLoginUseCase
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.LoginView
 import org.junit.jupiter.api.BeforeEach

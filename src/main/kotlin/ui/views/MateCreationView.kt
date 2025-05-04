@@ -1,21 +1,17 @@
-package org.damascus.ui
+package org.damascus.ui.views
 
 import logic.model.Admin
-import logic.model.Mate
-import org.damascus.data.authentication.AuthenticationRepoImpl
-import org.damascus.logic.model.Role
-import org.damascus.logic.usecase.AuthenticationUseCase
+import logic.usecase.auth.CreateMateUseCase
 import org.damascus.ui.input.checkPasswordInput
 import org.damascus.ui.input.checkUsernameInput
-import java.util.UUID
 
-fun viewMateCreation(admin: Admin, authenticationUseCase: AuthenticationUseCase) {
+fun viewMateCreation(admin: Admin, createMateUseCase: CreateMateUseCase) {
     println("Creating new mate, please fill the following fields")
 
     val usernameInput: String = getUsernameInput()
     val passwordInput: String = getPasswordInput()
 
-    authenticationUseCase.createMate(admin = admin, newUsername = usernameInput, passwordInput)
+    createMateUseCase(admin = admin, newUsername = usernameInput, passwordInput)
 }
 
 fun getUsernameInput(): String {
