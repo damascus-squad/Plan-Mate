@@ -2,7 +2,7 @@ package logic.model
 
 import java.util.*
 
-data class State(
+data class TaskState(
     val id: UUID,
     val name: String
 )
