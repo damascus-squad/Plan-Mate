@@ -1,6 +1,6 @@
-package logic.useCase
+package logic.usecase.project
 
-import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.Truth
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -10,7 +10,7 @@ import org.damascus.logic.repository.ProjectRepository
 import org.damascus.logic.usecase.ProjectUseCase.ModifyMateAssignmentUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.*
+import java.util.UUID
 
 class ModifyMateAssignmentUseCaseTest {
 
@@ -32,7 +32,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(UUID.randomUUID(), UUID.randomUUID(), shouldAssign = true)
 
         // Then
-        assertThat(result).isFalse()
+        Truth.assertThat(result).isFalse()
     }
 
     @Test
@@ -46,7 +46,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = true)
 
         // Then
-        assertThat(result).isFalse()
+        Truth.assertThat(result).isFalse()
     }
 
     @Test
@@ -61,7 +61,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = true)
 
         // Then
-        assertThat(result).isTrue()
+        Truth.assertThat(result).isTrue()
         verify { repository.update(project.id, match { mateId in it.assignedMatesIds }) }
     }
 
@@ -74,7 +74,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(UUID.randomUUID(), UUID.randomUUID(), shouldAssign = false)
 
         // Then
-        assertThat(result).isFalse()
+        Truth.assertThat(result).isFalse()
     }
 
     @Test
@@ -88,7 +88,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = false)
 
         // Then
-        assertThat(result).isFalse()
+        Truth.assertThat(result).isFalse()
     }
 
     @Test
@@ -103,7 +103,7 @@ class ModifyMateAssignmentUseCaseTest {
         val result = useCase(project.id, mateId, shouldAssign = false)
 
         // Then
-        assertThat(result).isTrue()
+        Truth.assertThat(result).isTrue()
         verify { repository.update(project.id, match { mateId !in it.assignedMatesIds }) }
     }
 
