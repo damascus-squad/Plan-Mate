@@ -1,8 +1,5 @@
 package org.damascus.ui.util
 
-import java.time.format.DateTimeFormatter
-
-
 enum class TerminalColor(val code: String) {
     Red("\u001B[31m"),
     Green("\u001B[32m"),
