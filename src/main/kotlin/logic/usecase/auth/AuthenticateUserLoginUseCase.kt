@@ -1,4 +1,4 @@
-package org.damascus.logic.usecase.auth
+package logic.usecase.auth
 
 import logic.model.User
 import logic.repo.AuthenticationRepository
