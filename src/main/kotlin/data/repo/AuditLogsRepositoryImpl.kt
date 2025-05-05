@@ -5,7 +5,7 @@ import logic.repo.DataSource
 import org.damascus.logic.model.History
 import java.util.*
 
-class AuditLogRepositoryImpl(private val dataSource: DataSource<History>) : AuditLogsRepository {
+class AuditLogsRepositoryImpl(private val dataSource: DataSource<History>) : AuditLogsRepository {
     override fun saveLog(history: History) {
         dataSource.write(history)
     }

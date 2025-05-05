@@ -29,7 +29,7 @@ import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.LoginView
 import org.damascus.ui.views.task.TaskCLI
 import org.koin.dsl.module
-import org.damascus.data.repo.AuditLogRepositoryImpl
+import org.damascus.data.repo.AuditLogsRepositoryImpl
 
 val appModule = module {
 
@@ -57,7 +57,7 @@ val appModule = module {
     single<TaskStateRepository> { TaskStateRepositoryImpl(get()) }
     single<TaskRepository> { TaskRepositoryImpl(get()) }
     single<HashingService> { MD5HashingService() }
-    single<AuditLogsRepository> { AuditLogRepositoryImpl(get()) }
+    single<AuditLogsRepository> { AuditLogsRepositoryImpl(get()) }
 
     // Use cases
     single { CreateMateUseCase(get()) }

@@ -9,20 +9,20 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.repo.DataSource
 import logic.useCase.createFakeActionLog
-import org.damascus.data.repo.AuditLogRepositoryImpl
+import org.damascus.data.repo.AuditLogsRepositoryImpl
 import org.damascus.logic.model.History
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class AuditLogRepositoryImplTest {
+class AuditLogsRepositoryImplTest {
     private lateinit var dataSource: DataSource<History>
-    private lateinit var repository: AuditLogRepositoryImpl
+    private lateinit var repository: AuditLogsRepositoryImpl
 
     @BeforeEach
     fun setup() {
         dataSource = mockk(relaxed = true)
-        repository = AuditLogRepositoryImpl(dataSource)
+        repository = AuditLogsRepositoryImpl(dataSource)
     }
 
     @Test
