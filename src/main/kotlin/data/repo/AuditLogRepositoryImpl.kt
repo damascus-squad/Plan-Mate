@@ -7,7 +7,7 @@ import java.util.*
 
 class AuditLogRepositoryImpl(private val dataSource: DataSource<History>): AuditLogRepository{
     override fun saveLog(history: History){
-        dataSource.write(history) // or .save(history) depending on the function name
+        dataSource.write(history)
     }
 
     override fun getLogByProjectId(projectId: UUID): List<History>{
