@@ -1,7 +1,7 @@
 package org.damascus.ui.views
 
 import logic.model.User
-import org.damascus.logic.usecase.auth.AuthenticateUserLoginUseCase
+import logic.usecase.auth.AuthenticateUserLoginUseCase
 import org.damascus.ui.io.InputReader
 
 class LoginView(
