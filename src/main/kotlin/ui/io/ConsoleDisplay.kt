@@ -30,7 +30,7 @@ class ConsoleDisplay(
                 )
 
                 if (input == 0) {
-                    println("\n👋 Exiting... Stay healthy!".withStyle(TerminalColor.Green))
+                    println("\n👋 Exiting...!".withStyle(TerminalColor.Green))
                     return
                 }
 

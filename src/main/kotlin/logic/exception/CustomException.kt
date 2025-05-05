@@ -14,8 +14,10 @@ class UnauthorizedActionException(action: String) : Exception("You are not allow
 
 class UserAlreadyExistException(newUsername: String) : Exception("Username '$newUsername' already exists.")
 
-class DuplicateStateException(id: UUID) : Exception("A state with ID ${id} already exists.")
+class DuplicateStateException(id: UUID) : Exception("A state with ID $id already exists.")
 
-class StateNotFoundException(id: UUID) : Exception("State with id ${id} not found.")
+class StateNotFoundException(id: UUID) : Exception("State with id $id not found.")
 
-class NoLogsException(message: String) : Exception(message)
+class NoLogException(message: String) : Exception(message)
+
+class ProjectsNotAvailableException(message: String) : Exception(message)

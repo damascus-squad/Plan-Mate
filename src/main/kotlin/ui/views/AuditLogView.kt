@@ -1,8 +1,8 @@
 package org.damascus.ui.views
 
-import logic.exception.NoLogsException
-import org.damascus.logic.usecase.AuditLog.GetLogsByProjectIdUseCase
-import org.damascus.logic.usecase.AuditLog.GetLogsByTaskIdUseCase
+import logic.exception.NoLogException
+import logic.usecase.auditLog.GetLogsByProjectIdUseCase
+import logic.usecase.auditLog.GetLogsByTaskIdUseCase
 import org.damascus.ui.util.TerminalColor
 import org.damascus.ui.util.withStyle
 import java.util.*
@@ -15,7 +15,7 @@ class AuditLogView(
         try {
             val log = getLogsByProjectId(projectId)
             println("📄 Log for Project ID [$projectId]:\n$log".withStyle(TerminalColor.Blue))
-        } catch (e: NoLogsException) {
+        } catch (e: NoLogException) {
             displayError("No log found for Project ID: $projectId")
         }
     }
@@ -24,7 +24,7 @@ class AuditLogView(
         try {
             val log = getLogsByTaskId(taskId)
             println("📄 Log for Task ID [$taskId]:\n$log".withStyle(TerminalColor.Blue))
-        } catch (e: NoLogsException) {
+        } catch (e: NoLogException) {
             displayError("No log found for Task ID: $taskId")
         }
     }

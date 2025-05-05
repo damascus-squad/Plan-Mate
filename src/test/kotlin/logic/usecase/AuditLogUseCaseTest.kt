@@ -1,4 +1,4 @@
-package logic.useCase.auditLog
+package logic.useCase
 
 import io.mockk.every
 import io.mockk.mockk
@@ -78,7 +78,7 @@ class AuditLogUseCaseTest {
     }
 
     @Test
-    fun `should throw NoLogException when no log are found for the given project id`() {
+    fun `should throw NoHistoryException when no log are found for the given project id`() {
         // Given
         val projectId = UUID.randomUUID()
         every { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
@@ -90,7 +90,7 @@ class AuditLogUseCaseTest {
     }
 
     @Test
-    fun `should throw NoLogException when no log are found for the given task id`() {
+    fun `should throw NoHistoryException when no log are found for the given task id`() {
         // Given
         val taskId = UUID.randomUUID()
         every { auditLogRepository.getLogsByTaskId(taskId) } returns emptyList()

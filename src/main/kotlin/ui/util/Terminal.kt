@@ -105,3 +105,37 @@ fun enableWindowsAnsi() {
 //    data.forEach { printRow(it) }
 //    println(footer)
 //}
+
+
+fun printTable(headers: List<String>, rows: List<List<Any>>, color: TerminalColor = TerminalColor.Yellow) {
+    val colWidths = headers.indices.map { i ->
+        (listOf(headers[i]) + rows.mapNotNull { it.getOrNull(i)?.toString() }).maxOf { it.length }
+    }
+
+    fun drawLine(left: String, mid: String, right: String): String {
+        return left + colWidths.joinToString(mid) { "═".repeat(it + 2) } + right
+    }
+
+
+    val topBorder = drawLine("╔", "╦", "╗")
+    val midBorder = drawLine("╠", "╬", "╣")
+    val bottomBorder = drawLine("╚", "╩", "╝")
+
+
+    println(topBorder.withStyle(TerminalColor.Magenta))
+
+    val headerRow = headers.mapIndexed { i, h -> " ${h.padEnd(colWidths[i])} " }
+    println("║" + headerRow.joinToString("║") + "║".withStyle(TerminalColor.Cyan))
+
+    println(midBorder.withStyle(TerminalColor.Magenta))
+
+    rows.forEach { row ->
+        val dataRow = headers.indices.map { i ->
+            val cell = row.getOrNull(i)?.toString() ?: "-"
+            " ${cell.padEnd(colWidths[i])} "
+        }
+        println("║" + dataRow.joinToString("║") + "║".withStyle(color))
+    }
+
+    println(bottomBorder.withStyle(TerminalColor.Magenta))
+}
