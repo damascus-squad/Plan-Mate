@@ -1,4 +1,4 @@
-package logic.useCase
+package logic.useCase.auditLog
 
 import io.mockk.every
 import io.mockk.mockk
@@ -6,7 +6,7 @@ import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.exception.NoLogException
+import logic.exception.NoLogsException
 import logic.repo.AuditLogsRepository
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History.Companion.NO_TASK_STATE
@@ -84,7 +84,7 @@ class AuditLogUseCaseTest {
         every { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
 
         // When & Then
-        assertThrows<NoLogException> {
+        assertThrows<NoLogsException> {
             getLogsByProjectId(projectId)
         }
     }
@@ -96,7 +96,7 @@ class AuditLogUseCaseTest {
         every { auditLogRepository.getLogsByTaskId(taskId) } returns emptyList()
 
         // When & Then
-        assertThrows<NoLogException> {
+        assertThrows<NoLogsException> {
             getLogsByTaskId(taskId)
         }
     }

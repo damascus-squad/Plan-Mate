@@ -1,6 +1,6 @@
 package org.damascus.logic.usecase.AuditLog
 
-import logic.exception.NoLogException
+import logic.exception.NoLogsException
 import logic.repo.AuditLogsRepository
 import org.damascus.logic.model.History
 import java.util.*
@@ -11,6 +11,6 @@ class GetLogsByProjectIdUseCase(
     operator fun invoke(projectId: UUID): List<History> {
         return auditLogsRepository.getLogsByProjectId(projectId)
             .takeIf { it.isNotEmpty() }
-            ?: throw NoLogException("No history found for the project: $projectId")
+            ?: throw NoLogsException("No history found for the project: $projectId")
     }
 }

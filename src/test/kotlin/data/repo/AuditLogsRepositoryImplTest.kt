@@ -8,7 +8,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.repo.DataSource
-import logic.useCase.createFakeActionLog
+import logic.useCase.auditLog.createFakeActionLog
 import org.damascus.data.repo.AuditLogsRepositoryImpl
 import org.damascus.logic.model.History
 import org.junit.jupiter.api.BeforeEach
