@@ -20,67 +20,60 @@ class ProjectViewCliTest {
     private lateinit var getAllProjectsUseCase: GetAllProjectsUseCase
     private lateinit var projectView: ProjectViewCli
 
+    private lateinit var sampleProject: Project
+
     @BeforeEach
     fun setup() {
         consoleUserInput = mockk()
         createProjectUseCase = mockk()
         getAllProjectsUseCase = mockk()
         projectView = ProjectViewCli(consoleUserInput, createProjectUseCase, getAllProjectsUseCase)
-    }
 
-    @Test
-    fun `should return true when project created successfully`() {
-        // given
-        every { consoleUserInput.readString(any()) } returns "Test Project"
-        every { createProjectUseCase(any()) } returns true
-
-        // when
-        projectView.createProject()
-
-        // then
-        verify { createProjectUseCase(match { it.name == "Test Project" }) }
-    }
-
-    @Test
-    fun `should return false when project already exists`() {
-        // given
-        every { consoleUserInput.readString(any()) } returns "Test Project"
-        every { createProjectUseCase(any()) } returns false
-
-        // when
-        projectView.createProject()
-
-        // then
-        verify { createProjectUseCase(any()) }
-    }
-
-    @Test
-    fun `should return empty list when no projects exist`() {
-        // given
-        every { getAllProjectsUseCase() } returns emptyList()
-
-        // when 
-        projectView.showAllProjects()
-
-        // then
-        verify { getAllProjectsUseCase() }
-    }
-
-    @Test
-    fun `should return project list when projects exist`() {
-        // given
-        val project = Project(
+        sampleProject = Project(
             id = UUID.randomUUID(),
             name = "Project 1",
             assignedMatesIds = mutableListOf(UUID.randomUUID()),
             creationDate = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         )
-        every { getAllProjectsUseCase() } returns listOf(project)
+    }
 
-        // when
+    @Test
+    fun `should return true when project created successfully`() {
+        every { consoleUserInput.readString(any()) } returns "Test Project"
+        every { createProjectUseCase(any()) } returns true
+
+        projectView.createProject()
+
+        verify { createProjectUseCase(match { it.name == "Test Project" }) }
+    }
+
+    @Test
+    fun `should return false when project already exists`() {
+        every { consoleUserInput.readString(any()) } returns "Test Project"
+        every { createProjectUseCase(any()) } returns false
+
+        projectView.createProject()
+
+        verify { createProjectUseCase(any()) }
+    }
+
+    @Test
+    fun `should return empty list when no projects exist`() {
+        every { getAllProjectsUseCase() } returns emptyList()
+
         projectView.showAllProjects()
 
-        // then
         verify { getAllProjectsUseCase() }
+    }
+
+    @Test
+    fun `should display and select project when projects exist`() {
+        every { getAllProjectsUseCase() } returns listOf(sampleProject)
+        every { consoleUserInput.readInt(any(), any(), any()) } returns 1
+
+        projectView.showAllProjects()
+
+        verify { getAllProjectsUseCase() }
+        verify { consoleUserInput.readInt(any(), 1, 1) }
     }
 }
