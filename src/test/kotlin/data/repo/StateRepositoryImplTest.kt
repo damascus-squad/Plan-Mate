@@ -52,16 +52,17 @@ class StateRepositoryImplTest {
     }
 
     @Test
-    fun `should return null if it doesn't exist`() {
+    fun `should throw StateNotFoundException if it doesn't exist`() {
         // given
+        val nonExistentID = UUID.randomUUID()
         every { dataSource.read() } returns fakeTaskStates
 
-        // when
-        val nonExistentID = UUID.randomUUID()
-        val result = stateRepositoryImpl.getStateById(nonExistentID)
+        // when && then
+        val exception = assertThrows<StateNotFoundException> {
+            stateRepositoryImpl.getStateById(nonExistentID)
+        }
 
-        //then
-        assertThat(result).isNull()
+        assertThat(exception).isInstanceOf(StateNotFoundException::class.java)
         verify(exactly = 1) { dataSource.read() }
     }
 
@@ -146,7 +147,7 @@ class StateRepositoryImplTest {
         //then
         assertThat(result).isTrue()
         verify(exactly = 1) { dataSource.read() }
-        verify (exactly = 1){ dataSource.delete(stateToDelete.id) }
+        verify(exactly = 1) { dataSource.delete(stateToDelete.id) }
     }
 
     @Test
