@@ -18,26 +18,6 @@ class ProjectViewCli(
     private val getAllProjectsUseCase: GetAllProjectsUseCase
 ) : ProjectView {
 
-    override fun displayProjects() {
-        val projects = getAllProjectsUseCase()
-        if (projects.isEmpty()) {
-            printMessageBox("No projects available.", TerminalColor.Red)
-            return
-        }
-
-        displayDetailsProjects(
-            projects = projects,
-            label = "Basic Info",
-            contentSelector = { project ->
-                mapOf(
-                    "Name" to project.name,
-                    "Mates Count" to project.assignedMatesIds.size,
-                    "Created Date" to project.creationDate
-                )
-            }
-        )
-    }
-
     override fun createProject() {
         val name = consoleUserInput.readString("Enter project name:")
         val project = Project(
@@ -54,39 +34,24 @@ class ProjectViewCli(
         }
     }
 
-    override fun displayDetailsProjects(
-        projects: List<Project>,
-        label: String,
-        contentSelector: ((Project) -> Map<String, Any?>)?
-    ) {
+    override fun showAllProjects() {
+        val projects = getAllProjectsUseCase()
         if (projects.isEmpty()) {
-            println("No projects to display.")
+            printMessageBox("No projects available.", TerminalColor.Red)
             return
         }
 
-        println("📋 Displaying projects by $label:")
-
-        val headers = if (contentSelector != null) {
-            listOf("ID") + contentSelector(projects.first()).keys.toList()
-        } else {
-            listOf("ID", "Name", "Assigned Mates", "Created Date")
+        val headers = listOf("ID", "Name", "Mates Count", "Created Date")
+        val rows = projects.map {
+            listOf(
+                it.id.toString().take(8),
+                it.name,
+                it.assignedMatesIds.size.toString(),
+                it.creationDate.toString()
+            )
         }
 
-        val data = projects.map { project ->
-            val contentMap = contentSelector?.invoke(project)
-            if (contentMap != null) {
-                listOf(project.id.toString().take(8)) + headers.drop(1).map { contentMap[it] ?: "-" }
-            } else {
-                listOf(
-                    project.id.toString().take(8),
-                    project.name,
-                    project.assignedMatesIds.size.toString(),
-                    project.creationDate.toString()
-                )
-            }
-        }
-
-        printTable(headers, data)
+        printTable(headers, rows)
     }
 
     fun printMessageBox(

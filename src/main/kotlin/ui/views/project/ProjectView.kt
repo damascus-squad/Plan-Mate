@@ -1,14 +1,6 @@
 package org.damascus.ui.views.project
 
-import logic.model.Project
-
 interface ProjectView {
-    fun displayDetailsProjects(
-        projects: List<Project>,
-        label: String,
-        contentSelector: ((Project) -> Map<String, Any?>)? = null
-    )
-
-    fun displayProjects()
     fun createProject()
+    fun showAllProjects()
 }
