@@ -21,3 +21,5 @@ class StateNotFoundException(id: UUID) : Exception("State with id ${id} not foun
 class InvalidStateException(message: String) : Exception(message)
 
 class NoHistoryException(message: String) : Exception(message)
+
+class NoTasksFoundException(message: String) : Exception(message)
