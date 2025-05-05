@@ -1,4 +1,4 @@
-package logic.useCase.AuditLog
+package logic.useCase.auditLog
 
 import kotlinx.datetime.LocalDateTime
 import org.damascus.logic.model.ActionType
