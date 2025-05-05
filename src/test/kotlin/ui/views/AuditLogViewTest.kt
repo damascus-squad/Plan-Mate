@@ -3,11 +3,11 @@ package ui.views
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import logic.exception.NoLogsException
+import logic.exception.NoLogException
 import logic.repo.AuditLogsRepository
 import org.damascus.logic.model.History
-import org.damascus.logic.usecase.AuditLog.GetLogsByProjectIdUseCase
-import org.damascus.logic.usecase.AuditLog.GetLogsByTaskIdUseCase
+import logic.usecase.auditLog.GetLogsByProjectIdUseCase
+import logic.usecase.auditLog.GetLogsByTaskIdUseCase
 import org.damascus.ui.views.AuditLogView
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -54,11 +54,11 @@ class AuditLogViewTest {
     @Test
     fun `should display error when NoLogsException is thrown for project`() {
         val uuid = UUID.randomUUID()
-        every { getLogsByProjectId(uuid) } throws NoLogsException("No logs")
+        every { getLogsByProjectId(uuid) } throws NoLogException("No logs")
 
         auditLogView.viewProjectLog(uuid)
 
-        assertThrows<NoLogsException> {
+        assertThrows<NoLogException> {
             getLogsByProjectId(uuid)
         }
     }
@@ -66,11 +66,11 @@ class AuditLogViewTest {
     @Test
     fun `should display error when NoLogsException is thrown for task`() {
         val uuid = UUID.randomUUID()
-        every { getLogsByTaskId(uuid) } throws NoLogsException("No logs")
+        every { getLogsByTaskId(uuid) } throws NoLogException("No logs")
 
         auditLogView.viewTaskLog(uuid)
 
-        assertThrows<NoLogsException> {
+        assertThrows<NoLogException> {
             getLogsByTaskId(uuid)
         }
     }

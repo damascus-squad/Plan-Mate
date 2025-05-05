@@ -6,13 +6,13 @@ import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.exception.NoLogsException
+import logic.exception.NoLogException
 import logic.repo.AuditLogsRepository
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History.Companion.NO_TASK_STATE
 import org.damascus.logic.model.History.Companion.NO_UUID
-import org.damascus.logic.usecase.AuditLog.GetLogsByProjectIdUseCase
-import org.damascus.logic.usecase.AuditLog.GetLogsByTaskIdUseCase
+import logic.usecase.auditLog.GetLogsByProjectIdUseCase
+import logic.usecase.auditLog.GetLogsByTaskIdUseCase
 import org.damascus.logic.usecase.AuditLog.SaveLogUseCase
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -78,25 +78,25 @@ class AuditLogUseCaseTest {
     }
 
     @Test
-    fun `should throw NoHistoryException when no log are found for the given project id`() {
+    fun `should throw NoLogException when no log are found for the given project id`() {
         // Given
         val projectId = UUID.randomUUID()
         every { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
 
         // When & Then
-        assertThrows<NoLogsException> {
+        assertThrows<NoLogException> {
             getLogsByProjectId(projectId)
         }
     }
 
     @Test
-    fun `should throw NoHistoryException when no log are found for the given task id`() {
+    fun `should throw NoLogException when no log are found for the given task id`() {
         // Given
         val taskId = UUID.randomUUID()
         every { auditLogRepository.getLogsByTaskId(taskId) } returns emptyList()
 
         // When & Then
-        assertThrows<NoLogsException> {
+        assertThrows<NoLogException> {
             getLogsByTaskId(taskId)
         }
     }

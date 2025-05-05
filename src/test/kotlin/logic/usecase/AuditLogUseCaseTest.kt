@@ -11,8 +11,8 @@ import logic.repo.AuditLogsRepository
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History.Companion.NO_TASK_STATE
 import org.damascus.logic.model.History.Companion.NO_UUID
-import org.damascus.logic.usecase.AuditLog.GetLogsByProjectIdUseCase
-import org.damascus.logic.usecase.AuditLog.GetLogsByTaskIdUseCase
+import logic.usecase.auditLog.GetLogsByProjectIdUseCase
+import logic.usecase.auditLog.GetLogsByTaskIdUseCase
 import org.damascus.logic.usecase.AuditLog.SaveLogUseCase
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

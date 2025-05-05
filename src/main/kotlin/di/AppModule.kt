@@ -3,39 +3,34 @@ package org.damascus.di
 import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
-import logic.model.Project
 import data.repo.TaskRepositoryImpl
+import logic.model.Project
 import logic.model.Task
 import logic.model.User
-import logic.repo.AuditLogsRepository
-import logic.repo.AuthenticationRepository
-import logic.repo.DataSource
-import logic.repo.TaskRepository
-import logic.repo.TaskStateRepository
-import org.damascus.data.repo.AuthenticationRepoImpl
-import org.damascus.logic.service.MD5HashingService
+import logic.repo.*
+import logic.usecase.auth.AuthenticateUserLoginUseCase
+import logic.usecase.auth.CreateMateUseCase
 import org.damascus.data.csv.CsvDataSource
 import org.damascus.data.csv.generateCsvHeader
 import org.damascus.data.csv.utils.CsvConstants.PROJECTS_FILE
-import org.damascus.data.csv.utils.CsvConstants.USERS_FILE
 import org.damascus.data.csv.utils.CsvConstants.TASKS_FILE
+import org.damascus.data.csv.utils.CsvConstants.USERS_FILE
+import org.damascus.data.repo.AuditLogsRepositoryImpl
+import org.damascus.data.repo.AuthenticationRepoImpl
 import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.damascus.logic.service.HashingService
-import logic.usecase.auth.CreateMateUseCase
-import logic.usecase.auth.AuthenticateUserLoginUseCase
+import org.damascus.logic.service.MD5HashingService
 import org.damascus.logic.usecase.task.*
 import org.damascus.ui.PlanMateConsoleUi
-import org.damascus.logic.usecase.task.*
 import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.views.project.ProjectViewCli
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.LoginView
 import org.damascus.ui.views.project.ProjectView
+import org.damascus.ui.views.project.ProjectViewCli
 import org.damascus.ui.views.task.TaskCLI
 import org.koin.dsl.module
-import org.damascus.data.repo.AuditLogsRepositoryImpl
 
 val appModule = module {
 
@@ -69,36 +64,14 @@ val appModule = module {
         )
     }
 
-    single<AuthenticationRepository> { AuthenticationRepoImpl(get(), get()) }
-    single<TaskStateRepository> { TaskStateRepositoryImpl(get()) }
-    single<TaskRepository> { TaskRepositoryImpl(get()) }
 
     single<HashingService> { MD5HashingService() }
-    single<AuditLogsRepository> { AuditLogsRepositoryImpl(get()) }
 
-    single { CreateMateUseCase(get()) }
-    single { AuthenticateUserLoginUseCase(get()) }
+    single<Display> { ConsoleDisplay(get()) }
+    single<InputReader> { ConsoleUserInput() }
 
-    single { CreateTaskUseCase(get()) }
-    single { UpdateTaskUseCase(get()) }
-    single { DeleteTaskUseCase(get()) }
-    single { GetTaskUseCase(get()) }
-    single { GetTasksByProjectUseCase(get()) }
-
-    single { ConsoleUserInput() }
-    single<ConsoleDisplay> { ConsoleDisplay(get()) } // concrete class
-    single<Display> { get<ConsoleDisplay>() }
-    single<InputReader> { get<ConsoleUserInput>() }
-
-    single { ProjectViewCli(get(), get(), get(), get(), get()) }
-    single<ProjectView> { get<ProjectViewCli>() }
+    single<ProjectView> { ProjectViewCli(get(), get(), get(), get(), get()) }
     single { LoginView(get(), get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
-
-
-    single {
-        PlanMateConsoleUi(
-            get(),
-        )
-    }
+    single { PlanMateConsoleUi(get()) }
 }
