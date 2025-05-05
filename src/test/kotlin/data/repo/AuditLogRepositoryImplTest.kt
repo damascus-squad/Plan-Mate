@@ -45,7 +45,7 @@ class AuditLogRepositoryImplTest {
         every { dataSource.read() } returns listOf(log, otherLog)
 
         // When
-        val result = repository.getLogByProjectId(log.projectId)
+        val result = repository.getLogsByProjectId(log.projectId)
 
         // Then
         assertThat(result).containsExactly(log)
@@ -58,7 +58,7 @@ class AuditLogRepositoryImplTest {
         every { dataSource.read() } returns listOf(log)
 
         // When
-        val result = repository.getLogByProjectId(UUID.randomUUID())
+        val result = repository.getLogsByProjectId(UUID.randomUUID())
 
         // Then
         assertThat(result).isEmpty()
@@ -72,7 +72,7 @@ class AuditLogRepositoryImplTest {
         every { dataSource.read() } returns listOf(log, otherLog)
 
         // When
-        val result = repository.getLogByTaskId(log.taskId)
+        val result = repository.getLogsByTaskId(log.taskId)
 
         // Then
         assertThat(result).containsExactly(log)
@@ -85,7 +85,7 @@ class AuditLogRepositoryImplTest {
         every { dataSource.read() } returns listOf(log)
 
         // When
-        val result = repository.getLogByTaskId(UUID.randomUUID())
+        val result = repository.getLogsByTaskId(UUID.randomUUID())
 
         // Then
         assertThat(result).isEmpty()

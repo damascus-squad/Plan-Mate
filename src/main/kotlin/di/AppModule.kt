@@ -5,7 +5,7 @@ import data.csv.helpers.UserCsvHelper
 import data.repo.TaskRepositoryImpl
 import logic.model.Task
 import logic.model.User
-import logic.repo.AuditLogRepository
+import logic.repo.AuditLogsRepository
 import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
 import logic.repo.TaskRepository
@@ -57,7 +57,7 @@ val appModule = module {
     single<TaskStateRepository> { TaskStateRepositoryImpl(get()) }
     single<TaskRepository> { TaskRepositoryImpl(get()) }
     single<HashingService> { MD5HashingService() }
-    single<AuditLogRepository> { AuditLogRepositoryImpl(get()) }
+    single<AuditLogsRepository> { AuditLogRepositoryImpl(get()) }
 
     // Use cases
     single { CreateMateUseCase(get()) }
