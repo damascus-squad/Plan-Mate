@@ -39,40 +39,52 @@ class ProjectViewCliTest {
 
     @Test
     fun `should return true when project created successfully`() {
+        // given
         every { consoleUserInput.readString(any()) } returns "Test Project"
         every { createProjectUseCase(any()) } returns true
 
+        // when
         projectView.createProject()
 
+        // then
         verify { createProjectUseCase(match { it.name == "Test Project" }) }
     }
 
     @Test
     fun `should return false when project already exists`() {
+        // given
         every { consoleUserInput.readString(any()) } returns "Test Project"
         every { createProjectUseCase(any()) } returns false
 
+        // when
         projectView.createProject()
 
+        // then
         verify { createProjectUseCase(any()) }
     }
 
     @Test
     fun `should return empty list when no projects exist`() {
+        // given
         every { getAllProjectsUseCase() } returns emptyList()
 
+        // when
         projectView.showAllProjects()
 
+        // then
         verify { getAllProjectsUseCase() }
     }
 
     @Test
     fun `should display and select project when projects exist`() {
+        // given
         every { getAllProjectsUseCase() } returns listOf(sampleProject)
         every { consoleUserInput.readInt(any(), any(), any()) } returns 1
 
+        // when
         projectView.showAllProjects()
 
+        // then
         verify { getAllProjectsUseCase() }
         verify { consoleUserInput.readInt(any(), 1, 1) }
     }
