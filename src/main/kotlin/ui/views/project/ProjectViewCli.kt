@@ -41,18 +41,29 @@ class ProjectViewCli(
             return
         }
 
-        val headers = listOf("ID", "Name", "Mates Count", "Created Date")
-        val rows = projects.map {
+        val headers = listOf("No", "Name", "ID", "Mates Count", "Created Date")
+        val rows = projects.mapIndexed { index, project ->
             listOf(
-                it.id.toString().take(8),
-                it.name,
-                it.assignedMatesIds.size.toString(),
-                it.creationDate.toString()
+                (index + 1).toString(),
+                project.name,
+                project.id.toString().take(8),
+                project.assignedMatesIds.size.toString(),
+                project.creationDate.toString()
             )
         }
 
         printTable(headers, rows)
+
+        val choice = consoleUserInput.readInt(
+            prompt = "\nEnter project number to select: ",
+            min = 1,
+            max = projects.size
+        )
+
+        val selectedProject = projects[choice - 1]
+        println("\nYou selected: ${selectedProject.name} (ID: ${selectedProject.id})")
     }
+
 
     fun printMessageBox(
         message: String,
