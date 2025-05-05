@@ -19,3 +19,5 @@ class DuplicateStateException(id: UUID) : Exception("A state with ID ${id} alrea
 class StateNotFoundException(id: UUID) : Exception("State with id ${id} not found.")
 
 class NoLogException(message: String) : Exception(message)
+
+class ProjectsNotAvailableException(message: String) : Exception(message)

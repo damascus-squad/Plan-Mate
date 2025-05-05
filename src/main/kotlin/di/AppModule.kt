@@ -90,7 +90,7 @@ val appModule = module {
     single<Display> { get<ConsoleDisplay>() }
     single<InputReader> { get<ConsoleUserInput>() }
 
-    single { ProjectViewCli(get(), get(), get()) }
+    single { ProjectViewCli(get(), get(), get(), get(), get()) }
     single<ProjectView> { get<ProjectViewCli>() }
     single { LoginView(get(), get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
