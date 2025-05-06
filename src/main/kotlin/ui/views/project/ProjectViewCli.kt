@@ -1,4 +1,4 @@
-package org.damascus.ui.views.project
+package ui.views.project
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -7,14 +7,14 @@ import logic.exception.ProjectsNotAvailableException
 import logic.exception.UnauthorizedActionException
 import logic.model.Project
 import logic.model.User
+import logic.model.UserRole
 import logic.usecase.project.CreateProjectUseCase
 import logic.usecase.project.GetAllProjectsByMateIdUseCase
 import logic.usecase.project.GetAllProjectsUseCase
-import org.damascus.logic.model.Role
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.util.TerminalColor
-import org.damascus.ui.util.printTable
-import org.damascus.ui.util.withStyle
+import ui.io.ConsoleUserInput
+import ui.util.TerminalColor
+import ui.util.printTable
+import ui.util.withStyle
 import java.util.*
 
 class ProjectViewCli(
@@ -27,7 +27,7 @@ class ProjectViewCli(
 ) : ProjectView {
 
     override fun createProject() {
-        if (currentUser.role != Role.ADMIN) {
+        if (currentUser.userRole != UserRole.ADMIN) {
             printMessageBox("Only admins can create projects!", TerminalColor.Red)
             throw UnauthorizedActionException("create project")
         }
@@ -48,9 +48,9 @@ class ProjectViewCli(
     }
 
     override fun showAllProjects(): Project? {
-        val projects = when (currentUser.role) {
-            Role.ADMIN -> getAllProjectsUseCase()
-            Role.MATE -> getAllProjectsByMateIdUseCase(currentUser.id)
+        val projects = when (currentUser.userRole) {
+            UserRole.ADMIN -> getAllProjectsUseCase()
+            UserRole.MATE -> getAllProjectsByMateIdUseCase(currentUser.id)
         }
 
         if (projects.isEmpty()) {

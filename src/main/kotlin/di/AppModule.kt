@@ -1,36 +1,36 @@
-package org.damascus.di
+package di
 
+import data.csv.CsvDataSource
+import data.csv.generateCsvHeader
 import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
+import data.csv.utils.CsvConstants.PROJECTS_FILE
+import data.csv.utils.CsvConstants.TASKS_FILE
+import data.csv.utils.CsvConstants.USERS_FILE
+import data.dto.UserDTO
 import logic.model.Project
 import logic.model.Task
-import logic.model.User
 import logic.repo.DataSource
-import org.damascus.data.csv.CsvDataSource
-import org.damascus.data.csv.generateCsvHeader
-import org.damascus.data.csv.utils.CsvConstants.PROJECTS_FILE
-import org.damascus.data.csv.utils.CsvConstants.TASKS_FILE
-import org.damascus.data.csv.utils.CsvConstants.USERS_FILE
-import org.damascus.logic.service.HashingService
-import org.damascus.logic.service.MD5HashingService
-import org.damascus.ui.PlanMateConsoleUi
-import org.damascus.ui.io.ConsoleDisplay
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.io.Display
-import org.damascus.ui.io.InputReader
-import org.damascus.ui.views.LoginView
-import org.damascus.ui.views.project.ProjectView
-import org.damascus.ui.views.project.ProjectViewCli
-import org.damascus.ui.views.task.TaskCLI
+import logic.service.HashingService
+import logic.service.MD5HashingService
 import org.koin.dsl.module
+import ui.PlanMateConsoleUi
+import ui.io.ConsoleDisplay
+import ui.io.ConsoleUserInput
+import ui.io.Display
+import ui.io.InputReader
+import ui.views.LoginView
+import ui.views.project.ProjectView
+import ui.views.project.ProjectViewCli
+import ui.views.task.TaskCLI
 
 val appModule = module {
 
-    single<DataSource<User>> {
+    single<DataSource<UserDTO>> {
         CsvDataSource(
             USERS_FILE,
-            { generateCsvHeader<User>() },
+            { generateCsvHeader<UserDTO>() },
             extractId = { it.id },
             parser = UserCsvHelper::parseUser,
             serializer = UserCsvHelper::serializeUser

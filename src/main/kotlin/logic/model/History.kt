@@ -1,7 +1,6 @@
-package org.damascus.logic.model
+package logic.model
 
 import kotlinx.datetime.LocalDateTime
-import logic.model.TaskState
 import java.util.*
 
 data class History(

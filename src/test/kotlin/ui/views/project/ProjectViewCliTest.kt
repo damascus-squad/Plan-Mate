@@ -1,22 +1,23 @@
 package ui.views.project
 
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.model.Project
-import logic.model.User
 import logic.exception.ProjectsNotAvailableException
 import logic.exception.UnauthorizedActionException
+import logic.model.Project
+import logic.model.User
+import logic.model.UserRole
 import logic.usecase.project.CreateProjectUseCase
 import logic.usecase.project.GetAllProjectsByMateIdUseCase
 import logic.usecase.project.GetAllProjectsUseCase
-import org.damascus.logic.model.Role
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.views.project.ProjectViewCli
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import ui.io.ConsoleUserInput
 import java.util.*
 
 class ProjectViewCliTest {
@@ -47,7 +48,7 @@ class ProjectViewCliTest {
         // Given
         every { consoleUserInput.readString(any()) } returns "Test Project"
         every { createProjectUseCase(any()) } returns true
-        val admin = createUser(Role.ADMIN, "admin")
+        val admin = createUser(UserRole.ADMIN, "admin")
 
         // When
         val view = createProjectForUser(admin)
@@ -62,7 +63,7 @@ class ProjectViewCliTest {
         // Given
         every { consoleUserInput.readString(any()) } returns "Test Project"
         every { createProjectUseCase(any()) } returns false
-        val admin = createUser(Role.ADMIN, "admin")
+        val admin = createUser(UserRole.ADMIN, "admin")
 
         // When
         val view = createProjectForUser(admin)
@@ -77,7 +78,7 @@ class ProjectViewCliTest {
         // Given
         every { getAllProjectsUseCase() } returns emptyList()
         every { consoleUserInput.readInt(any(), any(), any()) } throws IllegalStateException()
-        val admin = createUser(Role.ADMIN, "admin")
+        val admin = createUser(UserRole.ADMIN, "admin")
 
         // When
         val view = createProjectForUser(admin)
@@ -94,7 +95,7 @@ class ProjectViewCliTest {
         // Given
         every { getAllProjectsUseCase() } returns listOf(sampleProject)
         every { consoleUserInput.readInt(any(), 1, 1) } returns 1
-        val admin = createUser(Role.ADMIN, "admin")
+        val admin = createUser(UserRole.ADMIN, "admin")
 
         // When
         val view = createProjectForUser(admin)
@@ -108,7 +109,7 @@ class ProjectViewCliTest {
     @Test
     fun `should display and select project when projects exist for mate`() {
         // Given
-        val mate = createUser(Role.MATE, "Mate 1")
+        val mate = createUser(UserRole.MATE, "Mate 1")
         every { getAllProjectsByMateIdUseCase(mate.id) } returns listOf(sampleProject)
         every { consoleUserInput.readInt(any(), 1, 1) } returns 1
 
@@ -124,7 +125,7 @@ class ProjectViewCliTest {
     @Test
     fun `should throw UnauthorizedActionException when mate tries to create project`() {
         // Given
-        val mate = createUser(Role.MATE, "Mate 1")
+        val mate = createUser(UserRole.MATE, "Mate 1")
 
         // When
         val view = createProjectForUser(mate)
@@ -138,7 +139,7 @@ class ProjectViewCliTest {
     @Test
     fun `should throw exception when no projects exist for mate`() {
         // Given
-        val mate = createUser(Role.MATE, "Mate 1")
+        val mate = createUser(UserRole.MATE, "Mate 1")
         every { getAllProjectsByMateIdUseCase(mate.id) } returns emptyList()
         every { consoleUserInput.readInt(any(), any(), any()) } throws IllegalStateException()
 
@@ -162,8 +163,8 @@ class ProjectViewCliTest {
         )
     }
 
-    private fun createUser(role: Role, username: String, password: String = "1233"): User {
-        return object : User(UUID.randomUUID(), username, password, role) {}
+    private fun createUser(userRole: UserRole, username: String, password: String = "1233"): User {
+        return User(UUID.randomUUID(), username, userRole)
     }
 
 }

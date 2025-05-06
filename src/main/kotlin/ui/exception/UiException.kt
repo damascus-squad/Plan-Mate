@@ -1,3 +1,3 @@
-package org.damascus.ui.exception
+package ui.exception
 
-class InputException(message: String): Exception(message)
+class InputException(message: String) : Exception(message)

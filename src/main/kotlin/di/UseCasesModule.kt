@@ -1,9 +1,9 @@
-package org.damascus.di
+package di
 
-import logic.usecase.auth.*
+import logic.usecase.auth.AuthenticateUserLoginUseCase
+import logic.usecase.auth.CreateMateUseCase
 import logic.usecase.project.*
-import org.damascus.logic.usecase.project.GetProjectStateUseCase
-import org.damascus.logic.usecase.task.*
+import logic.usecase.task.*
 import org.koin.dsl.module
 
 val useCaseModule = module {

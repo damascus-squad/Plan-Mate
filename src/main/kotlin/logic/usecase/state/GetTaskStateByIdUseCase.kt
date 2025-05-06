@@ -1,4 +1,4 @@
-package org.damascus.logic.usecase.state
+package logic.usecase.state
 
 import logic.exception.StateNotFoundException
 import logic.model.TaskState

@@ -1,4 +1,4 @@
-package org.damascus.data.csv
+package data.csv
 
 import logic.repo.DataSource
 import java.io.File

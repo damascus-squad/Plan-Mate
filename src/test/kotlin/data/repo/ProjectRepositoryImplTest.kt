@@ -1,17 +1,16 @@
 package data.repo
 
-import io.mockk.mockk
-import logic.model.Project
-import org.damascus.data.repo.ProjectRepositoryImpl
 import com.google.common.truth.Truth.assertThat
-import kotlinx.datetime.LocalDateTime
-import org.damascus.data.repo.ProjectNotFoundException
-import org.junit.jupiter.api.Test
 import io.mockk.every
-import org.junit.jupiter.api.assertThrows
+import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.datetime.LocalDateTime
+import logic.exception.ProjectNotFoundException
+import logic.model.Project
 import logic.repo.DataSource
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class ProjectRepositoryImplTest {

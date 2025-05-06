@@ -1,13 +1,15 @@
-import io.mockk.*
-import logic.model.Admin
+import io.mockk.Called
+import io.mockk.mockk
+import io.mockk.verify
+import logic.model.User
+import logic.model.UserRole
 import logic.usecase.auth.CreateMateUseCase
-import org.damascus.logic.model.Role
-import org.damascus.ui.io.ConsoleDisplay
-import org.damascus.ui.views.AdminDashboardView
-import org.damascus.ui.views.project.ProjectView
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import ui.io.ConsoleDisplay
+import ui.views.AdminDashboardView
+import ui.views.project.ProjectView
+import java.util.*
 
 class AdminDashboardViewTest {
     private lateinit var consoleDisplay: ConsoleDisplay
@@ -16,7 +18,7 @@ class AdminDashboardViewTest {
     private lateinit var createMateUseCase: CreateMateUseCase
 
 
-   @BeforeEach
+    @BeforeEach
     fun setup() {
         consoleDisplay = mockk(relaxed = true)
         projectView = mockk(relaxed = true)
@@ -27,11 +29,10 @@ class AdminDashboardViewTest {
     @Test
     fun `showDashboard should accept an admin user`() {
         // Given
-        val admin = Admin(
+        val admin = User(
             id = UUID.randomUUID(),
             username = "notAdminUser",
-            password = "password",
-            role = Role.ADMIN
+            userRole = UserRole.ADMIN
         )
 
         // When
@@ -40,14 +41,14 @@ class AdminDashboardViewTest {
         // Then
         verify(exactly = 1) { consoleDisplay.displayMenu(any(), any()) }
     }
+
     @Test
     fun `showDashboard should reject a non admin user`() {
         // Given
-        val notAdmin = Admin(
+        val notAdmin = User(
             id = UUID.randomUUID(),
             username = "adminUser",
-            password = "password",
-            role = Role.MATE
+            userRole = UserRole.MATE
         )
 
         // when

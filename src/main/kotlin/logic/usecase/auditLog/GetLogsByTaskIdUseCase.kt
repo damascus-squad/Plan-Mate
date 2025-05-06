@@ -1,8 +1,8 @@
 package logic.usecase.auditLog
 
 import logic.exception.NoLogException
+import logic.model.History
 import logic.repo.AuditLogsRepository
-import org.damascus.logic.model.History
 import java.util.*
 
 class GetLogsByTaskIdUseCase(

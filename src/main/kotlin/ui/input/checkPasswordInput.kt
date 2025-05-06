@@ -1,4 +1,4 @@
-package org.damascus.ui.input
+package ui.input
 
 private const val PASSWORD_PATTERN = "^[a-zA-Z0-9]+$"
 private const val MINIMUM_Length = 6

@@ -1,8 +1,8 @@
-package org.damascus.ui.views
+package ui.views
 
 import logic.model.User
 import logic.usecase.auth.AuthenticateUserLoginUseCase
-import org.damascus.ui.io.InputReader
+import ui.io.InputReader
 
 class LoginView(
     private val authenticateUserLoginUseCase: AuthenticateUserLoginUseCase,

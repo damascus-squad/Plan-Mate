@@ -1,8 +1,8 @@
-package org.damascus.ui.io
+package ui.io
 
-import org.damascus.ui.exception.InputException
-import org.damascus.ui.util.TerminalColor
-import org.damascus.ui.util.withStyle
+import ui.exception.InputException
+import ui.util.TerminalColor
+import ui.util.withStyle
 
 class ConsoleUserInput : InputReader {
     override fun readString(prompt: String): String {

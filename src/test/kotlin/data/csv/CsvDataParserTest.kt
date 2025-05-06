@@ -1,17 +1,10 @@
 package data.csv
 
 import com.google.common.truth.Truth.assertThat
+import data.csv.helpers.*
+import data.dto.UserDTO
 import kotlinx.datetime.LocalDateTime
 import logic.model.*
-import org.damascus.data.csv.CsvParsingException
-import data.csv.helpers.HistoryCsvHelper
-import data.csv.helpers.ProjectCsvHelper
-import data.csv.helpers.StateCsvHelper
-import data.csv.helpers.TaskCsvHelper
-import data.csv.helpers.UserCsvHelper
-import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
-import org.damascus.logic.model.Role
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -23,10 +16,10 @@ class CsvDataParserTest {
     @Test
     fun `parseUser should return a valid mate when csv entry is a valid mate`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},alice,1234,mate"
-        val expectedUser = Mate(
-            listOfUUIDs[0], "alice", "1234",
-            Role.MATE
+        val csvEntry = "${listOfUUIDs[0]},1234,alice,mate"
+        val expectedUser = UserDTO(
+            listOfUUIDs[0], "1234", "alice",
+            UserRole.MATE
         )
 
         // When
@@ -39,10 +32,10 @@ class CsvDataParserTest {
     @Test
     fun `parseUser should return a valid admin when csv entry is a valid admin`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},alice,1234,admin"
-        val expectedUser = Admin(
-            listOfUUIDs[0], "alice", "1234",
-            Role.ADMIN
+        val csvEntry = "${listOfUUIDs[0]},1234,alice,admin"
+        val expectedUser = UserDTO(
+            listOfUUIDs[0], "1234", "alice",
+            UserRole.ADMIN
         )
 
         // When
@@ -189,7 +182,7 @@ class CsvDataParserTest {
     @Test
     fun `parseState should throw CsvParsingException when csv entry is invalid`() {
         // Given
-        val csvEntry =  "${listOfUUIDs[0]},,,Backlog"
+        val csvEntry = "${listOfUUIDs[0]},,,Backlog"
 
         // When && Then
         assertThrows<CsvParsingException> {
@@ -200,7 +193,8 @@ class CsvDataParserTest {
     @Test
     fun `parseHistory should return a valid history when csv entry is a valid history`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},${listOfUUIDs[1]},${listOfUUIDs[2]},5,${listOfUUIDs[3]},${listOfUUIDs[4]},${listOfUUIDs[5]},$date1"
+        val csvEntry =
+            "${listOfUUIDs[0]},${listOfUUIDs[1]},${listOfUUIDs[2]},5,${listOfUUIDs[3]},${listOfUUIDs[4]},${listOfUUIDs[5]},$date1"
 
         val expectedHistory = History(
             id = listOfUUIDs[0],

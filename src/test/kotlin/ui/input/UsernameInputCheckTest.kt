@@ -1,5 +1,6 @@
+package ui.input
+
 import junit.framework.TestCase.assertEquals
-import org.damascus.ui.input.checkUsernameInput
 
 import kotlin.test.Test
 
@@ -16,7 +17,7 @@ class UsernameInputCheckTest {
         // Then
         assertEquals(false, result)
     }
-    
+
     @Test
     fun `checkUsernameInput should return false when username has a character other than letter, digit or underscore`() {
         // Given
@@ -28,7 +29,7 @@ class UsernameInputCheckTest {
         // Then
         assertEquals(false, result)
     }
-    
+
     @Test
     fun `checkUsernameInput should return false when username is empty`() {
         // Given
@@ -40,7 +41,7 @@ class UsernameInputCheckTest {
         // Then
         assertEquals(false, result)
     }
-    
+
     @Test
     fun `checkUsernameInput should return false when username is only spaces`() {
         // Given
@@ -52,7 +53,7 @@ class UsernameInputCheckTest {
         // Then
         assertEquals(false, result)
     }
-    
+
     @Test
     fun `checkUsernameInput should return false when username is less than 4 characters`() {
         // Given
@@ -76,7 +77,7 @@ class UsernameInputCheckTest {
         // Then
         assertEquals(false, result)
     }
-    
+
     @Test
     fun `checkUsernameInput should return false when username already exist`() {
         // Given

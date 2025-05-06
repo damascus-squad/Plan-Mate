@@ -1,10 +1,10 @@
-package org.damascus.ui.views
+package ui.views
 
 import logic.exception.NoLogException
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
 import logic.usecase.auditLog.GetLogsByTaskIdUseCase
-import org.damascus.ui.util.TerminalColor
-import org.damascus.ui.util.withStyle
+import ui.util.TerminalColor
+import ui.util.withStyle
 import java.util.*
 
 class AuditLogView(

@@ -1,17 +1,19 @@
 package data.repo
 
 import com.google.common.truth.Truth.assertThat
+import data.csv.CsvDataSource
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import io.mockk.*
 import logic.exception.TaskAlreadyExistsException
 import logic.exception.TaskNotFoundException
-import logic.model.*
-import org.damascus.data.csv.CsvDataSource
+import logic.model.Task
 import org.junit.jupiter.api.BeforeEach
-import java.util.*
 import org.junit.jupiter.api.assertThrows
+import java.util.*
 import kotlin.test.Test
 
 class TaskRepositoryImplTest {
@@ -57,7 +59,7 @@ class TaskRepositoryImplTest {
         repository.update(sampleTask.id, updatedTask)
 
         // Then
-        verify (exactly = 1){ dataSource.update(sampleTask.id, updatedTask) }
+        verify(exactly = 1) { dataSource.update(sampleTask.id, updatedTask) }
     }
 
     @Test

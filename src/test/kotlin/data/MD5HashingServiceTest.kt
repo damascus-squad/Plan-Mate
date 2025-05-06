@@ -1,6 +1,6 @@
 package data
 
-import org.damascus.logic.service.MD5HashingService
+import logic.service.MD5HashingService
 import org.junit.jupiter.api.Assertions.*
 import kotlin.test.Test
 

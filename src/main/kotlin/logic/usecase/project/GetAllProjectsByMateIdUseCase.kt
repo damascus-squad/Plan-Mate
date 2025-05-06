@@ -2,7 +2,7 @@ package logic.usecase.project
 
 import logic.model.Project
 import logic.repo.ProjectRepository
-import java.util.UUID
+import java.util.*
 
 class GetAllProjectsByMateIdUseCase(private val repository: ProjectRepository) {
     operator fun invoke(mateId: UUID): List<Project> {

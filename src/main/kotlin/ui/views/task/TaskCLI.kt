@@ -1,13 +1,13 @@
-package org.damascus.ui.views.task
+package ui.views.task
 
 import logic.model.Task
 import logic.repo.TaskStateRepository
-import org.damascus.logic.usecase.task.DeleteTaskUseCase
-import org.damascus.logic.usecase.task.GetTaskUseCase
-import org.damascus.logic.usecase.task.UpdateTaskUseCase
-import org.damascus.ui.io.ConsoleDisplay
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.util.UiAction
+import logic.usecase.task.DeleteTaskUseCase
+import logic.usecase.task.GetTaskUseCase
+import logic.usecase.task.UpdateTaskUseCase
+import ui.io.ConsoleDisplay
+import ui.io.ConsoleUserInput
+import ui.util.UiAction
 import java.util.*
 
 class TaskCLI(
@@ -63,7 +63,7 @@ class TaskCLI(
         println("Description: ${task.description}")
         println("Status: ${taskStateRepository.getStateById(taskId)}")
         println("Assignee: ${task.assigneeId}")
-        println("Created At: ${task.creationDate}" )
+        println("Created At: ${task.creationDate}")
     }
 
     private fun updateField(fieldName: String, updatedTask: Task): Task {

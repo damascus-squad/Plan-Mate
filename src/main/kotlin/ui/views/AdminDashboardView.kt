@@ -1,30 +1,30 @@
-package org.damascus.ui.views
+package ui.views
 
-import logic.model.Admin
-import org.damascus.logic.model.Role
-import org.damascus.ui.views.project.ProjectView
-import org.damascus.ui.util.TerminalColor
-import org.damascus.ui.util.withStyle
+import logic.model.User
+import logic.model.UserRole
 import logic.usecase.auth.CreateMateUseCase
-import org.damascus.ui.io.ConsoleDisplay
-import org.damascus.ui.util.UiAction
+import ui.io.ConsoleDisplay
+import ui.util.TerminalColor
+import ui.util.UiAction
+import ui.util.withStyle
+import ui.views.project.ProjectView
 
 class AdminDashboardView(
     private val consoleDisplay: ConsoleDisplay,
     private val projectView: ProjectView,
     private val createMateUseCase: CreateMateUseCase
 ) {
-    fun showDashboard(admin: Admin) {
-        if (admin.role != Role.ADMIN) {
+    fun showDashboard(user: User) {
+        if (user.userRole != UserRole.ADMIN) {
             println("Only admins can access this dashboard!".withStyle(TerminalColor.Red))
             return
         }
+
         val dashboardActions = listOf(
             UiAction("See ALL Projects") { projectView.showAllProjects() },
-            UiAction("Create New Mate") { viewMateCreation(admin, createMateUseCase) }
+            UiAction("Create New Mate") { viewMateCreation(user, createMateUseCase) }
         )
+
         consoleDisplay.displayMenu(dashboardActions, "ADMIN DASHBOARD")
     }
 }
-
-

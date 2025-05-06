@@ -1,4 +1,4 @@
-package org.damascus.ui.views.task
+package ui.views.task
 
 import java.util.*
 

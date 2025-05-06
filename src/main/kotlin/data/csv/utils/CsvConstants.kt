@@ -1,4 +1,4 @@
-package org.damascus.data.csv.utils
+package data.csv.utils
 
 object CsvConstants {
     const val USERS_FILE = "assets/users.csv"

@@ -1,27 +1,27 @@
 package data
 
-import org.junit.jupiter.api.Assertions.*
+import data.dto.UserDTO
+import data.repo.AuthenticationRepoImpl
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import logic.exception.InvalidCredentialsException
 import logic.exception.UnauthorizedActionException
 import logic.exception.UserAlreadyExistException
 import logic.exception.UserNotFoundException
-import logic.model.Admin
-import logic.model.Mate
 import logic.model.User
-import logic.repo.DataSource
-import org.damascus.logic.service.HashingService
+import logic.model.UserRole
 import logic.repo.AuthenticationRepository
-import org.damascus.data.repo.AuthenticationRepoImpl
-import org.damascus.logic.model.Role
+import logic.repo.DataSource
+import logic.service.HashingService
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.*
-import kotlin.test.BeforeTest
-import kotlin.test.Ignore
+import java.util.stream.Stream
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -30,12 +30,12 @@ class AuthenticationRepositoryImplTest {
 
     private lateinit var hashingService: HashingService
     private lateinit var authRepo: AuthenticationRepository
-    private lateinit var usersDataSource: DataSource<User>
+    private lateinit var usersDataSource: DataSource<UserDTO>
 
-    @BeforeTest
+    @BeforeEach
     fun setup() {
-        hashingService = mockk()
-        usersDataSource = mockk()
+        hashingService = mockk(relaxed = true)
+        usersDataSource = mockk(relaxed = true)
         authRepo = AuthenticationRepoImpl(hashingService, usersDataSource)
     }
 
@@ -45,7 +45,7 @@ class AuthenticationRepositoryImplTest {
         val username = "abdo"
         val rawPassword = "pass123"
         val hashedPassword = "hashed-pass"
-        val storedUser = Mate(id = UUID.randomUUID(), username, hashedPassword, Role.MATE)
+        val storedUser = UserDTO(id = UUID.randomUUID(), hashedPassword, username, UserRole.MATE)
 
         every { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(rawPassword, hashedPassword) } returns true
@@ -54,7 +54,7 @@ class AuthenticationRepositoryImplTest {
         val result = authRepo.login(username, rawPassword)
 
         // Then
-        assertEquals(storedUser, result)
+        assertEquals(storedUser.toUser(), result)
     }
 
     @Test
@@ -76,10 +76,10 @@ class AuthenticationRepositoryImplTest {
         val username = "ahmed"
         val correctHashed = "hashed-pass"
         val wrongInput = "wrong-pass"
-        val storedUser = Mate(id = UUID.randomUUID(), username, correctHashed, Role.MATE)
+        val storedUser = UserDTO(id = UUID.randomUUID(), correctHashed, username, UserRole.MATE)
+
         every { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(wrongInput, correctHashed) } returns false
-
 
         // When , Then
         assertFailsWith<InvalidCredentialsException> {
@@ -87,13 +87,13 @@ class AuthenticationRepositoryImplTest {
         }
     }
 
-    @Test
-    fun `createMate should fail if user already exists`() {
+    @ParameterizedTest
+    @MethodSource("existingUsersLists")
+    fun `createMate should fail if user already exists`(matesList: List<UserDTO>) {
         // Given
-        val admin = Admin(id = UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
-        val existingUsername = "mate1"
-        val newMate = Mate(id = UUID.randomUUID(), existingUsername, "pass", Role.MATE)
-        every { usersDataSource.read() } returns listOf(newMate)
+        val admin = User(UUID.randomUUID(), "hashed123", UserRole.ADMIN)
+        val existingUsername = "mate17"
+        every { usersDataSource.read() } returns matesList
 
         // When , Then
         assertFailsWith<UserAlreadyExistException> {
@@ -104,57 +104,24 @@ class AuthenticationRepositoryImplTest {
     @Test
     fun `createMate should hash password and return correct Mate`() {
         // Given
-        val admin = Admin(UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
+        val admin = User(UUID.randomUUID(), "admin1", UserRole.ADMIN)
         val username = "newMate"
         val rawPassword = "password"
-        val expectedHash = "hashedPassword"
+
         every { usersDataSource.read() } returns emptyList()
-        every { hashingService.hashData(rawPassword) } returns expectedHash
-        every { usersDataSource.write(any<Mate>()) } returns Unit
+        every { usersDataSource.write(any<UserDTO>()) } returns Unit
 
         // When
         val mate = authRepo.createMate(admin, username, rawPassword)
 
         // Then
         assertEquals(username, mate.username)
-        assertEquals(expectedHash, mate.password)
         verify(exactly = 1) { hashingService.hashData(rawPassword) }
     }
 
-    @Ignore
-    @Test
-    fun `createMate should add mate to users list`() {
-        // Given
-        val admin = Admin(UUID.randomUUID(), "admin1", "hashed123", Role.ADMIN)
-        val username = "newMate"
-        val rawPassword = "password"
-        val expectedHash = "hashedPassword"
-
-        val capturedMate = slot<Mate>()
-        var called = false
-
-        every { usersDataSource.read() } answers  {
-            if (!called) {
-                called = true
-                emptyList()
-            } else {
-                listOf(capturedMate.captured)
-            }
-        }
-        every { hashingService.hashData(rawPassword) } returns expectedHash
-        every { usersDataSource.write(capture(capturedMate)) } returns Unit
-
-        // When
-        val mate = authRepo.createMate(admin, username, rawPassword)
-
-        // Then
-        assertTrue(usersDataSource.read().contains(mate))
-    }
-
-
     @Test
     fun `createMate should fail when mate is the creator`() {
-        val mate = Mate(id = UUID.randomUUID(), "mate1", "hashedMatePass", Role.MATE)
+        val mate = User(id = UUID.randomUUID(), "mate1", UserRole.MATE)
         val username = "newMate"
         val rawPassword = "123"
 
@@ -163,40 +130,20 @@ class AuthenticationRepositoryImplTest {
         }
     }
 
-    @Test
-    fun `findByUsername should return user when user exists`() {
-        // Given
-        val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123", Role.MATE)
-        every { usersDataSource.read() } returns listOf(user)
+    companion object {
+        @JvmStatic
+        fun existingUsersLists(): Stream<List<UserDTO>> {
+            val existingUsername = "mate17"
+            val newMate = UserDTO(UUID.randomUUID(), "pass", existingUsername, UserRole.MATE)
 
-        // When
-        val result = authRepo.getUserByUsername("testUser")
-
-        // Then
-        assertEquals(user.username, result?.username)
-    }
-
-    @Test
-    fun `findByUsername should return null when user does not exist`() {
-        // Given
-        val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123", Role.MATE)
-        every { usersDataSource.read() } returns listOf(user)
-
-        // When
-        val result = authRepo.getUserByUsername("nonExistingUser")
-
-        // Then
-        assertNull(result)
-    }
-
-    @Test
-    fun `findByUsername should return null when list is empty`() {
-        // Given : empty list
-        every { usersDataSource.read() } returns emptyList()
-        // When
-        val result = authRepo.getUserByUsername("nonExistingUser")
-
-        // Then
-        assertNull(result)
+            return Stream.of(
+                listOf(newMate),
+                listOf(
+                    UserDTO(UUID.randomUUID(), "pass", "mate1", UserRole.MATE),
+                    UserDTO(UUID.randomUUID(), "pass", "mate2", UserRole.MATE),
+                    newMate
+                )
+            )
+        }
     }
 }
