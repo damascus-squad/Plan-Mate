@@ -50,7 +50,7 @@ class UpdateTaskStateUseCaseTest {
         every { repository.exist(taskState.id) } returns false
 
         //when
-        val exception = assertThrows<StateNotFoundException> {
+         assertThrows<StateNotFoundException> {
             updateTaskStateUseCase(taskState)
         }
 

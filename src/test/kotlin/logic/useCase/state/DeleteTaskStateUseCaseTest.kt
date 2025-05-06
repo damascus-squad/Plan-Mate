@@ -51,7 +51,7 @@ class DeleteTaskStateUseCaseTest {
         every { repository.exist(taskState.id) } returns false
 
         //when && then
-        val exception = assertThrows<StateNotFoundException> {
+         assertThrows<StateNotFoundException> {
             deleteTaskStateUseCase(taskState)
         }
 

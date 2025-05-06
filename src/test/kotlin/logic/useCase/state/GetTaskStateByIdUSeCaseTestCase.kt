@@ -48,7 +48,7 @@ class GetTaskStateByIdUSeCaseTestCase {
         every { repository.getStateById(taskStateId) } returns null
 
         // when && then
-        val exception = assertThrows<StateNotFoundException> {
+        assertThrows<StateNotFoundException> {
             getTaskStateByIdUseCase(taskStateId)
         }
 

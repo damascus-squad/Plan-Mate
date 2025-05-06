@@ -50,7 +50,7 @@ class CreateTaskStateUseCaseTest {
         every { repository.exist(existingId) } returns true
 
         // when && then
-        val exception = assertThrows<DuplicateStateException> {
+        assertThrows<DuplicateStateException> {
             createTaskStateUseCase(existingState)
         }
 
