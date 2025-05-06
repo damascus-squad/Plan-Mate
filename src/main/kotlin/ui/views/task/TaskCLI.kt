@@ -5,14 +5,14 @@ import logic.repo.TaskStateRepository
 import logic.usecase.task.DeleteTaskUseCase
 import logic.usecase.task.GetTaskUseCase
 import logic.usecase.task.UpdateTaskUseCase
-import ui.io.ConsoleDisplay
-import ui.io.ConsoleUserInput
+import ui.io.Display
+import ui.io.InputReader
 import ui.util.UiAction
 import java.util.*
 
 class TaskCLI(
-    private val display: ConsoleDisplay,
-    private val inputReader: ConsoleUserInput,
+    private val display: Display,
+    private val inputReader: InputReader,
     private val updateTaskUseCase: UpdateTaskUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
     private val taskStateRepository: TaskStateRepository,
