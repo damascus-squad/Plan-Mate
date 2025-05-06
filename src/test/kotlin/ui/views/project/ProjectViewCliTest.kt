@@ -8,10 +8,10 @@ import logic.model.Project
 import logic.model.User
 import logic.exception.ProjectsNotAvailableException
 import logic.exception.UnauthorizedActionException
+import logic.usecase.project.CreateProjectUseCase
+import logic.usecase.project.GetAllProjectsByMateIdUseCase
+import logic.usecase.project.GetAllProjectsUseCase
 import org.damascus.logic.model.Role
-import org.damascus.logic.usecase.ProjectUseCase.CreateProjectUseCase
-import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsUseCase
-import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsByMateIdUseCase
 import org.damascus.ui.io.ConsoleUserInput
 import org.damascus.ui.views.project.ProjectViewCli
 import org.junit.jupiter.api.BeforeEach

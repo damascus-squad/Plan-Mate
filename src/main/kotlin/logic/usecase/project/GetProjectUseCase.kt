@@ -1,4 +1,4 @@
-package org.damascus.logic.usecase.ProjectUseCase
+package logic.usecase.project
 
 import logic.model.Project
 import logic.repo.ProjectRepository

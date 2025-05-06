@@ -1,7 +1,7 @@
 package logic.repo
 
 import logic.model.Project
-import java.util.UUID
+import java.util.*
 
 interface ProjectRepository {
     fun create(project: Project): Boolean
