@@ -8,8 +8,8 @@ class CreateTaskStateUseCase(
     private val repository: TaskStateRepository
 ) {
     operator fun invoke(taskState: TaskState): Boolean {
-        if (repository.exist(taskState.id)) {
-            throw DuplicateStateException(taskState.id)
+        if (repository.exist(taskState.name)) {
+            throw DuplicateStateException(taskState.name)
         }
         return repository.create(taskState)
     }

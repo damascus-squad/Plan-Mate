@@ -29,7 +29,7 @@ class CreateTaskStateUseCaseTest {
         val newState = TaskState(UUID.randomUUID(), "To Do")
 
         //given
-        every { repository.exist(newState.id) } returns false
+        every { repository.exist(newState.name) } returns false
         every { repository.create(newState) } returns true
 
         //when
@@ -37,7 +37,7 @@ class CreateTaskStateUseCaseTest {
 
         //then
         assertThat(result).isTrue()
-        verify(exactly = 1) { repository.exist(newState.id) }
+        verify(exactly = 1) { repository.exist(newState.name) }
         verify(exactly = 1) { repository.create(newState) }
     }
 
@@ -47,14 +47,14 @@ class CreateTaskStateUseCaseTest {
         val existingState = TaskState(existingId, "In Progress")
 
         // given
-        every { repository.exist(existingId) } returns true
+        every { repository.exist(existingState.name) } returns true
 
         // when && then
         assertThrows<DuplicateStateException> {
             createTaskStateUseCase(existingState)
         }
 
-        verify(exactly = 1) { repository.exist(existingId) }
+        verify(exactly = 1) { repository.exist(existingState.name) }
         verify(exactly = 0) { repository.create(existingState) }
     }
 

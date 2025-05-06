@@ -26,38 +26,38 @@ class UpdateTaskStateUseCaseTest {
 
     @Test
     fun `should update state when it exists`() {
-        val taskState = TaskState(UUID.randomUUID(), "In Progress")
-
+        val updatedTaskState = TaskState(UUID.randomUUID(), "In Progress")
+        val existTaskState = TaskState(UUID.randomUUID(), "Done")
         //given
-        every { repository.exist(taskState.id) } returns true
-        every { repository.update(taskState) } returns true
+        every { repository.exist(updatedTaskState.name) } returns true
+        every { repository.update(existTaskState, updatedTaskState) } returns true
 
         //when
-        val result = updateTaskStateUseCase(taskState)
+        val result = updateTaskStateUseCase(existTaskState, updatedTaskState)
 
         //then
         assertTrue(result)
-        verify(exactly = 1) { repository.exist(taskState.id) }
-        verify(exactly = 1) { repository.update(taskState) }
+        verify(exactly = 1) { repository.exist(updatedTaskState.name) }
+        verify(exactly = 1) { repository.update(existTaskState, updatedTaskState) }
 
     }
 
     @Test
     fun `should throw StateNotFoundException when state doesn't exist`() {
-        val taskState = TaskState(UUID.randomUUID(), "New")
+        val updatedTaskState = TaskState(UUID.randomUUID(), "New")
+        val existTaskState = TaskState(UUID.randomUUID(), "Done")
 
         //given
-        every { repository.exist(taskState.id) } returns false
+        every { repository.exist(updatedTaskState.name) } returns false
 
         //when
-         assertThrows<StateNotFoundException> {
-            updateTaskStateUseCase(taskState)
+        assertThrows<StateNotFoundException> {
+            updateTaskStateUseCase(existTaskState, updatedTaskState)
         }
 
         //then
-
-        verify (exactly = 1){ repository.exist(taskState.id) }
-        verify (exactly = 0){ repository.update(taskState) }
+        verify(exactly = 1) { repository.exist(updatedTaskState.name) }
+        verify(exactly = 0) { repository.update(existTaskState, updatedTaskState) }
 
     }
 }

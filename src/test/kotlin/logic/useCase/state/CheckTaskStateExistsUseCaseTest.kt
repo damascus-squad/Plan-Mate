@@ -3,6 +3,7 @@ package logic.useCase.state
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import logic.model.TaskState
 import logic.repo.TaskStateRepository
 import org.damascus.logic.usecase.state.CheckTaskStateExistsUseCase
 import org.junit.jupiter.api.BeforeEach
@@ -25,31 +26,32 @@ class CheckTaskStateExistsUseCaseTest {
     @Test
     fun `should return true when state exists`() {
         val stateId = UUID.randomUUID()
-
+        val taskState = TaskState(stateId, "In Progress")
         //given
-        every { repository.exist(stateId) } returns true
+        every { repository.exist(taskState.name) } returns true
 
         //when
-        val result = checkTaskStateExistsUseCase(stateId)
+        val result = checkTaskStateExistsUseCase(taskState.name)
 
         //then
         assertTrue(result)
-        verify(exactly = 1) { repository.exist(stateId) }
+        verify(exactly = 1) { repository.exist(taskState.name) }
     }
 
     @Test
     fun `should return false when state doesn't exist`() {
-        val existingId = UUID.randomUUID()
+        val stateId = UUID.randomUUID()
+        val taskState = TaskState(stateId, "In Progress")
 
         //given
-        every { repository.exist(existingId) } returns false
+        every { repository.exist(taskState.name) } returns false
 
         //when
-        val result = checkTaskStateExistsUseCase(existingId)
+        val result = checkTaskStateExistsUseCase(taskState.name)
 
         //then
         assertFalse(result)
-        verify(exactly = 1) { repository.exist(existingId) }
+        verify(exactly = 1) { repository.exist(taskState.name) }
     }
 
 }

@@ -8,8 +8,8 @@ class DeleteTaskStateUseCase(
     private val repository: TaskStateRepository
 ) {
     operator fun invoke(taskState: TaskState): Boolean {
-        if (!repository.exist(taskState.id)) {
-            throw StateNotFoundException(taskState.id)
+        if (!repository.exist(taskState.name)) {
+            throw StateNotFoundException()
         }
         return repository.delete(taskState)
     }

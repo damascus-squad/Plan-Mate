@@ -29,7 +29,7 @@ class DeleteTaskStateUseCaseTest {
         val taskState = TaskState(UUID.randomUUID(), "In Progress")
 
         //given
-        every { repository.exist(taskState.id) } returns true
+        every { repository.exist(taskState.name) } returns true
         every { repository.delete(taskState) } returns true
 
         //when
@@ -38,7 +38,7 @@ class DeleteTaskStateUseCaseTest {
         //then
         assertTrue(result)
 
-        verify(exactly = 1) { repository.exist(taskState.id) }
+        verify(exactly = 1) { repository.exist(taskState.name) }
         verify(exactly = 1) { repository.delete(taskState) }
 
     }
@@ -48,14 +48,14 @@ class DeleteTaskStateUseCaseTest {
         val taskState = TaskState(UUID.randomUUID(), "New")
 
         //given
-        every { repository.exist(taskState.id) } returns false
+        every { repository.exist(taskState.name) } returns false
 
         //when && then
-         assertThrows<StateNotFoundException> {
+        assertThrows<StateNotFoundException> {
             deleteTaskStateUseCase(taskState)
         }
 
-        verify(exactly = 1) { repository.exist(taskState.id) }
+        verify(exactly = 1) { repository.exist(taskState.name) }
         verify(exactly = 0) { repository.delete(taskState) }
 
     }

@@ -7,10 +7,10 @@ import logic.repo.TaskStateRepository
 class UpdateTaskStateUseCase(
     private val repository: TaskStateRepository
 ) {
-    operator fun invoke(taskState: TaskState): Boolean {
-        if (!repository.exist(taskState.id)) {
-            throw StateNotFoundException(taskState.id)
+    operator fun invoke(taskState: TaskState,updatedTaskState: TaskState): Boolean {
+        if (!repository.exist(updatedTaskState.name)) {
+            throw StateNotFoundException()
         }
-        return repository.update(taskState)
+        return repository.update(taskState,updatedTaskState)
     }
 }

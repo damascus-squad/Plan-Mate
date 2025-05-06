@@ -98,18 +98,18 @@ class StateRepositoryImplTest {
 
     @Test
     fun `update should replace existing state`() {
-        val updatedState = fakeTaskStates[1].copy(name = "Deleted")
+        val updatedState = fakeTaskStates[1].copy(name = "New")
 
         //give
         every { dataSource.read() } returns fakeTaskStates
 
         //when
-        val result = stateRepositoryImpl.update(updatedState)
+        val result = stateRepositoryImpl.update(fakeTaskStates[1],updatedState)
 
         //then
         assertThat(result).isTrue()
         verify { dataSource.read() }
-        verify { dataSource.update(updatedState.id, updatedState) }
+        verify { dataSource.update(fakeTaskStates[1].id, updatedState) }
 
     }
 
@@ -120,10 +120,10 @@ class StateRepositoryImplTest {
 
         // when
         val nonExistentTaskState = TaskState(UUID.randomUUID(), "Unknown")
-
+        val updatedTaskState = nonExistentTaskState.copy(name = "In Progress")
         //then
         assertThrows<StateNotFoundException> {
-            stateRepositoryImpl.update(nonExistentTaskState)
+            stateRepositoryImpl.update(nonExistentTaskState,updatedTaskState)
         }
         verify(exactly = 1) { dataSource.read() }
         verify(exactly = 0) { dataSource.update(any(), any()) }
@@ -167,7 +167,7 @@ class StateRepositoryImplTest {
         every { dataSource.read() } returns fakeTaskStates
 
         // when
-        val result = stateRepositoryImpl.exist(existingState.id)
+        val result = stateRepositoryImpl.exist(existingState.name)
 
         // then
         assertThat(result).isTrue()
@@ -177,11 +177,12 @@ class StateRepositoryImplTest {
     @Test
     fun `exist should return false when state does not exist`() {
         // given
-        val nonExistentId = UUID.randomUUID()
+        val id = UUID.randomUUID()
+        val nonExistentTaskState = TaskState(id, "Done")
         every { dataSource.read() } returns fakeTaskStates
 
         // when
-        val result = stateRepositoryImpl.exist(nonExistentId)
+        val result = stateRepositoryImpl.exist(nonExistentTaskState.name)
 
         // then
         assertThat(result).isFalse()

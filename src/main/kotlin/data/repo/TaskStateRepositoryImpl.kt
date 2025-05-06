@@ -15,37 +15,37 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
 
     override fun getStateById(id: UUID): TaskState {
         return dataSource.read().firstOrNull { it.id == id }
-            ?: throw StateNotFoundException(id)
+            ?: throw StateNotFoundException()
     }
 
     override fun create(taskState: TaskState): Boolean {
-        if (exist(taskState.id)) {
-            throw DuplicateStateException(taskState.id)
+        if (exist(taskState.name)) {
+            throw DuplicateStateException(taskState.name)
         }
         dataSource.write(taskState)
 
         return true
     }
 
-    override fun update(taskState: TaskState): Boolean {
-        if (!exist(taskState.id)) {
-            throw StateNotFoundException(taskState.id)
+    override fun update(taskState: TaskState, updatedTaskState: TaskState): Boolean {
+        if (!exist(taskState.name)) {
+            throw StateNotFoundException()
         }
-        dataSource.update(taskState.id, taskState)
+        dataSource.update(taskState.id, updatedTaskState)
 
         return true
     }
 
     override fun delete(taskState: TaskState): Boolean {
-        if (!exist(taskState.id)) {
-            throw StateNotFoundException(taskState.id)
+        if (!exist(taskState.name)) {
+            throw StateNotFoundException()
         }
         dataSource.delete(taskState.id)
 
         return true
     }
 
-    override fun exist(id: UUID): Boolean {
-        return dataSource.read().any { it.id == id }
+    override fun exist(name: String): Boolean {
+        return dataSource.read().any { it.name == name }
     }
 }
