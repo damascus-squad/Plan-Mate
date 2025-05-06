@@ -1,6 +1,6 @@
-package org.damascus.logic.model
+package logic.model
 
-import org.damascus.data.csv.CsvParsingException
+import data.csv.CsvParsingException
 
 enum class UserRole {
     ADMIN,

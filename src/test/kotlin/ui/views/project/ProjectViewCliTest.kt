@@ -1,22 +1,23 @@
 package ui.views.project
 
-import io.mockk.*
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.model.Project
-import logic.model.User
 import logic.exception.ProjectsNotAvailableException
 import logic.exception.UnauthorizedActionException
-import org.damascus.logic.model.UserRole
-import org.damascus.logic.usecase.ProjectUseCase.CreateProjectUseCase
-import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsUseCase
-import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsByMateIdUseCase
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.views.project.ProjectViewCli
+import logic.model.Project
+import logic.model.User
+import logic.model.UserRole
+import logic.usecase.project.CreateProjectUseCase
+import logic.usecase.project.GetAllProjectsByMateIdUseCase
+import logic.usecase.project.GetAllProjectsUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import ui.io.ConsoleUserInput
 import java.util.*
 
 class ProjectViewCliTest {

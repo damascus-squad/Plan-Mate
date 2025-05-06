@@ -1,6 +1,6 @@
-package org.damascus.ui.io
+package ui.io
 
-import org.damascus.ui.util.UiAction
+import ui.util.UiAction
 
 interface Display {
     fun displayMenu(uiActionList: List<UiAction>, menuTitle: String)

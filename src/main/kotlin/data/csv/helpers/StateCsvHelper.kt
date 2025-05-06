@@ -1,8 +1,8 @@
 package data.csv.helpers
 
+import data.csv.CsvParsingException
+import data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import logic.model.TaskState
-import org.damascus.data.csv.CsvParsingException
-import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import java.util.*
 
 object StateCsvHelper {

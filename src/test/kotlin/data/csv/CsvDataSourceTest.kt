@@ -3,11 +3,8 @@ package data.csv
 import com.google.common.truth.Truth.assertThat
 import data.csv.CsvTestHelper.HISTORY_FILE_PATH
 import data.csv.CsvTestHelper.createHistory
-import org.damascus.data.csv.CsvDataSource
-import org.damascus.data.csv.CsvEntryNotFound
-import org.damascus.data.csv.CsvFileNotFound
-import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
+import logic.model.ActionType
+import logic.model.History
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -15,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.File
-import java.util.*
 
 class CsvDataSourceTest {
 

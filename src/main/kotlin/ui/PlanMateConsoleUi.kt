@@ -1,6 +1,6 @@
-package org.damascus.ui
+package ui
 
-import org.damascus.ui.views.LoginView
+import ui.views.LoginView
 
 class PlanMateConsoleUi(
     private val loginView: LoginView

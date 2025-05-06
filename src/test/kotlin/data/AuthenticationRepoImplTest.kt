@@ -1,6 +1,7 @@
 package data
 
 import data.dto.UserDTO
+import data.repo.AuthenticationRepoImpl
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
@@ -10,11 +11,10 @@ import logic.exception.UnauthorizedActionException
 import logic.exception.UserAlreadyExistException
 import logic.exception.UserNotFoundException
 import logic.model.User
+import logic.model.UserRole
 import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
-import org.damascus.data.repo.AuthenticationRepoImpl
-import org.damascus.logic.model.UserRole
-import org.damascus.logic.service.HashingService
+import logic.service.HashingService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith

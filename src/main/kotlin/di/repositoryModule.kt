@@ -1,11 +1,7 @@
-package org.damascus.di
+package di
 
-import data.repo.TaskRepositoryImpl
+import data.repo.*
 import logic.repo.*
-import org.damascus.data.repo.AuditLogsRepositoryImpl
-import org.damascus.data.repo.AuthenticationRepoImpl
-import org.damascus.data.repo.ProjectRepositoryImpl
-import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.koin.dsl.module
 
 val repositoryModule = module {

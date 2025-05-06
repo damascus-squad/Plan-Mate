@@ -1,4 +1,4 @@
-package org.damascus.data.repo
+package data.repo
 
 import data.dto.UserDTO
 import logic.exception.InvalidCredentialsException
@@ -6,10 +6,10 @@ import logic.exception.UnauthorizedActionException
 import logic.exception.UserAlreadyExistException
 import logic.exception.UserNotFoundException
 import logic.model.User
+import logic.model.UserRole
 import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
-import org.damascus.logic.model.UserRole
-import org.damascus.logic.service.HashingService
+import logic.service.HashingService
 import java.util.*
 
 class AuthenticationRepoImpl(

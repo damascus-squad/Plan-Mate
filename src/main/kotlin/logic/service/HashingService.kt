@@ -1,4 +1,4 @@
-package org.damascus.logic.service
+package logic.service
 
 interface HashingService {
     fun <T> hashData(data: T): String

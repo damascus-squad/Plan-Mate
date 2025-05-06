@@ -1,21 +1,17 @@
-package logic.useCase
+package logic.usecase.auditLog
 
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.exception.NoLogException
+import logic.model.ActionType
+import logic.model.History
 import logic.repo.AuditLogsRepository
-import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History.Companion.NO_TASK_STATE
-import org.damascus.logic.model.History.Companion.NO_UUID
-import logic.usecase.auditLog.GetLogsByProjectIdUseCase
-import logic.usecase.auditLog.GetLogsByTaskIdUseCase
-import org.damascus.logic.usecase.AuditLog.SaveLogUseCase
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -46,7 +42,7 @@ class AuditLogUseCaseTest {
         // Given
         val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
-        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault())
         val projectId = UUID.randomUUID()
         every { auditLogRepository.getLogsByProjectId(projectId) } returns listOf(
             createFakeActionLog(
@@ -74,7 +70,7 @@ class AuditLogUseCaseTest {
         val historyLog = getLogsByProjectId(projectId)
 
         // Then
-        assertEquals(2, historyLog.size)
+        Assertions.assertEquals(2, historyLog.size)
     }
 
     @Test
@@ -106,7 +102,7 @@ class AuditLogUseCaseTest {
         // Given
         val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
-        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault())
         val userAction = createFakeActionLog(
             id,
             userId,
@@ -136,7 +132,7 @@ class AuditLogUseCaseTest {
         val id = UUID.randomUUID()
         val projectId = UUID.randomUUID()
         val userId = UUID.randomUUID()
-        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault())
         val log = listOf(
             createFakeActionLog(
                 id,
@@ -155,7 +151,7 @@ class AuditLogUseCaseTest {
         val result = getLogsByProjectId(projectId)
 
         // Then
-        assertTrue { result.any { projectId == it.projectId } }
+        Assertions.assertTrue { result.any { projectId == it.projectId } }
     }
 
     @Test
@@ -164,7 +160,7 @@ class AuditLogUseCaseTest {
         val id = UUID.randomUUID()
         val taskId = UUID.randomUUID()
         val userId = UUID.randomUUID()
-        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault())
         val log = listOf(
             createFakeActionLog(
                 id,
@@ -183,7 +179,7 @@ class AuditLogUseCaseTest {
         val result = getLogsByTaskId(taskId)
 
         // Then
-        assertTrue(result.any { it.taskId == taskId })
+        Assertions.assertTrue(result.any { it.taskId == taskId })
     }
 
     @ParameterizedTest
@@ -200,7 +196,7 @@ class AuditLogUseCaseTest {
     )
     fun `should create ActionLog with action type when action type is valid`(actionType: ActionType) {
         // Given
-        val actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val actionDate = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault())
 
         // When
         val log = createFakeActionLog(
@@ -210,7 +206,7 @@ class AuditLogUseCaseTest {
             targetedStateId = inProgressStateId
         )
         // Then
-        assertEquals(actionType, log.actionType)
+        Assertions.assertEquals(actionType, log.actionType)
     }
 
     @Test
@@ -219,7 +215,27 @@ class AuditLogUseCaseTest {
         val name = "Nothing"
 
         // When & Then
-        assertEquals(UUID(0, 0), NO_UUID)
-        assertEquals(name, NO_TASK_STATE.name)
+        Assertions.assertEquals(UUID(0, 0), History.Companion.NO_UUID)
+        Assertions.assertEquals(name, History.Companion.NO_TASK_STATE.name)
     }
+
+    private fun createFakeActionLog(
+        id: UUID = UUID.randomUUID(),
+        userId: UUID = UUID.randomUUID(),
+        taskId: UUID = UUID.randomUUID(),
+        projectId: UUID = UUID.randomUUID(),
+        actionDate: LocalDateTime,
+        currentStateId: UUID,
+        targetedStateId: UUID,
+        actionType: ActionType = ActionType.TASK_STATE_CHANGED,
+    ): History = History(
+        id = id,
+        taskId = taskId,
+        projectId = projectId,
+        currentStateId = currentStateId,
+        newStateId = targetedStateId,
+        actionDate = actionDate,
+        actionType = actionType,
+        userId = userId,
+    )
 }

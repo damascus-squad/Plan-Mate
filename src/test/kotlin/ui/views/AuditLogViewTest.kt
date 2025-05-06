@@ -4,11 +4,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import logic.exception.NoLogException
+import logic.model.History
 import logic.repo.AuditLogsRepository
-import org.damascus.logic.model.History
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
 import logic.usecase.auditLog.GetLogsByTaskIdUseCase
-import org.damascus.ui.views.AuditLogView
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

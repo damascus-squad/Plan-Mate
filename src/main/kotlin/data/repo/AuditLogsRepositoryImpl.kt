@@ -1,8 +1,8 @@
-package org.damascus.data.repo
+package data.repo
 
+import logic.model.History
 import logic.repo.AuditLogsRepository
 import logic.repo.DataSource
-import org.damascus.logic.model.History
 import java.util.*
 
 class AuditLogsRepositoryImpl(private val dataSource: DataSource<History>) : AuditLogsRepository {

@@ -1,8 +1,8 @@
-package org.damascus.ui.io
+package ui.io
 
-import org.damascus.ui.util.TerminalColor
-import org.damascus.ui.util.UiAction
-import org.damascus.ui.util.withStyle
+import ui.util.TerminalColor
+import ui.util.UiAction
+import ui.util.withStyle
 
 class ConsoleDisplay(
     private val inputReader: ConsoleUserInput

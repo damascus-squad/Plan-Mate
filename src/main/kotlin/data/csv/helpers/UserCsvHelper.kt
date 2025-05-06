@@ -1,9 +1,9 @@
 package data.csv.helpers
 
+import data.csv.CsvParsingException
+import data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import data.dto.UserDTO
-import org.damascus.data.csv.CsvParsingException
-import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
-import org.damascus.logic.model.UserRole
+import logic.model.UserRole
 import java.util.*
 
 object UserCsvHelper {

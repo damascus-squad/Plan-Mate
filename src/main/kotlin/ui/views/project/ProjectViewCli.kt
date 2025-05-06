@@ -1,4 +1,4 @@
-package org.damascus.ui.views.project
+package ui.views.project
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -7,14 +7,14 @@ import logic.exception.ProjectsNotAvailableException
 import logic.exception.UnauthorizedActionException
 import logic.model.Project
 import logic.model.User
-import org.damascus.logic.model.UserRole
-import org.damascus.logic.usecase.ProjectUseCase.CreateProjectUseCase
-import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsByMateIdUseCase
-import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsUseCase
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.util.TerminalColor
-import org.damascus.ui.util.printTable
-import org.damascus.ui.util.withStyle
+import logic.model.UserRole
+import logic.usecase.project.CreateProjectUseCase
+import logic.usecase.project.GetAllProjectsByMateIdUseCase
+import logic.usecase.project.GetAllProjectsUseCase
+import ui.io.ConsoleUserInput
+import ui.util.TerminalColor
+import ui.util.printTable
+import ui.util.withStyle
 import java.util.*
 
 class ProjectViewCli(
