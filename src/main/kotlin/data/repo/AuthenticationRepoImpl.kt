@@ -14,7 +14,7 @@ import java.util.*
 
 class AuthenticationRepoImpl(
     private val hashingService: HashingService,
-    val usersDataSource: DataSource<UserDTO>
+    private val usersDataSource: DataSource<UserDTO>
 ) : AuthenticationRepository {
 
     override fun login(username: String, password: String): User {

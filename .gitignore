@@ -43,4 +43,4 @@ bin/
 
 # Ignore CSV test data
 *.csv
-assets/
+!users.csv
