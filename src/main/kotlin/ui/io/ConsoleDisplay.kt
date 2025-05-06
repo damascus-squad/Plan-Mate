@@ -5,7 +5,7 @@ import ui.util.UiAction
 import ui.util.withStyle
 
 class ConsoleDisplay(
-    private val inputReader: ConsoleUserInput
+    private val inputReader: InputReader
 ) : Display {
     override fun displayMenu(uiActionList: List<UiAction>, menuTitle: String) {
         while (true) {
