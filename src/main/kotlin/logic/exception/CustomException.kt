@@ -21,3 +21,19 @@ class StateNotFoundException(id: UUID) : Exception("State with id ${id} not foun
 class InvalidStateException(message: String) : Exception(message)
 
 class NoHistoryException(message: String) : Exception(message)
+
+class InvalidPasswordException(password: String) : Exception("Invalid password '$password'")
+
+class InvalidUserNameInputException(message: String) : RuntimeException(message)
+
+class BlankInputException(message: String = "Input cannot be blank") : RuntimeException(message)
+
+
+
+
+
+
+
+
+
+
