@@ -22,7 +22,7 @@ class CsvDataParserTest {
     @Test
     fun `parseUser should return a valid mate when csv entry is a valid mate`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},alice,1234,mate"
+        val csvEntry = "${listOfUUIDs[0]},1234,alice,mate"
         val expectedUser = UserDTO(
             listOfUUIDs[0], "1234", "alice",
             UserRole.MATE
@@ -38,7 +38,7 @@ class CsvDataParserTest {
     @Test
     fun `parseUser should return a valid admin when csv entry is a valid admin`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},alice,1234,admin"
+        val csvEntry = "${listOfUUIDs[0]},1234,alice,admin"
         val expectedUser = UserDTO(
             listOfUUIDs[0], "1234", "alice",
             UserRole.ADMIN
