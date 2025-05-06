@@ -1,21 +1,19 @@
-package ui.views
-
 import io.mockk.*
 import logic.model.Admin
+import logic.usecase.auth.CreateMateUseCase
 import org.damascus.logic.model.Role
-import org.damascus.ui.io.InputReader
+import org.damascus.ui.io.ConsoleUserInput
+import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.AdminDashboardView
 import org.damascus.ui.views.project.ProjectView
-import logic.usecase.auth.CreateMateUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.UUID
 
-
 class AdminDashboardViewTest {
 
     private lateinit var adminDashboardView: AdminDashboardView
-    private lateinit var inputReader: InputReader
+    private lateinit var inputReader: ConsoleUserInput
     private lateinit var projectView: ProjectView
     private lateinit var createMateUseCase: CreateMateUseCase
     private lateinit var admin: Admin
@@ -50,13 +48,25 @@ class AdminDashboardViewTest {
         adminDashboardView.showDashboard(nonAdmin)
 
         // Then
-        verify(exactly = 0) { inputReader.readInt(any(), any(), any()) }
+        verify { projectView wasNot Called }
     }
 
     @Test
     fun `should show all projects when option 1 is selected`() {
         // Given
-        every { inputReader.readInt("Enter your choice: ", 1, 3) } returns 1 andThen 3
+        mockkConstructor(org.damascus.ui.io.ConsoleDisplay::class)
+
+        val actionsSlot = slot<List<UiAction>>()
+        val titleSlot = slot<String>()
+
+        every {
+            anyConstructed<org.damascus.ui.io.ConsoleDisplay>().displayMenu(
+                capture(actionsSlot),
+                capture(titleSlot)
+            )
+        } answers {
+            actionsSlot.captured[0].action()
+        }
 
         // When
         adminDashboardView.showDashboard(admin)
@@ -66,15 +76,23 @@ class AdminDashboardViewTest {
     }
 
     @Test
-    fun `should exit dashboard when option 3 is selected`() {
+    fun `should exit menu when option 0 is selected`() {
         // Given
-        every { inputReader.readInt("Enter your choice: ", 1, 3) } returns 3
+        mockkConstructor(org.damascus.ui.io.ConsoleDisplay::class)
+
+        every {
+            anyConstructed<org.damascus.ui.io.ConsoleDisplay>().displayMenu(
+                any(), any()
+            )
+        } returns Unit
 
         // When
         adminDashboardView.showDashboard(admin)
 
         // Then
-        verify(exactly = 0) { projectView.showAllProjects() }
-        verify(exactly = 1) { inputReader.readInt("Enter your choice: ", 1, 3) }
+        verify(exactly = 1) {
+            anyConstructed<org.damascus.ui.io.ConsoleDisplay>().displayMenu(any(), any())
+        }
     }
+
 }
