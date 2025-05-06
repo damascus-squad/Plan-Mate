@@ -7,6 +7,9 @@ import org.damascus.ui.views.project.ProjectView
 import org.damascus.ui.util.TerminalColor
 import org.damascus.ui.util.withStyle
 import logic.usecase.auth.CreateMateUseCase
+import org.damascus.ui.io.ConsoleDisplay
+import org.damascus.ui.io.ConsoleUserInput
+import org.damascus.ui.util.UiAction
 
 
 class AdminDashboardView(
@@ -16,31 +19,19 @@ class AdminDashboardView(
 ) {
     fun showDashboard(admin: Admin) {
         if (admin.role != Role.ADMIN) {
-            println("Only admins can access this dashboard!")
+            println("Only admins can access this dashboard!".withStyle(TerminalColor.Red))
             return
         }
 
-        while (true) {
-            printDashboardMenu()
-            when (inputReader.readInt("Enter your choice: ", 1, 3)) {
-                1 -> projectView.showAllProjects()
-                2 -> viewMateCreation(admin, createMateUseCase)
-                3 -> return
-            }
-        }
-    }
+        val consoleDisplay = ConsoleDisplay(inputReader as ConsoleUserInput)
 
-    private fun printDashboardMenu() {
-        println("\n$SECTION_DIVIDER")
-        println("ADMIN DASHBOARD".withStyle(TerminalColor.Blue))
-        println(SECTION_DIVIDER)
-        println("1. See ALL Projects")
-        println("2. Create New Mate")
-        println("3. Exit Dashboard")
-        println(SECTION_DIVIDER)
-    }
+        val dashboardActions = listOf(
+            UiAction("See ALL Projects") { projectView.showAllProjects() },
+            UiAction("Create New Mate") { viewMateCreation(admin, createMateUseCase) }
+        )
 
-    private companion object {
-        const val SECTION_DIVIDER = "=========================================="
+        consoleDisplay.displayMenu(dashboardActions, "ADMIN DASHBOARD")
     }
 }
+
+
