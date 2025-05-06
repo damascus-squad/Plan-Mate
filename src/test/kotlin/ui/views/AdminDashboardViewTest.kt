@@ -2,6 +2,7 @@ import io.mockk.*
 import logic.model.Admin
 import logic.usecase.auth.CreateMateUseCase
 import org.damascus.logic.model.Role
+import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.io.ConsoleUserInput
 import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.AdminDashboardView
@@ -54,13 +55,13 @@ class AdminDashboardViewTest {
     @Test
     fun `should show all projects when option 1 is selected`() {
         // Given
-        mockkConstructor(org.damascus.ui.io.ConsoleDisplay::class)
+        mockkConstructor(ConsoleDisplay::class)
 
         val actionsSlot = slot<List<UiAction>>()
         val titleSlot = slot<String>()
 
         every {
-            anyConstructed<org.damascus.ui.io.ConsoleDisplay>().displayMenu(
+            anyConstructed<ConsoleDisplay>().displayMenu(
                 capture(actionsSlot),
                 capture(titleSlot)
             )
@@ -78,10 +79,10 @@ class AdminDashboardViewTest {
     @Test
     fun `should exit menu when option 0 is selected`() {
         // Given
-        mockkConstructor(org.damascus.ui.io.ConsoleDisplay::class)
+        mockkConstructor(ConsoleDisplay::class)
 
         every {
-            anyConstructed<org.damascus.ui.io.ConsoleDisplay>().displayMenu(
+            anyConstructed<ConsoleDisplay>().displayMenu(
                 any(), any()
             )
         } returns Unit
@@ -91,7 +92,7 @@ class AdminDashboardViewTest {
 
         // Then
         verify(exactly = 1) {
-            anyConstructed<org.damascus.ui.io.ConsoleDisplay>().displayMenu(any(), any())
+            anyConstructed<ConsoleDisplay>().displayMenu(any(), any())
         }
     }
 
