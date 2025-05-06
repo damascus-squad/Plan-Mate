@@ -7,7 +7,7 @@ interface TaskStateRepository {
     fun getAllStates(): List<TaskState>
     fun getStateById(id: UUID): TaskState?
     fun create(taskState: TaskState): Boolean
-    fun update(taskState: TaskState): Boolean
+    fun update(taskState: TaskState, updatedTaskState: TaskState): Boolean
     fun delete(taskState: TaskState): Boolean
-    fun exist(id: UUID): Boolean
+    fun exist(name:String): Boolean
 }
