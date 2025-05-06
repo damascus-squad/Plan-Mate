@@ -130,7 +130,7 @@ class CsvDataSerializerTest {
         )
 
         // When
-        val result = StateCsvHelper.serializeState(taskState)
+        val result = TaskStateCsvHelper.serializeTaskState(taskState)
 
         // Then
         val expected = listOf(
