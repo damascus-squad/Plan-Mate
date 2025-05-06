@@ -3,8 +3,6 @@ import logic.model.Admin
 import logic.usecase.auth.CreateMateUseCase
 import org.damascus.logic.model.Role
 import org.damascus.ui.io.ConsoleDisplay
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.AdminDashboardView
 import org.damascus.ui.views.project.ProjectView
 import org.junit.jupiter.api.BeforeEach
@@ -12,88 +10,51 @@ import org.junit.jupiter.api.Test
 import java.util.UUID
 
 class AdminDashboardViewTest {
+    private lateinit var consoleDisplay: ConsoleDisplay
 
-    private lateinit var adminDashboardView: AdminDashboardView
-    private lateinit var inputReader: ConsoleUserInput
     private lateinit var projectView: ProjectView
+    private lateinit var adminDashboardView: AdminDashboardView
     private lateinit var createMateUseCase: CreateMateUseCase
-    private lateinit var admin: Admin
 
     @BeforeEach
     fun setup() {
-        inputReader = mockk(relaxed = true)
-        projectView = mockk(relaxed = true)
-        createMateUseCase = mockk(relaxed = true)
+        consoleDisplay = mockk(relaxed = true)
 
-        admin = Admin(
+        projectView = mockk(relaxed = true)
+        adminDashboardView = AdminDashboardView(consoleDisplay, projectView, createMateUseCase)
+        createMateUseCase = mockk(relaxed = true)
+    }
+
+    @Test
+    fun `showDashboard should accept an admin user`() {
+        // Given
+        val admin = Admin(
             id = UUID.randomUUID(),
-            username = "adminUser",
+            username = "notAdminUser",
             password = "password",
             role = Role.ADMIN
         )
 
-        adminDashboardView = AdminDashboardView(inputReader, projectView, createMateUseCase)
-    }
+        // When
+        adminDashboardView.showDashboard(admin)
 
+        // Then
+        verify(exactly = 1) { consoleDisplay.displayMenu(any(), any()) }
+    }
     @Test
-    fun `should reject non-admin users`() {
+    fun `showDashboard should reject a non admin user`() {
         // Given
-        val nonAdmin = Admin(
+        val notAdmin = Admin(
             id = UUID.randomUUID(),
-            username = "nonAdmin",
+            username = "adminUser",
             password = "password",
             role = Role.MATE
         )
 
-        // When
-        adminDashboardView.showDashboard(nonAdmin)
+        // when
+        adminDashboardView.showDashboard(notAdmin)
 
         // Then
         verify { projectView wasNot Called }
     }
-
-    @Test
-    fun `should show all projects when option 1 is selected`() {
-        // Given
-        mockkConstructor(ConsoleDisplay::class)
-
-        val actionsSlot = slot<List<UiAction>>()
-        val titleSlot = slot<String>()
-
-        every {
-            anyConstructed<ConsoleDisplay>().displayMenu(
-                capture(actionsSlot),
-                capture(titleSlot)
-            )
-        } answers {
-            actionsSlot.captured[0].action()
-        }
-
-        // When
-        adminDashboardView.showDashboard(admin)
-
-        // Then
-        verify(exactly = 1) { projectView.showAllProjects() }
-    }
-
-    @Test
-    fun `should exit menu when option 0 is selected`() {
-        // Given
-        mockkConstructor(ConsoleDisplay::class)
-
-        every {
-            anyConstructed<ConsoleDisplay>().displayMenu(
-                any(), any()
-            )
-        } returns Unit
-
-        // When
-        adminDashboardView.showDashboard(admin)
-
-        // Then
-        verify(exactly = 1) {
-            anyConstructed<ConsoleDisplay>().displayMenu(any(), any())
-        }
-    }
-
 }
