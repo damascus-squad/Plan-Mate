@@ -8,12 +8,10 @@ import org.damascus.di.repositoryModule
 import org.damascus.di.useCaseModule
 
 fun main() {
-
     startKoin {
         modules(appModule, repositoryModule, useCaseModule)
     }
 
     val ui: PlanMateConsoleUi = getKoin().get()
     ui.start()
-
 }
