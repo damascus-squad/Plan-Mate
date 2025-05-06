@@ -21,7 +21,6 @@ import ui.io.ConsoleUserInput
 import java.util.*
 
 class ProjectViewCliTest {
-
     private lateinit var consoleUserInput: ConsoleUserInput
     private lateinit var createProjectUseCase: CreateProjectUseCase
     private lateinit var getAllProjectsUseCase: GetAllProjectsUseCase
@@ -44,36 +43,6 @@ class ProjectViewCliTest {
     }
 
     @Test
-    fun `should return true when project created successfully`() {
-        // Given
-        every { consoleUserInput.readString(any()) } returns "Test Project"
-        every { createProjectUseCase(any()) } returns true
-        val admin = createUser(UserRole.ADMIN, "admin")
-
-        // When
-        val view = createProjectForUser(admin)
-        view.createProject()
-
-        // Then
-        verify { createProjectUseCase(match { it.name == "Test Project" }) }
-    }
-
-    @Test
-    fun `should return false when project already exists`() {
-        // Given
-        every { consoleUserInput.readString(any()) } returns "Test Project"
-        every { createProjectUseCase(any()) } returns false
-        val admin = createUser(UserRole.ADMIN, "admin")
-
-        // When
-        val view = createProjectForUser(admin)
-        view.createProject()
-
-        // Then
-        verify { createProjectUseCase(any()) }
-    }
-
-    @Test
     fun `should throw exception when no projects exist for admin`() {
         // Given
         every { getAllProjectsUseCase() } returns emptyList()
@@ -85,7 +54,7 @@ class ProjectViewCliTest {
 
         // Then
         assertThrows<ProjectsNotAvailableException> {
-            view.showAllProjects()
+            view.showAllProjects(admin)
         }
         verify { getAllProjectsUseCase() }
     }
@@ -99,7 +68,7 @@ class ProjectViewCliTest {
 
         // When
         val view = createProjectForUser(admin)
-        view.showAllProjects()
+        view.showAllProjects(admin)
 
         // Then
         verify { getAllProjectsUseCase() }
@@ -115,25 +84,11 @@ class ProjectViewCliTest {
 
         // When
         val view = createProjectForUser(mate)
-        view.showAllProjects()
+        view.showAllProjects(mate)
 
         // Then
         verify { getAllProjectsByMateIdUseCase(mate.id) }
         verify { consoleUserInput.readInt(any(), 1, 1) }
-    }
-
-    @Test
-    fun `should throw UnauthorizedActionException when mate tries to create project`() {
-        // Given
-        val mate = createUser(UserRole.MATE, "Mate 1")
-
-        // When
-        val view = createProjectForUser(mate)
-
-        // Then
-        assertThrows<UnauthorizedActionException> {
-            view.createProject()
-        }
     }
 
     @Test
@@ -148,23 +103,20 @@ class ProjectViewCliTest {
 
         // Then
         assertThrows<ProjectsNotAvailableException> {
-            view.showAllProjects()
+            view.showAllProjects(mate)
         }
         verify { getAllProjectsByMateIdUseCase(mate.id) }
     }
 
     private fun createProjectForUser(user: User): ProjectViewCli {
         return ProjectViewCli(
-            currentUser = user,
             consoleUserInput = consoleUserInput,
-            createProjectUseCase = createProjectUseCase,
             getAllProjectsUseCase = getAllProjectsUseCase,
             getAllProjectsByMateIdUseCase = getAllProjectsByMateIdUseCase
         )
     }
 
-    private fun createUser(userRole: UserRole, username: String, password: String = "1233"): User {
+    private fun createUser(userRole: UserRole, username: String): User {
         return User(UUID.randomUUID(), username, userRole)
     }
-
 }
