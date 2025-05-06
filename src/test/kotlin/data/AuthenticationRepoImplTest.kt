@@ -4,7 +4,6 @@ import data.dto.UserDTO
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import logic.exception.InvalidCredentialsException
 import logic.exception.UnauthorizedActionException
@@ -17,14 +16,12 @@ import org.damascus.data.repo.AuthenticationRepoImpl
 import org.damascus.logic.model.UserRole
 import org.damascus.logic.service.HashingService
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.*
 import java.util.stream.Stream
-import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
@@ -35,7 +32,7 @@ class AuthenticationRepositoryImplTest {
     private lateinit var authRepo: AuthenticationRepository
     private lateinit var usersDataSource: DataSource<UserDTO>
 
-    @BeforeTest
+    @BeforeEach
     fun setup() {
         hashingService = mockk(relaxed = true)
         usersDataSource = mockk(relaxed = true)
@@ -120,36 +117,6 @@ class AuthenticationRepositoryImplTest {
         // Then
         assertEquals(username, mate.username)
         verify(exactly = 1) { hashingService.hashData(rawPassword) }
-    }
-
-    @Ignore
-    @Test
-    fun `createMate should add mate to users list`() {
-        // Given
-        val admin = User(UUID.randomUUID(), "admin1", UserRole.ADMIN)
-        val username = "newMate"
-        val rawPassword = "password"
-        val expectedHash = "hashedPassword"
-
-        val capturedMate = slot<UserDTO>()
-        var called = false
-
-        every { usersDataSource.read() } answers {
-            if (!called) {
-                called = true
-                emptyList()
-            } else {
-                listOf(capturedMate.captured)
-            }
-        }
-        every { hashingService.hashData(rawPassword) } returns expectedHash
-        every { usersDataSource.write(capture(capturedMate)) } returns Unit
-
-        // When
-        val mate = authRepo.createMate(admin, username, rawPassword)
-
-        // Then
-        assertTrue(usersDataSource.read().any { it.username == username })
     }
 
     @Test

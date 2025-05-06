@@ -15,8 +15,8 @@ object UserCsvHelper {
         if (tokens.size != USER_FIELD_COUNT) throw CsvParsingException("Invalid user line: $line")
 
         val id = UUID.fromString(tokens[0].trim())
-        val username = tokens[1].trim()
-        val hashedPassword = tokens[2].trim()
+        val hashedPassword = tokens[1].trim()
+        val username = tokens[2].trim()
         val userRole = UserRole.fromString(tokens[3].trim())
 
         return UserDTO(id, hashedPassword, username, userRole)
