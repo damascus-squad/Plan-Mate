@@ -173,7 +173,7 @@ class CsvDataParserTest {
         )
 
         // When
-        val result = StateCsvHelper.parseState(csvEntry)
+        val result = TaskStateCsvHelper.parseTaskState(csvEntry)
 
         // Then
         assertThat(result).isEqualTo(expectedTaskState)
@@ -186,7 +186,7 @@ class CsvDataParserTest {
 
         // When && Then
         assertThrows<CsvParsingException> {
-            StateCsvHelper.parseState(csvEntry)
+            TaskStateCsvHelper.parseTaskState(csvEntry)
         }
     }
 

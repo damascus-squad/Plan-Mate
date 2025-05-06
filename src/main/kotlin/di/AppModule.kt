@@ -2,18 +2,25 @@ package di
 
 import data.csv.CsvDataSource
 import data.csv.generateCsvHeader
+import data.csv.helpers.HistoryCsvHelper
 import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.TaskCsvHelper
+import data.csv.helpers.TaskStateCsvHelper
 import data.csv.helpers.UserCsvHelper
+import data.csv.utils.CsvConstants.HISTORY_FILE
 import data.csv.utils.CsvConstants.PROJECTS_FILE
+import data.csv.utils.CsvConstants.TASK_STATES_FILE
 import data.csv.utils.CsvConstants.TASKS_FILE
 import data.csv.utils.CsvConstants.USERS_FILE
 import data.dto.UserDTO
+import logic.model.History
 import logic.model.Project
 import logic.model.Task
+import logic.model.TaskState
 import logic.repo.DataSource
 import logic.service.HashingService
 import logic.service.MD5HashingService
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ui.PlanMateConsoleUi
 import ui.io.ConsoleDisplay
@@ -27,7 +34,7 @@ import ui.views.task.TaskCLI
 
 val appModule = module {
 
-    single<DataSource<UserDTO>> {
+    single<DataSource<UserDTO>>(qualifier = named("userDataSource")) {
         CsvDataSource(
             USERS_FILE,
             { generateCsvHeader<UserDTO>() },
@@ -37,7 +44,7 @@ val appModule = module {
         )
     }
 
-    single<DataSource<Project>> {
+    single<DataSource<Project>>(qualifier = named("projectDataSource")) {
         CsvDataSource(
             PROJECTS_FILE,
             { generateCsvHeader<Project>() },
@@ -47,13 +54,33 @@ val appModule = module {
         )
     }
 
-    single<DataSource<Task>> {
+    single<DataSource<Task>>(qualifier = named("taskDataSource")) {
         CsvDataSource(
             TASKS_FILE,
             { generateCsvHeader<Task>() },
             extractId = { it.id },
             parser = TaskCsvHelper::parseTask,
             serializer = TaskCsvHelper::serializeTask
+        )
+    }
+
+    single<DataSource<History>>(qualifier = named("historyDataSource")) {
+        CsvDataSource(
+            HISTORY_FILE,
+            { generateCsvHeader<History>() },
+            extractId = { it.id },
+            parser = HistoryCsvHelper::parseHistory,
+            serializer = HistoryCsvHelper::serializeHistory
+        )
+    }
+
+    single<DataSource<TaskState>>(qualifier = named("taskStateDataSource")) {
+        CsvDataSource(
+            TASK_STATES_FILE,
+            { generateCsvHeader<TaskState>() },
+            extractId = { it.id },
+            parser = TaskStateCsvHelper::parseTaskState,
+            serializer = TaskStateCsvHelper::serializeTaskState
         )
     }
 
