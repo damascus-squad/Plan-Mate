@@ -11,18 +11,17 @@ import java.util.UUID
 
 class AdminDashboardViewTest {
     private lateinit var consoleDisplay: ConsoleDisplay
-
     private lateinit var projectView: ProjectView
     private lateinit var adminDashboardView: AdminDashboardView
     private lateinit var createMateUseCase: CreateMateUseCase
 
-    @BeforeEach
+
+   @BeforeEach
     fun setup() {
         consoleDisplay = mockk(relaxed = true)
-
         projectView = mockk(relaxed = true)
-        adminDashboardView = AdminDashboardView(consoleDisplay, projectView, createMateUseCase)
         createMateUseCase = mockk(relaxed = true)
+        adminDashboardView = AdminDashboardView(consoleDisplay, projectView, createMateUseCase)
     }
 
     @Test
