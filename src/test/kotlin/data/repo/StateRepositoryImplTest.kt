@@ -61,8 +61,6 @@ class StateRepositoryImplTest {
         val exception = assertThrows<StateNotFoundException> {
             stateRepositoryImpl.getStateById(nonExistentID)
         }
-
-        assertThat(exception).isInstanceOf(StateNotFoundException::class.java)
         verify(exactly = 1) { dataSource.read() }
     }
 
