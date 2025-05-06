@@ -4,8 +4,8 @@ import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
 import logic.repo.AuthenticationRepository
-import org.damascus.data.authentication.MD5HashingService
 import logic.exception.*
+import org.damascus.logic.service.MD5HashingService
 
 class CreateMateUseCase(
     private val authRepository: AuthenticationRepository,
