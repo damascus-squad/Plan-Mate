@@ -1,7 +1,7 @@
 package org.damascus.logic.model
 
 import kotlinx.datetime.LocalDateTime
-import logic.model.State
+import logic.model.TaskState
 import java.util.*
 
 data class History(
@@ -16,7 +16,7 @@ data class History(
 ) {
     companion object {
         val NO_UUID: UUID = UUID(0, 0)
-        val NO_STATE = State(
+        val NO_TASK_STATE = TaskState(
             id = NO_UUID,
             name = "Nothing"
         )

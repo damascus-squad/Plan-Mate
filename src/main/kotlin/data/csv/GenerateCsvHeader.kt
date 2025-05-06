@@ -1,6 +1,6 @@
 package org.damascus.data.csv
 
-import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
+import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
 
 /**
  * Usage of inline with reified here is to avoid type erasure when creating headers for CSVs
@@ -10,5 +10,5 @@ import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
  */
 
 inline fun <reified T> generateCsvHeader(): String {
-    return T::class.java.declaredFields.joinToString(LIST_SEPARATOR) { it.name }
+    return T::class.java.declaredFields.joinToString(COMMA_SEPARATOR) { it.name }
 }

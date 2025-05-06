@@ -1,4 +1,4 @@
-package org.damascus.data.authentication
+package org.damascus.data.repo
 
 import logic.exception.InvalidCredentialsException
 import logic.exception.UnauthorizedActionException
@@ -7,11 +7,11 @@ import logic.exception.UserNotFoundException
 import logic.model.Admin
 import logic.model.Mate
 import logic.model.User
-import org.damascus.logic.model.Role
 import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
+import org.damascus.logic.model.Role
 import org.damascus.logic.service.HashingService
-import java.util.*
+import java.util.UUID
 
 class AuthenticationRepoImpl(
     private val hashingService: HashingService,
