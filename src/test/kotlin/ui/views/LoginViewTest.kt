@@ -3,8 +3,8 @@ package ui.views
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import logic.model.Mate
-import org.damascus.logic.model.Role
+import logic.model.User
+import org.damascus.logic.model.UserRole
 import logic.usecase.auth.AuthenticateUserLoginUseCase
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.LoginView
@@ -31,7 +31,7 @@ class LoginViewTest {
         // Given
         val username = "testUser"
         val password = "password123"
-        val expectedUser = Mate(id = UUID.randomUUID(), username = username, password = password, role = Role.MATE)
+        val expectedUser = User(id = UUID.randomUUID(), username = username, userRole = UserRole.MATE)
 
         every { inputReader.readString("Username:") } returns username
         every { inputReader.readString("Password:") } returns password
@@ -54,7 +54,7 @@ class LoginViewTest {
         val failPassword = "wrongPass"
         val correctUsername = "correctUser"
         val correctPassword = "correctPass"
-        val expectedUser = Mate(id = UUID.randomUUID(), username = correctUsername, password = correctPassword, role = Role.MATE)
+        val expectedUser = User(id = UUID.randomUUID(), username = correctUsername, userRole = UserRole.MATE)
 
         every { inputReader.readString("Username:") } returns failUsername andThen correctUsername
         every { inputReader.readString("Password:") } returns failPassword andThen correctPassword
@@ -82,8 +82,7 @@ class LoginViewTest {
         val thirdUsername = "user3"
         val thirdPassword = "pass3"
 
-        val expectedUser = Mate(id = UUID.randomUUID(), username = thirdUsername, password = thirdPassword, role = Role.MATE)
-
+        val expectedUser = User(id = UUID.randomUUID(), username = thirdUsername, userRole = UserRole.MATE)
 
         every { inputReader.readString("Username:") } returns firstUsername andThen secondUsername andThen thirdUsername
         every { inputReader.readString("Password:") } returns firstPassword andThen secondPassword andThen thirdPassword

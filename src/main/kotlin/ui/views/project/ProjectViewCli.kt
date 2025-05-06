@@ -7,7 +7,7 @@ import logic.exception.ProjectsNotAvailableException
 import logic.exception.UnauthorizedActionException
 import logic.model.Project
 import logic.model.User
-import org.damascus.logic.model.Role
+import org.damascus.logic.model.UserRole
 import org.damascus.logic.usecase.ProjectUseCase.CreateProjectUseCase
 import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsByMateIdUseCase
 import org.damascus.logic.usecase.ProjectUseCase.GetAllProjectsUseCase
@@ -27,7 +27,7 @@ class ProjectViewCli(
 ) : ProjectView {
 
     override fun createProject() {
-        if (currentUser.role != Role.ADMIN) {
+        if (currentUser.userRole != UserRole.ADMIN) {
             printMessageBox("Only admins can create projects!", TerminalColor.Red)
             throw UnauthorizedActionException("create project")
         }
@@ -48,9 +48,9 @@ class ProjectViewCli(
     }
 
     override fun showAllProjects(): Project? {
-        val projects = when (currentUser.role) {
-            Role.ADMIN -> getAllProjectsUseCase()
-            Role.MATE -> getAllProjectsByMateIdUseCase(currentUser.id)
+        val projects = when (currentUser.userRole) {
+            UserRole.ADMIN -> getAllProjectsUseCase()
+            UserRole.MATE -> getAllProjectsByMateIdUseCase(currentUser.id)
         }
 
         if (projects.isEmpty()) {

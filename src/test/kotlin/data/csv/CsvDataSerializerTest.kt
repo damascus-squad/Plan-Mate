@@ -2,15 +2,15 @@ package data.csv
 
 import com.google.common.truth.Truth.assertThat
 import data.csv.helpers.*
+import data.dto.UserDTO
 import kotlinx.datetime.LocalDateTime
-import logic.model.Admin
 import logic.model.Project
 import logic.model.TaskState
 import logic.model.Task
 import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History
-import org.damascus.logic.model.Role
+import org.damascus.logic.model.UserRole
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -21,11 +21,11 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeUser should return csv entry when user is passed`() {
         // Given
-        val user = Admin(
+        val user = UserDTO(
             id = listOfUUIDs[0],
+            hashedPassword = "SuperStrongPassword",
             username = "Ameer",
-            password = "SuperStrongPassword",
-            role = Role.ADMIN
+            userRole = UserRole.ADMIN
         )
 
         // When
@@ -34,9 +34,9 @@ class CsvDataSerializerTest {
         // Then
         val expected = listOf(
             listOfUUIDs[0],
-            "Ameer",
             "SuperStrongPassword",
-            Role.ADMIN
+            "Ameer",
+            UserRole.ADMIN
         ).joinToString(",")
 
         assertThat(result).isEqualTo(expected)
