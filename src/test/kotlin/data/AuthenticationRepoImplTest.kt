@@ -19,7 +19,10 @@ import org.damascus.logic.service.HashingService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.*
+import java.util.stream.Stream
 import kotlin.test.BeforeTest
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -87,13 +90,13 @@ class AuthenticationRepositoryImplTest {
         }
     }
 
-    @Test
-    fun `createMate should fail if user already exists`() {
+    @ParameterizedTest
+    @MethodSource("existingUsersLists")
+    fun `createMate should fail if user already exists`(matesList: List<UserDTO>) {
         // Given
-        val admin = User(id = UUID.randomUUID(), "hashed123", UserRole.ADMIN)
-        val existingUsername = "mate1"
-        val newMate = UserDTO(id = UUID.randomUUID(), "pass", existingUsername, UserRole.MATE)
-        every { usersDataSource.read() } returns listOf(newMate)
+        val admin = User(UUID.randomUUID(), "hashed123", UserRole.ADMIN)
+        val existingUsername = "mate17"
+        every { usersDataSource.read() } returns matesList
 
         // When , Then
         assertFailsWith<UserAlreadyExistException> {
@@ -149,7 +152,6 @@ class AuthenticationRepositoryImplTest {
         assertTrue(usersDataSource.read().any { it.username == username })
     }
 
-
     @Test
     fun `createMate should fail when mate is the creator`() {
         val mate = User(id = UUID.randomUUID(), "mate1", UserRole.MATE)
@@ -161,40 +163,20 @@ class AuthenticationRepositoryImplTest {
         }
     }
 
-//    @Test
-//    fun `findByUsername should return user when user exists`() {
-//        // Given
-//        val user = UserDTO(id = UUID.randomUUID(), "testUser", "hashed123", UserRole.MATE)
-//        every { usersDataSource.read() } returns listOf(user)
-//
-//        // When
-//        val result = authRepo.getUserByUsername("testUser")
-//
-//        // Then
-//        assertEquals(user.username, result?.username)
-//    }
-//
-//    @Test
-//    fun `findByUsername should return null when user does not exist`() {
-//        // Given
-//        val user = Mate(id = UUID.randomUUID(), "testUser", "hashed123", UserRole.MATE)
-//        every { usersDataSource.read() } returns listOf(user)
-//
-//        // When
-//        val result = authRepo.getUserByUsername("nonExistingUser")
-//
-//        // Then
-//        assertNull(result)
-//    }
-//
-//    @Test
-//    fun `findByUsername should return null when list is empty`() {
-//        // Given : empty list
-//        every { usersDataSource.read() } returns emptyList()
-//        // When
-//        val result = authRepo.getUserByUsername("nonExistingUser")
-//
-//        // Then
-//        assertNull(result)
-//    }
+    companion object {
+        @JvmStatic
+        fun existingUsersLists(): Stream<List<UserDTO>> {
+            val existingUsername = "mate17"
+            val newMate = UserDTO(UUID.randomUUID(), "pass", existingUsername, UserRole.MATE)
+
+            return Stream.of(
+                listOf(newMate),
+                listOf(
+                    UserDTO(UUID.randomUUID(), "pass", "mate1", UserRole.MATE),
+                    UserDTO(UUID.randomUUID(), "pass", "mate2", UserRole.MATE),
+                    newMate
+                )
+            )
+        }
+    }
 }

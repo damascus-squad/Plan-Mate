@@ -1,5 +1,6 @@
 package org.damascus.data.repo
 
+import data.dto.UserDTO
 import logic.exception.InvalidCredentialsException
 import logic.exception.UnauthorizedActionException
 import logic.exception.UserAlreadyExistException
@@ -7,11 +8,9 @@ import logic.exception.UserNotFoundException
 import logic.model.User
 import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
-import data.dto.UserDTO
 import org.damascus.logic.model.UserRole
 import org.damascus.logic.service.HashingService
 import java.util.*
-import kotlin.collections.find
 
 class AuthenticationRepoImpl(
     private val hashingService: HashingService,
