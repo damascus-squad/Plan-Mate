@@ -3,24 +3,17 @@ package org.damascus.di
 import data.csv.helpers.ProjectCsvHelper
 import data.csv.helpers.TaskCsvHelper
 import data.csv.helpers.UserCsvHelper
-import data.repo.TaskRepositoryImpl
+import data.dto.UserDTO
 import logic.model.Project
 import logic.model.Task
-import logic.model.User
-import logic.repo.*
-import logic.usecase.auth.AuthenticateUserLoginUseCase
-import logic.usecase.auth.CreateMateUseCase
+import logic.repo.DataSource
 import org.damascus.data.csv.CsvDataSource
 import org.damascus.data.csv.generateCsvHeader
 import org.damascus.data.csv.utils.CsvConstants.PROJECTS_FILE
 import org.damascus.data.csv.utils.CsvConstants.TASKS_FILE
 import org.damascus.data.csv.utils.CsvConstants.USERS_FILE
-import org.damascus.data.repo.AuditLogsRepositoryImpl
-import org.damascus.data.repo.AuthenticationRepoImpl
-import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.damascus.logic.service.HashingService
 import org.damascus.logic.service.MD5HashingService
-import org.damascus.logic.usecase.task.*
 import org.damascus.ui.PlanMateConsoleUi
 import org.damascus.ui.io.ConsoleDisplay
 import org.damascus.ui.io.ConsoleUserInput
@@ -34,10 +27,10 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    single<DataSource<User>> {
+    single<DataSource<UserDTO>> {
         CsvDataSource(
             USERS_FILE,
-            { generateCsvHeader<User>() },
+            { generateCsvHeader<UserDTO>() },
             extractId = { it.id },
             parser = UserCsvHelper::parseUser,
             serializer = UserCsvHelper::serializeUser
