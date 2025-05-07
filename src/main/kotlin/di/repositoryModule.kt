@@ -1,17 +1,39 @@
-package org.damascus.di
+package di
 
-import data.repo.TaskRepositoryImpl
+import data.repo.*
 import logic.repo.*
-import org.damascus.data.repo.AuditLogsRepositoryImpl
-import org.damascus.data.repo.AuthenticationRepoImpl
-import org.damascus.data.repo.ProjectRepositoryImpl
-import org.damascus.data.repo.TaskStateRepositoryImpl
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<ProjectRepository> { ProjectRepositoryImpl(get()) }
-    single<AuthenticationRepository> { AuthenticationRepoImpl(get(), get()) }
-    single<TaskStateRepository> { TaskStateRepositoryImpl(get()) }
-    single<TaskRepository> { TaskRepositoryImpl(get()) }
-    single<AuditLogsRepository> { AuditLogsRepositoryImpl(get()) }
+    single<ProjectRepository> {
+        ProjectRepositoryImpl(
+            get(qualifier = named("projectDataSource"))
+        )
+    }
+
+    single<AuthenticationRepository> {
+        AuthenticationRepoImpl(
+            get(),
+            get(qualifier = named("userDataSource"))
+        )
+    }
+
+    single<TaskStateRepository> {
+        TaskStateRepositoryImpl(
+            get(qualifier = named("taskStateDataSource"))
+        )
+    }
+
+    single<TaskRepository> {
+        TaskRepositoryImpl(
+            get(qualifier = named("taskDataSource"))
+        )
+    }
+
+    single<AuditLogsRepository> {
+        AuditLogsRepositoryImpl(
+            get(qualifier = named("historyDataSource"))
+        )
+    }
 }

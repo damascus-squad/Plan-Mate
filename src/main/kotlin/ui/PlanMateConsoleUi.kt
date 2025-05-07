@@ -1,14 +1,20 @@
-package org.damascus.ui
+package ui
 
-import org.damascus.ui.views.LoginView
+import logic.model.UserRole
+import org.damascus.ui.views.admin.AdminDashboardView
+import ui.views.LoginView
 
 class PlanMateConsoleUi(
-    private val loginView: LoginView
+    private val loginView: LoginView,
+    private val adminDashboardView: AdminDashboardView
 ) {
 
     fun start() {
         while (true) {
             val user = loginView.getLoggedUser()
+            if (user.userRole == UserRole.ADMIN) {
+                adminDashboardView.showDashboard(user)
+            }
         }
     }
 

@@ -1,9 +1,9 @@
-package org.damascus.logic.usecase.project
+package logic.usecase.project
 
 import logic.exception.NoTasksFoundException
+import logic.model.ProjectState
 import logic.repo.TaskRepository
 import logic.repo.TaskStateRepository
-import org.damascus.logic.model.ProjectState
 import java.util.*
 
 class GetProjectStateUseCase(

@@ -1,11 +1,10 @@
-package logic.useCase.state
+package logic.usecase.state
 
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import logic.model.TaskState
 import logic.repo.TaskStateRepository
-import org.damascus.logic.usecase.state.CheckTaskStateExistsUseCase
 import org.junit.jupiter.api.BeforeEach
 import java.util.*
 import kotlin.test.Test

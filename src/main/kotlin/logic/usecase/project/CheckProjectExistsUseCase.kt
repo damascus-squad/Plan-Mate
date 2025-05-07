@@ -1,7 +1,7 @@
 package logic.usecase.project
 
 import logic.repo.ProjectRepository
-import java.util.UUID
+import java.util.*
 
 class CheckProjectExistsUseCase(private val repository: ProjectRepository) {
     operator fun invoke(projectId: UUID): Boolean {

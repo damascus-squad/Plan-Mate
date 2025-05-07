@@ -1,4 +1,4 @@
-package org.damascus.data.repo
+package data.repo
 
 import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException

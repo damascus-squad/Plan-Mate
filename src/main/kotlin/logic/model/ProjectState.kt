@@ -1,6 +1,4 @@
-package org.damascus.logic.model
-
-import logic.model.TaskState
+package logic.model
 
 data class ProjectState(
     val taskStateFrequency: Map<TaskState, Int>

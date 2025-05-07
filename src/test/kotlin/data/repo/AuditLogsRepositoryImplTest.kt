@@ -5,12 +5,12 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import logic.model.ActionType
+import logic.model.History
 import logic.repo.DataSource
-import logic.useCase.auditLog.createFakeActionLog
-import org.damascus.data.repo.AuditLogsRepositoryImpl
-import org.damascus.logic.model.History
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -95,5 +95,25 @@ class AuditLogsRepositoryImplTest {
         actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
         currentStateId = UUID.randomUUID(),
         targetedStateId = UUID.randomUUID()
+    )
+
+    private fun createFakeActionLog(
+        id: UUID = UUID.randomUUID(),
+        userId: UUID = UUID.randomUUID(),
+        taskId: UUID = UUID.randomUUID(),
+        projectId: UUID = UUID.randomUUID(),
+        actionDate: LocalDateTime,
+        currentStateId: UUID,
+        targetedStateId: UUID,
+        actionType: ActionType = ActionType.TASK_STATE_CHANGED,
+    ): History = History(
+        id = id,
+        taskId = taskId,
+        projectId = projectId,
+        currentStateId = currentStateId,
+        newStateId = targetedStateId,
+        actionDate = actionDate,
+        actionType = actionType,
+        userId = userId,
     )
 }

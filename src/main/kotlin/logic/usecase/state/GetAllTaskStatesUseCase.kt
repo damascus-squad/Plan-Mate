@@ -1,4 +1,4 @@
-package org.damascus.logic.usecase.state
+package logic.usecase.state
 
 import logic.model.TaskState
 import logic.repo.TaskStateRepository

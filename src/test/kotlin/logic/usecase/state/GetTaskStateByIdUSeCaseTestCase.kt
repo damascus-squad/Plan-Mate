@@ -1,4 +1,4 @@
-package logic.useCase.state
+package logic.usecase.state
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.every
@@ -7,7 +7,6 @@ import io.mockk.verify
 import logic.exception.StateNotFoundException
 import logic.model.TaskState
 import logic.repo.TaskStateRepository
-import org.damascus.logic.usecase.state.GetTaskStateByIdUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertThrows
 import java.util.*

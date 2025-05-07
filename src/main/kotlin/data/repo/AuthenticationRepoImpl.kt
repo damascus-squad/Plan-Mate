@@ -1,49 +1,50 @@
-package org.damascus.data.repo
+package data.repo
 
+import data.dto.UserDTO
 import logic.exception.InvalidCredentialsException
 import logic.exception.UnauthorizedActionException
 import logic.exception.UserAlreadyExistException
 import logic.exception.UserNotFoundException
-import logic.model.Admin
-import logic.model.Mate
 import logic.model.User
+import logic.model.UserRole
 import logic.repo.AuthenticationRepository
 import logic.repo.DataSource
-import org.damascus.logic.model.Role
-import org.damascus.logic.service.HashingService
-import java.util.UUID
+import logic.service.HashingService
+import java.util.*
 
 class AuthenticationRepoImpl(
     private val hashingService: HashingService,
-    val usersDataSource: DataSource<User>
+    private val usersDataSource: DataSource<UserDTO>
 ) : AuthenticationRepository {
 
     override fun login(username: String, password: String): User {
-        val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException(username) as Throwable
+        val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException(username)
+        val searchedUserPassword = searchedUser.hashedPassword
 
-        if (!hashingService.verifyData(password, searchedUser.password)) {
+        if (!hashingService.verifyData(password, searchedUserPassword)) {
             throw InvalidCredentialsException()
         }
 
-        return searchedUser
+        return searchedUser.toUser()
     }
 
-    override fun createMate(requester: User, newUsername: String, rawPassword: String): Mate {
-        if (requester !is Admin) {
+    override fun createMate(requester: User, newUsername: String, rawPassword: String): User {
+        if (requester.userRole == UserRole.MATE) {
             throw UnauthorizedActionException("create a mate")
         }
+
         if (getUserByUsername(newUsername) != null) {
             throw UserAlreadyExistException(newUsername)
         }
 
         val hashedPassword = hashingService.hashData(rawPassword)
-        val newMate = Mate(id = UUID.randomUUID(), newUsername, hashedPassword, Role.MATE)
+        val newMate = UserDTO(id = UUID.randomUUID(), hashedPassword, newUsername, UserRole.MATE)
         usersDataSource.write(newMate)
 
-        return newMate
+        return newMate.toUser()
     }
 
-    override fun getUserByUsername(username: String): User? {
+    private fun getUserByUsername(username: String): UserDTO? {
         return usersDataSource.read().find { it.username == username }
     }
 }

@@ -1,4 +1,4 @@
-package org.damascus.ui.util
+package ui.util
 
 enum class TerminalColor(val code: String) {
     Red("\u001B[31m"),

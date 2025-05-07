@@ -6,12 +6,11 @@ import io.mockk.mockk
 import kotlinx.datetime.LocalDateTime
 import logic.exception.NoTasksFoundException
 import logic.model.Project
+import logic.model.ProjectState
 import logic.model.Task
 import logic.model.TaskState
 import logic.repo.TaskRepository
 import logic.repo.TaskStateRepository
-import org.damascus.logic.model.ProjectState
-import org.damascus.logic.usecase.project.GetProjectStateUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

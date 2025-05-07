@@ -1,4 +1,4 @@
-package org.damascus.logic.service
+package logic.service
 
 import java.security.MessageDigest
 

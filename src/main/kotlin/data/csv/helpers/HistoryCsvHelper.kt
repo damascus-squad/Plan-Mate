@@ -1,15 +1,15 @@
 package data.csv.helpers
 
+import data.csv.CsvParsingException
+import data.csv.utils.CsvConstants.COMMA_SEPARATOR
 import kotlinx.datetime.LocalDateTime
-import org.damascus.data.csv.CsvParsingException
-import org.damascus.data.csv.utils.CsvConstants.COMMA_SEPARATOR
-import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
+import logic.model.ActionType
+import logic.model.History
 import java.util.*
 
 object HistoryCsvHelper {
 
-    const val HISTORY_FIELD_COUNT = 8
+    private const val HISTORY_FIELD_COUNT = 8
 
     fun parseHistory(line: String): History {
         val tokens = line.split(COMMA_SEPARATOR)

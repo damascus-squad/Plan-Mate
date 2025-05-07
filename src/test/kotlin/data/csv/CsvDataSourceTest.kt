@@ -3,11 +3,8 @@ package data.csv
 import com.google.common.truth.Truth.assertThat
 import data.csv.CsvTestHelper.HISTORY_FILE_PATH
 import data.csv.CsvTestHelper.createHistory
-import org.damascus.data.csv.CsvDataSource
-import org.damascus.data.csv.CsvEntryNotFound
-import org.damascus.data.csv.CsvFileNotFound
-import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
+import logic.model.ActionType
+import logic.model.History
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -15,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.File
-import java.util.*
 
 class CsvDataSourceTest {
 
@@ -99,14 +95,14 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `read should throw CsvFileNotFound exception when file does not exist`() {
+    fun `read should create new file when file does not exist`() {
         // Given
         file.delete()
 
         // When && Then
-        assertThrows<CsvFileNotFound> {
-            csvDataSource.read()
-        }
+        csvDataSource.read()
+
+        assertTrue(file.exists())
     }
 
     @Test
@@ -125,20 +121,6 @@ class CsvDataSourceTest {
         assertEquals(ActionType.TASK_STATE_CHANGED, result.find { it.id == h2.id }?.actionType)
     }
 
-//    @Test
-//    fun `update should throw CsvEntryNotFound exception when entry does not exist`() {
-//        // Given
-//        val h1 = createHistory()
-//        csvDataSource.write(listOf(h1))
-//
-//        val ghost = h1.copy(id = UUID.randomUUID(), actionType = "Ghost")
-//
-//        // When && Then
-//        assertThrows<CsvEntryNotFound> {
-//            csvDataSource.update(ghost.id, ghost)
-//        }
-//    }
-
     @Test
     fun `delete should remove entry when id exists`() {
         // Given
@@ -153,18 +135,4 @@ class CsvDataSourceTest {
         // Then
         assertThat(result).containsExactly(h2)
     }
-
-//    @Test
-//    fun `delete should throw CsvEntryNotFound exception when entry does not exist`() {
-//        // Given
-//        val h1 = createHistory()
-//        csvDataSource.write(listOf(h1))
-//
-//        val ghost = h1.copy(id = UUID.randomUUID(), actionType = "Ghost")
-//
-//        // When && Then
-//        assertThrows<CsvEntryNotFound> {
-//            csvDataSource.delete(ghost.id)
-//        }
-//    }
 }

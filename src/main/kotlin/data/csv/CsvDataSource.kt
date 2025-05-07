@@ -1,4 +1,4 @@
-package org.damascus.data.csv
+package data.csv
 
 import logic.repo.DataSource
 import java.io.File
@@ -24,15 +24,18 @@ class CsvDataSource<T>(
     }
 
     override fun read(): List<T> {
+        createFileIfNotExists()
         val lines = readLinesSkippingHeader()
         return lines.mapNotNull { runCatching { parser(it) }.getOrNull() }
     }
 
     override fun write(entry: T) {
+        createFileIfNotExists()
         append(entry)
     }
 
     override fun write(entriesList: List<T>) {
+        createFileIfNotExists()
         entriesList.forEach { entry -> write(entry) }
     }
 
@@ -76,5 +79,12 @@ class CsvDataSource<T>(
     private companion object {
         const val HEADER_LINE_COUNT = 1
         const val INDEX_NOT_FOUND = -1
+    }
+
+    private fun createFileIfNotExists(){
+        if (!file.exists()) {
+            file.parentFile.mkdirs()
+            file.writeText("$header\n")
+        }
     }
 }

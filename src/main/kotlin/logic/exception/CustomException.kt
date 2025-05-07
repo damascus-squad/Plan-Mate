@@ -23,3 +23,5 @@ class NoLogException(message: String) : Exception(message)
 class ProjectsNotAvailableException(message: String) : Exception(message)
 
 class NoTasksFoundException(message: String) : Exception(message)
+
+class ProjectNotFoundException(projectId: UUID) : RuntimeException("Project with ID $projectId not found")

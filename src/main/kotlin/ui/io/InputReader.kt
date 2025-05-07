@@ -1,4 +1,4 @@
-package org.damascus.ui.io
+package ui.io
 
 interface InputReader {
     fun readString(prompt: String): String

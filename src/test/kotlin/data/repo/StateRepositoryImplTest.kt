@@ -8,7 +8,6 @@ import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
 import logic.model.TaskState
 import logic.repo.DataSource
-import org.damascus.data.repo.TaskStateRepositoryImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -104,7 +103,7 @@ class StateRepositoryImplTest {
         every { dataSource.read() } returns fakeTaskStates
 
         //when
-        val result = stateRepositoryImpl.update(fakeTaskStates[1],updatedState)
+        val result = stateRepositoryImpl.update(fakeTaskStates[1], updatedState)
 
         //then
         assertThat(result).isTrue()
@@ -123,7 +122,7 @@ class StateRepositoryImplTest {
         val updatedTaskState = nonExistentTaskState.copy(name = "In Progress")
         //then
         assertThrows<StateNotFoundException> {
-            stateRepositoryImpl.update(nonExistentTaskState,updatedTaskState)
+            stateRepositoryImpl.update(nonExistentTaskState, updatedTaskState)
         }
         verify(exactly = 1) { dataSource.read() }
         verify(exactly = 0) { dataSource.update(any(), any()) }

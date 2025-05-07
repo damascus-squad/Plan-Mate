@@ -1,7 +1,7 @@
-package org.damascus.logic.usecase.AuditLog
+package logic.usecase.auditLog
 
+import logic.model.History
 import logic.repo.AuditLogsRepository
-import org.damascus.logic.model.History
 
 class SaveLogUseCase(
     private val auditLogsRepository: AuditLogsRepository

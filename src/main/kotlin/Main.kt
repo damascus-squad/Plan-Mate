@@ -1,11 +1,11 @@
 package org.damascus
 
-import org.damascus.di.appModule
-import org.damascus.ui.PlanMateConsoleUi
+import di.appModule
+import di.repositoryModule
+import di.useCaseModule
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.getKoin
-import org.damascus.di.repositoryModule
-import org.damascus.di.useCaseModule
+import ui.PlanMateConsoleUi
 
 fun main() {
     startKoin {

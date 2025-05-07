@@ -1,4 +1,4 @@
-package org.damascus.logic.usecase.state
+package logic.usecase.state
 
 import logic.exception.DuplicateStateException
 import logic.model.TaskState

@@ -1,4 +1,4 @@
-package org.damascus.ui.util
+package ui.util
 
 data class UiAction(
     val name: String,
