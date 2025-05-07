@@ -2,15 +2,11 @@ package di
 
 import data.csv.CsvDataSource
 import data.csv.generateCsvHeader
-import data.csv.helpers.HistoryCsvHelper
-import data.csv.helpers.ProjectCsvHelper
-import data.csv.helpers.TaskCsvHelper
-import data.csv.helpers.TaskStateCsvHelper
-import data.csv.helpers.UserCsvHelper
+import data.csv.helpers.*
 import data.csv.utils.CsvConstants.HISTORY_FILE
 import data.csv.utils.CsvConstants.PROJECTS_FILE
-import data.csv.utils.CsvConstants.TASK_STATES_FILE
 import data.csv.utils.CsvConstants.TASKS_FILE
+import data.csv.utils.CsvConstants.TASK_STATES_FILE
 import data.csv.utils.CsvConstants.USERS_FILE
 import data.dto.UserDTO
 import logic.model.History
@@ -20,6 +16,7 @@ import logic.model.TaskState
 import logic.repo.DataSource
 import logic.service.HashingService
 import logic.service.MD5HashingService
+import org.damascus.ui.views.admin.AdminDashboardView
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ui.PlanMateConsoleUi
@@ -27,7 +24,6 @@ import ui.io.ConsoleDisplay
 import ui.io.ConsoleUserInput
 import ui.io.Display
 import ui.io.InputReader
-import org.damascus.ui.views.admin.AdminDashboardView
 import ui.views.LoginView
 import ui.views.project.ProjectView
 import ui.views.project.ProjectViewCli
@@ -91,7 +87,7 @@ val appModule = module {
     single<InputReader> { ConsoleUserInput() }
 
     single<ProjectView> { ProjectViewCli(get(), get(), get()) }
-    single{ AdminDashboardView(get(),get(),get(),get(),get()) }
+    single { AdminDashboardView(get(), get(), get(), get(), get()) }
     single { LoginView(get(), get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
     single { PlanMateConsoleUi(get(), get()) }
