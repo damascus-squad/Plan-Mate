@@ -1,16 +1,15 @@
 package org.damascus.ui.views.projectDashboard
 
-import logic.model.Project
-import logic.model.Task
-import java.util.UUID
+import logic.model.User
+import java.util.*
 
 interface ProjectDashboardController {
     fun editProject(projectId: UUID)
     fun deleteTask(taskId: UUID)
-    fun createTask(projectId: UUID,task: Task)
+    fun createTask(projectId: UUID)
     fun assignMateToProject(
         projectId: UUID,
         mateId: UUID,
-        shouldAssign: Boolean
     )
+    fun start(projectId: UUID, currentUser: User)
 }

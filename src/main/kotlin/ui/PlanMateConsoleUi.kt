@@ -2,11 +2,16 @@ package ui
 
 import logic.model.UserRole
 import org.damascus.ui.views.admin.AdminDashboardView
+import org.damascus.ui.views.projectDashboard.ProjectDashboardCli
+import org.damascus.ui.views.projectDashboard.ProjectDashboardController
 import ui.views.LoginView
+import ui.views.project.ProjectView
+import ui.views.project.ProjectViewCli
 
 class PlanMateConsoleUi(
     private val loginView: LoginView,
-    private val adminDashboardView: AdminDashboardView
+    private val adminDashboardView: AdminDashboardView,
+    private val projectViewCli: ProjectView
 ) {
 
     fun start() {
@@ -14,6 +19,8 @@ class PlanMateConsoleUi(
             val user = loginView.getLoggedUser()
             if (user.userRole == UserRole.ADMIN) {
                 adminDashboardView.showDashboard(user)
+            }else{
+                projectViewCli.showAllProjects(currentUser = user)
             }
         }
     }
