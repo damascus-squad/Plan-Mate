@@ -40,6 +40,19 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         if (!exist(taskState.name)) {
             throw StateNotFoundException()
         }
+
+        /**
+         * This would need refactoring if the system would be used by more than one user at once
+         * So this should be treated as a critical section then and protected by a mutex
+         */
+
+        if (taskState.projectReferencesCount > 1) {
+            update(
+                taskState = taskState,
+                updatedTaskState = taskState.copy(projectReferencesCount = taskState.projectReferencesCount - 1)
+            )
+        }
+
         dataSource.delete(taskState.id)
 
         return true
@@ -47,5 +60,18 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
 
     override fun exist(name: String): Boolean {
         return dataSource.read().any { it.name == name }
+    }
+
+    override fun incrementProjectReferences(taskState: TaskState): Boolean {
+        if (!exist(taskState.name)) {
+            throw StateNotFoundException()
+        }
+
+        update(
+            taskState = taskState,
+            updatedTaskState = taskState.copy(projectReferencesCount = taskState.projectReferencesCount + 1)
+        )
+
+        return true
     }
 }
