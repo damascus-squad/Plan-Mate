@@ -44,6 +44,12 @@ class AuthenticationRepoImpl(
         return newMate.toUser()
     }
 
+    override fun getAllMates(): List<User>{
+        return usersDataSource.read()
+            .filter { it.userRole == UserRole.MATE }
+            .map { it.toUser() }
+    }
+
     private fun getUserByUsername(username: String): UserDTO? {
         return usersDataSource.read().find { it.username == username }
     }
