@@ -10,32 +10,29 @@ import logic.model.Project
 import logic.model.Task
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
 import logic.usecase.auditLog.GetLogsByTaskIdUseCase
+import logic.usecase.auditLog.SaveLogUseCase
+import logic.usecase.project.GetProjectUseCase
 import logic.usecase.project.ModifyMateAssignmentUseCase
-import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
-import org.damascus.logic.usecase.AuditLog.SaveLogUseCase
-import org.damascus.logic.usecase.ProjectUseCase.GetProjectUseCase
-import org.damascus.logic.usecase.ProjectUseCase.UpdateProjectUseCase
-import org.damascus.logic.usecase.task.CreateTaskUseCase
-import org.damascus.logic.usecase.task.DeleteTaskUseCase
-import org.damascus.logic.usecase.task.GetTasksByProjectUseCase
-import org.damascus.ui.io.ConsoleDisplay
-import org.damascus.ui.io.ConsoleUserInput
-import org.damascus.ui.util.UiAction
+import logic.usecase.project.UpdateProjectUseCase
+import logic.usecase.state.GetTaskStateByIdUseCase
+import logic.usecase.task.CreateTaskUseCase
+import logic.usecase.task.DeleteTaskUseCase
+import logic.usecase.task.GetTasksByProjectUseCase
+import ui.io.Display
+import ui.io.InputReader
+import ui.util.UiAction
 import java.util.*
 
 
 class ProjectDashboardCli(
-    private val display: ConsoleDisplay,
-    private val inputReader: ConsoleUserInput,
+    private val display: Display,
+    private val inputReader: InputReader,
     private val getProjectUseCase: GetProjectUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
     private val updateProjectUseCase: UpdateProjectUseCase,
     private val createTaskUseCase: CreateTaskUseCase,
-    private val getTaskStateByIdUseCase:GetTaskStateByIdUseCase,
-    private val getLogsByProjectIdUseCase: GetLogsByProjectIdUseCase,
+    private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase,
     private val getTasksByProjectUseCase: GetTasksByProjectUseCase,
-    private val getLogsByTaskIdUseCase: GetLogsByTaskIdUseCase,
     private val saveLogUseCase: SaveLogUseCase,
     private val modifyMateAssignmentUseCase: ModifyMateAssignmentUseCase
 ) : ProjectDashboardController {
@@ -46,14 +43,19 @@ class ProjectDashboardCli(
         display.displayMenu(
             listOf(
                 UiAction("Edit Project") { editProject(projectId) },
+                UiAction("Delete Project") { editProject(projectId) },
+                UiAction("Assign Mate") { editProject(projectId) },
+                UiAction("Show History") { editProject(projectId) },
+                UiAction("Create Task") { editProject(projectId) }
             ),
             menuTitle = "Project Dashboard"
         )
     }
 
 
-    fun viewProjectSwimlaneView(projectId: UUID) {
+    private fun viewProjectSwimlaneView(projectId: UUID) {
         val projectTasks = getTasksByProjectUseCase(projectId)
+        projectTasks.map {  }
 
         val todoTasks = mutableListOf<String>()
         val inProgressTasks = mutableListOf<String>()
@@ -67,23 +69,23 @@ class ProjectDashboardCli(
                 "DONE" -> doneTasks.add(task.title)
             }
         }
-
-        val swimlaneRepresentation = StringBuilder()
-        swimlaneRepresentation.append(" Project Dashboard\n")
-        swimlaneRepresentation.append("-----------------------------------------------------------\n")
-        swimlaneRepresentation.append("TODO                  | In Progress |                   Done\n")
-        swimlaneRepresentation.append("-----------------------------------------------------------\n")
-
-        val maxRows = maxOf(todoTasks.size, inProgressTasks.size, doneTasks.size)
-
-        for (i in 0 until maxRows) {
-            swimlaneRepresentation.append(
-                "${todoTasks.getOrNull(i) ?: " "}".padEnd(25) +
-                        "| ${inProgressTasks.getOrNull(i) ?: " "}".padEnd(23) +
-                        "| ${doneTasks.getOrNull(i) ?: " "}".padEnd(23) + "\n"
-            )
-        }
-        print(swimlaneRepresentation.toString())
+//
+//        val swimlaneRepresentation = StringBuilder()
+//        swimlaneRepresentation.append(" Project Dashboard\n")
+//        swimlaneRepresentation.append("-----------------------------------------------------------\n")
+//        swimlaneRepresentation.append("TODO                  | In Progress |                   Done\n")
+//        swimlaneRepresentation.append("-----------------------------------------------------------\n")
+//
+//        val maxRows = maxOf(todoTasks.size, inProgressTasks.size, doneTasks.size)
+//
+//        for (i in 0 until maxRows) {
+//            swimlaneRepresentation.append(
+//                "${todoTasks.getOrNull(i) ?: " "}".padEnd(25) +
+//                        "| ${inProgressTasks.getOrNull(i) ?: " "}".padEnd(23) +
+//                        "| ${doneTasks.getOrNull(i) ?: " "}".padEnd(23) + "\n"
+//            )
+//        }
+//        print(swimlaneRepresentation.toString())
     }
 
     override fun editProject(projectId: UUID) {
@@ -101,7 +103,6 @@ class ProjectDashboardCli(
 
         println("✅ Task updated successfully!")
     }
-
 
     override fun deleteTask(taskId: UUID) {
         try {
@@ -159,7 +160,6 @@ class ProjectDashboardCli(
         }
     }
 
-
     override fun assignMateToProject(projectId: UUID, mateId: UUID, shouldAssign: Boolean) {
         try {
             val success = modifyMateAssignmentUseCase(projectId, mateId, shouldAssign)
@@ -186,35 +186,34 @@ class ProjectDashboardCli(
         }
     }
 
-    override fun viewProjectHistory(projectId: UUID) {
-        try {
-            val projectLogs = getLogsByProjectIdUseCase(projectId)
-
-            println("\n📜 Project History:")
-
-            projectLogs.forEach { log ->
-                println("Action: ${log.actionType} by User ${log.userId} on ${log.actionDate}")
-                println("From state: ${log.currentStateId} to state: ${log.newStateId}")
-            }
-
-        } catch (e: NoLogException) {
-            println("Error retrieving project history: ${e.message}")
-        }
-    }
-
-
-    override fun viewTaskHistory(projectId: UUID) {
-        try {
-            val taskLogs = getLogsByTaskIdUseCase(projectId)
-            println("\n📜 Task History for this project:")
-            taskLogs.forEach { log ->
-                println("Action: ${log.actionType} by User ${log.userId} on ${log.actionDate}")
-                println("From state: ${log.currentStateId} to state: ${log.newStateId}")
-            }
-        } catch (e: NoLogException) {
-            println("Error retrieving task history: ${e.message}")
-        }
-    }
+//    override fun viewProjectHistory(projectId: UUID) {
+//        try {
+//            val projectLogs = getLogsByProjectIdUseCase(projectId)
+//
+//            println("\n📜 Project History:")
+//
+//            projectLogs.forEach { log ->
+//                println("Action: ${log.actionType} by User ${log.userId} on ${log.actionDate}")
+//                println("From state: ${log.currentStateId} to state: ${log.newStateId}")
+//            }
+//
+//        } catch (e: NoLogException) {
+//            println("Error retrieving project history: ${e.message}")
+//        }
+//    }
+//
+//    override fun viewTaskHistory(projectId: UUID) {
+//        try {
+//            val taskLogs = getLogsByTaskIdUseCase(projectId)
+//            println("\n📜 Task History for this project:")
+//            taskLogs.forEach { log ->
+//                println("Action: ${log.actionType} by User ${log.userId} on ${log.actionDate}")
+//                println("From state: ${log.currentStateId} to state: ${log.newStateId}")
+//            }
+//        } catch (e: NoLogException) {
+//            println("Error retrieving task history: ${e.message}")
+//        }
+//    }
 
     private fun updateField(fieldName: String, updatedProject: Project): Project {
         println("You selected: $fieldName")

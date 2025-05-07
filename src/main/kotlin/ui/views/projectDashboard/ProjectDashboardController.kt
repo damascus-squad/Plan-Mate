@@ -13,7 +13,4 @@ interface ProjectDashboardController {
         mateId: UUID,
         shouldAssign: Boolean
     )
-    fun viewProjectHistory(projectId: UUID)
-    fun viewTaskHistory(projectId: UUID)
-
 }
