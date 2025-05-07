@@ -51,15 +51,13 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
                 taskState = taskState,
                 updatedTaskState = taskState.copy(projectReferencesCount = taskState.projectReferencesCount - 1)
             )
+
+            return true
         }
 
         dataSource.delete(taskState.id)
 
         return true
-    }
-
-    override fun exist(name: String): Boolean {
-        return dataSource.read().any { it.name == name }
     }
 
     override fun incrementProjectReferences(taskState: TaskState): Boolean {
@@ -73,5 +71,9 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         )
 
         return true
+    }
+
+    override fun exist(name: String): Boolean {
+        return dataSource.read().any { it.name == name }
     }
 }
