@@ -6,6 +6,8 @@ import kotlinx.datetime.toLocalDateTime
 import logic.exception.NoLogException
 import logic.exception.TaskAlreadyExistsException
 import logic.exception.TaskNotFoundException
+import logic.model.ActionType
+import logic.model.History
 import logic.model.Project
 import logic.model.Task
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
@@ -62,12 +64,12 @@ class ProjectDashboardCli(
         val doneTasks = mutableListOf<String>()
 
         projectTasks.forEach { task ->
-            // TODO : import GetTaskStateByIdUseCase
-            when (getTaskStateByIdUseCase(task.stateId)) {
-                "TODO" -> todoTasks.add(task.title)
-                "IN_PROGRESS"-> inProgressTasks.add(task.title)
-                "DONE" -> doneTasks.add(task.title)
-            }
+//            // TODO : import GetTaskStateByIdUseCase
+//            when (getTaskStateByIdUseCase(task.stateId)) {
+//                "TODO" -> todoTasks.add(task.title)
+//                "IN_PROGRESS"-> inProgressTasks.add(task.title)
+//                "DONE" -> doneTasks.add(task.title)
+//            }
         }
 //
 //        val swimlaneRepresentation = StringBuilder()
