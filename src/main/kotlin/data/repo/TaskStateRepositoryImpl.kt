@@ -13,7 +13,7 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         return dataSource.read()
     }
 
-    override fun getStateById(id: UUID): TaskState {
+    override fun getTaskStateById(id: UUID): TaskState {
         return dataSource.read().firstOrNull { it.id == id }
             ?: throw StateNotFoundException()
     }

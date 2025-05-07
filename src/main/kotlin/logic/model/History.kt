@@ -17,7 +17,8 @@ data class History(
         val NO_UUID: UUID = UUID(0, 0)
         val NO_TASK_STATE = TaskState(
             id = NO_UUID,
-            name = "Nothing"
+            name = "Nothing",
+            projectReferencesCount = 0,
         )
     }
 }

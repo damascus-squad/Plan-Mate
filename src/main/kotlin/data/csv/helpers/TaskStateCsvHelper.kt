@@ -17,7 +17,7 @@ object TaskStateCsvHelper {
 
         return TaskState(
             id = parseUuid(tokens[FieldPosition.ID.ordinal]),
-            name = parseName(tokens[FieldPosition.ID.ordinal]),
+            name = parseName(tokens[FieldPosition.NAME.ordinal]),
             projectReferencesCount = parseInt(tokens[FieldPosition.PROJECT_REFERENCES_COUNT.ordinal])
         )
     }

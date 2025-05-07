@@ -9,7 +9,7 @@ class GetTaskStateByIdUseCase(
     private val repository: TaskStateRepository
 ) {
     operator fun invoke(id: UUID): TaskState {
-        return repository.getStateById(id)
+        return repository.getTaskStateById(id)
             ?: throw StateNotFoundException()
     }
 }

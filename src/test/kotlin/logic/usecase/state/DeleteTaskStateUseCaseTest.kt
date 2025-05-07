@@ -25,7 +25,7 @@ class DeleteTaskStateUseCaseTest {
 
     @Test
     fun `should delete state when it exists`() {
-        val taskState = TaskState(UUID.randomUUID(), "In Progress")
+        val taskState = TaskState(UUID.randomUUID(), "In Progress", 1)
 
         //given
         every { repository.exist(taskState.name) } returns true
@@ -44,7 +44,7 @@ class DeleteTaskStateUseCaseTest {
 
     @Test
     fun `should throw StateNotFoundException when state doesn't exist `() {
-        val taskState = TaskState(UUID.randomUUID(), "New")
+        val taskState = TaskState(UUID.randomUUID(), "New", 1)
 
         //given
         every { repository.exist(taskState.name) } returns false

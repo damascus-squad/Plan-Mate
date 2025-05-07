@@ -249,6 +249,7 @@ fun makeProject(id: UUID): Project {
         id = id,
         "name",
         mutableListOf(),
+        mutableListOf(),
         LocalDateTime(2023, 10, 7, 3, 30, 0),
     )
 }

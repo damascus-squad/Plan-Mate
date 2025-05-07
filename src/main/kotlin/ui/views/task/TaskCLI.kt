@@ -61,7 +61,7 @@ class TaskCLI(
         println("\n📋 Task Details:")
         println("Title: ${task.title}")
         println("Description: ${task.description}")
-        println("Status: ${taskStateRepository.getStateById(taskId)}")
+        println("Status: ${taskStateRepository.getTaskStateById(taskId)}")
         println("Assignee: ${task.assigneeId}")
         println("Created At: ${task.creationDate}")
     }

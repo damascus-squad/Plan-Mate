@@ -44,7 +44,7 @@ class StateRepositoryImplTest {
 
         //when
         val targetId = fakeTaskStates[0].id
-        val result = stateRepositoryImpl.getStateById(targetId)
+        val result = stateRepositoryImpl.getTaskStateById(targetId)
 
         //then
         assertThat(result).isEqualTo(fakeTaskStates[0])
@@ -60,14 +60,14 @@ class StateRepositoryImplTest {
 
         // when && then
         assertThrows<StateNotFoundException> {
-            stateRepositoryImpl.getStateById(nonExistentID)
+            stateRepositoryImpl.getTaskStateById(nonExistentID)
         }
         verify { dataSource.read() }
     }
 
     @Test
     fun `create should add new state when it doesn't exist`() {
-        val newTaskState = TaskState(UUID.randomUUID(), "New")
+        val newTaskState = TaskState(UUID.randomUUID(), "New", 1)
 
         //given
         every { dataSource.read() } returns fakeTaskStates
@@ -118,7 +118,7 @@ class StateRepositoryImplTest {
         every { dataSource.read() } returns fakeTaskStates
 
         // when
-        val nonExistentTaskState = TaskState(UUID.randomUUID(), "Unknown")
+        val nonExistentTaskState = TaskState(UUID.randomUUID(), "Unknown", 1)
         val updatedTaskState = nonExistentTaskState.copy(name = "In Progress")
         //then
         assertThrows<StateNotFoundException> {
@@ -149,7 +149,7 @@ class StateRepositoryImplTest {
         every { dataSource.read() } returns fakeTaskStates
 
         // when
-        val taskStateToDelete = TaskState(UUID.randomUUID(), "Unknown")
+        val taskStateToDelete = TaskState(UUID.randomUUID(), "Unknown", 1)
 
         // then
         assertThrows<StateNotFoundException> {
@@ -177,7 +177,7 @@ class StateRepositoryImplTest {
     fun `exist should return false when state does not exist`() {
         // given
         val id = UUID.randomUUID()
-        val nonExistentTaskState = TaskState(id, "Done")
+        val nonExistentTaskState = TaskState(id, "Done", 1)
         every { dataSource.read() } returns fakeTaskStates
 
         // when
@@ -189,9 +189,9 @@ class StateRepositoryImplTest {
     }
 
     private val fakeTaskStates = listOf(
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000001"), "In Progress"),
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000002"), "In Review"),
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Completed")
+        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000001"), "In Progress", 1),
+        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000002"), "In Review", 1),
+        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Completed", 1)
 
     )
 }

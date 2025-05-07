@@ -25,17 +25,17 @@ class GetTaskStateByIdUSeCaseTestCase {
 
     @Test
     fun `should return task state when it exists`() {
-        val taskState = TaskState(UUID.randomUUID(), "In Progress")
+        val taskState = TaskState(UUID.randomUUID(), "In Progress", 1)
 
         //given
-        every { repository.getStateById(taskState.id) } returns taskState
+        every { repository.getTaskStateById(taskState.id) } returns taskState
 
         //when
         val result = getTaskStateByIdUseCase(taskState.id)
 
         //then
         assertThat(result).isEqualTo(taskState)
-        verify(exactly = 1) { repository.getStateById(taskState.id) }
+        verify(exactly = 1) { repository.getTaskStateById(taskState.id) }
     }
 
 
@@ -44,14 +44,14 @@ class GetTaskStateByIdUSeCaseTestCase {
         val taskStateId = UUID.randomUUID()
 
         // given
-        every { repository.getStateById(taskStateId) } returns null
+        every { repository.getTaskStateById(taskStateId) } returns null
 
         // when && then
         assertThrows<StateNotFoundException> {
             getTaskStateByIdUseCase(taskStateId)
         }
 
-        verify(exactly = 1) { repository.getStateById(taskStateId) }
+        verify(exactly = 1) { repository.getTaskStateById(taskStateId) }
     }
 
 

@@ -151,6 +151,7 @@ fun makeProject(id: UUID): Project {
         id = id,
         name = "Test Project",
         assignedMatesIds = mutableListOf(),
+        allowedStatesIds = mutableListOf(),
         creationDate = LocalDateTime(2023, 10, 7, 3, 30, 0)
     )
 }

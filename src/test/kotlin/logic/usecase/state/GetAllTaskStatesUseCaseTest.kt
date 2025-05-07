@@ -25,8 +25,8 @@ class GetAllTaskStatesUseCaseTest {
     @Test
     fun `should return all task states `() {
         val taskStates = listOf(
-            TaskState(UUID.randomUUID(), "In Progress"),
-            TaskState(UUID.randomUUID(), "Done")
+            TaskState(UUID.randomUUID(), "In Progress", 1),
+            TaskState(UUID.randomUUID(), "Done", 1)
         )
 
         // given
