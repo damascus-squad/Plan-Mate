@@ -2,6 +2,7 @@ package data.repo
 
 import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
+import logic.model.History.Companion.NO_TASK_STATE
 import logic.model.TaskState
 import logic.repo.DataSource
 import logic.repo.TaskStateRepository
@@ -15,7 +16,7 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
 
     override fun getTaskStateById(id: UUID): TaskState {
         return dataSource.read().firstOrNull { it.id == id }
-            ?: throw StateNotFoundException()
+            ?: NO_TASK_STATE
     }
 
     override fun create(taskState: TaskState): Boolean {

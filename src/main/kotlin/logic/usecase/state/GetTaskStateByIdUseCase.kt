@@ -10,6 +10,5 @@ class GetTaskStateByIdUseCase(
 ) {
     operator fun invoke(id: UUID): TaskState {
         return repository.getTaskStateById(id)
-            ?: throw StateNotFoundException()
     }
 }

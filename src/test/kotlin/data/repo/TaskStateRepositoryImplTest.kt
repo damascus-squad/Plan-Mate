@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
+import logic.model.History.Companion.NO_TASK_STATE
 import logic.model.TaskState
 import logic.repo.DataSource
 import org.junit.jupiter.api.BeforeEach
@@ -53,15 +54,16 @@ class TaskStateRepositoryImplTest {
     }
 
     @Test
-    fun `getStateById should throw StateNotFoundException if state doesn't exist`() {
+    fun `getStateById should return NO_TASK_STATE if state doesn't exist`() {
         // given
         val nonExistentID = UUID.randomUUID()
         every { dataSource.read() } returns fakeTaskStates
 
-        // when && then
-        assertThrows<StateNotFoundException> {
-            stateRepositoryImpl.getTaskStateById(nonExistentID)
-        }
+        // when
+        val result = stateRepositoryImpl.getTaskStateById(nonExistentID)
+
+        // Then
+        assertThat(result).isEqualTo(NO_TASK_STATE)
         verify { dataSource.read() }
     }
 
