@@ -14,10 +14,12 @@ import logic.model.UserRole
 import logic.usecase.project.CreateProjectUseCase
 import logic.usecase.project.GetAllProjectsByMateIdUseCase
 import logic.usecase.project.GetAllProjectsUseCase
+import org.damascus.ui.views.projectDashboard.ProjectDashboardController
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import ui.io.ConsoleUserInput
+import ui.io.InputReader
 import java.util.*
 
 class ProjectViewCliTest {
@@ -26,6 +28,7 @@ class ProjectViewCliTest {
     private lateinit var getAllProjectsUseCase: GetAllProjectsUseCase
     private lateinit var getAllProjectsByMateIdUseCase: GetAllProjectsByMateIdUseCase
     private lateinit var sampleProject: Project
+    private lateinit var projectDashboardCli: ProjectDashboardController
 
     @BeforeEach
     fun setup() {
@@ -33,6 +36,7 @@ class ProjectViewCliTest {
         createProjectUseCase = mockk()
         getAllProjectsUseCase = mockk()
         getAllProjectsByMateIdUseCase = mockk()
+        projectDashboardCli = mockk()
 
         sampleProject = Project(
             id = UUID.randomUUID(),
@@ -112,7 +116,8 @@ class ProjectViewCliTest {
         return ProjectViewCli(
             consoleUserInput = consoleUserInput,
             getAllProjectsUseCase = getAllProjectsUseCase,
-            getAllProjectsByMateIdUseCase = getAllProjectsByMateIdUseCase
+            getAllProjectsByMateIdUseCase = getAllProjectsByMateIdUseCase,
+            projectDashboardCli = projectDashboardCli
         )
     }
 

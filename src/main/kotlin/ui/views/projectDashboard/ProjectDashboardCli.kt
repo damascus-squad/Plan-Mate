@@ -7,6 +7,8 @@ import logic.exception.NoMatesAvailableException
 import logic.exception.TaskAlreadyExistsException
 import logic.exception.TaskNotFoundException
 import logic.model.*
+import logic.usecase.auditLog.GetLogsByProjectIdUseCase
+import logic.usecase.auditLog.GetLogsByTaskIdUseCase
 import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.project.GetProjectUseCase
 import logic.usecase.project.AssignMateUseCase
@@ -14,6 +16,7 @@ import logic.usecase.project.UpdateProjectUseCase
 import logic.usecase.state.GetTaskStateByIdUseCase
 import logic.usecase.task.CreateTaskUseCase
 import logic.usecase.task.DeleteTaskUseCase
+import logic.usecase.task.GetTaskUseCase
 import logic.usecase.task.GetTasksByProjectUseCase
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
 import org.damascus.logic.usecase.project.UnassignMateUseCase
@@ -38,29 +41,30 @@ class ProjectDashboardCli(
     private val assignMateUseCase: AssignMateUseCase,
     private val removeMate: UnassignMateUseCase,
     private val getAllMatesUseCase: GetAllMatesUseCase,
+    private val getLogsByProjectIdUseCase: GetLogsByProjectIdUseCase,
 ) : ProjectDashboardController {
 
-    override fun start(projectId: UUID, currentUser: User) {
-        val dummyStates = listOf(
-            TaskState(UUID.randomUUID(), "TODO"),
-            TaskState(UUID.randomUUID(), "In Progress"),
-            TaskState(UUID.randomUUID(), "Done"),
-        )
+    val dummyStates = listOf(
+        TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"), "TODO"),
+        TaskState(UUID.fromString("22222222-2222-2222-2222-222222222222"), "In Progress"),
+        TaskState(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Done"),
+    )
 
-        viewProjectSwimlaneView(dummyStates, projectId)
+    override fun start(projectId: UUID, currentUser: User) {
 
         val adminActions = listOf(
             UiAction("Edit Project") { editProject(projectId) },
             UiAction("Delete Project") { },
             UiAction("Assign Mate") { assignMateToProject(projectId, selectMateFromList()) },
             UiAction("Remove Mate") { removeMate(projectId, selectMateFromList()) },
-            UiAction("Show History") { },
-            UiAction("Create Task") { createTask(projectId) }
+            UiAction("Show History") {showHistory(projectId, currentUser) },
+            UiAction("Create Task") { createTask(projectId,currentUser) },
+            UiAction("Display Tasks Board") { viewProjectSwimlaneView(dummyStates, projectId) }
         )
 
         val mateActions = listOf(
             UiAction("Show History") { },
-            UiAction("Create Task") { createTask(projectId) }
+            UiAction("Create Task") { createTask(projectId, currentUser) }
         )
 
         val actions = when (currentUser.userRole) {
@@ -69,6 +73,53 @@ class ProjectDashboardCli(
         }
 
         display.displayMenu(actions, menuTitle = "Project Dashboard")
+        viewProjectSwimlaneView(dummyStates, projectId)
+    }
+
+    private fun showHistory(projectId: UUID, user: User){
+        val projectLogs = getLogsByProjectIdUseCase(projectId)
+
+        if (projectLogs.isEmpty()) {
+            println("ℹ️ No history found for this project.")
+            return
+        }
+
+        val tasks = getTasksByProjectUseCase(projectId)
+        val taskMap = tasks.associateBy { it.id }
+
+        val project = getProjectUseCase(projectId)
+
+        projectLogs.forEach { log ->
+            val actionDate = log.actionDate.toString()
+            val actionDescription = when (log.actionType) {
+                ActionType.TASK_CREATED -> {
+                    val taskTitle = taskMap[log.taskId]?.title ?: "Unknown Task"
+                    """created the task "$taskTitle""""
+                }
+
+                ActionType.TASK_DELETED -> {
+                    val taskTitle = taskMap[log.taskId]?.title ?: "Unknown Task"
+                    """deleted the task "$taskTitle""""
+                }
+
+                ActionType.TASK_STATE_CHANGED -> {
+                    val taskTitle = taskMap[log.taskId]?.title ?: "Unknown Task"
+                    val fromState = getTaskStateByIdUseCase(log.currentStateId).name
+                    val toState = getTaskStateByIdUseCase(log.newStateId).name
+                    """moved the task "$taskTitle" from "$fromState" to "$toState""""
+                }
+
+                ActionType.PROJECT_CREATED -> """created the project "${project.name}""""
+
+                ActionType.PROJECT_MODIFIED -> {
+                        """modified the project "${project.name}""""
+                }
+
+                ActionType.PROJECT_DELETED -> """deleted the project "${project.name}""""
+            }
+
+            println("🕒 [$actionDate] ${user.username} $actionDescription")
+        }
     }
 
     private fun viewProjectSwimlaneView(allowedStates: List<TaskState>, projectId: UUID) {
@@ -120,38 +171,64 @@ class ProjectDashboardCli(
         }
     }
 
-    override fun createTask(projectId: UUID) {
+    override fun createTask(projectId: UUID, user: User) {
         val title = inputReader.readString("Enter task title: ")
         val description = inputReader.readString("Enter task description: ")
+        val project = getProjectUseCase(projectId)
+        var assigneeInput = ""
+        var assigneeId :UUID? = null
+        val mates = getAllMatesUseCase().filter { it.id in project.assignedMatesIds }
 
-        val assigneeInput = inputReader.readString("Enter assignee ID (leave blank if none): ")
+        if (mates.isEmpty()) {
+            println("⚠️ No mates assigned to this project.")
+        } else {
+            println("👥 Available Mates:")
+            mates.forEachIndexed { index, mate ->
+                println("${index + 1}. ${mate.username} (ID: ${mate.id})")
+            }
 
-        val stateInput = inputReader.readString("Enter task state ID: ")
+            assigneeInput = inputReader.readString("Enter assignee ID (leave blank if none): ")
+            assigneeId = if (assigneeInput.isNotBlank()) {
+                val selectedMateIndex = assigneeInput.toIntOrNull()
+                if (selectedMateIndex != null && selectedMateIndex in 1..mates.size) {
+                    mates[selectedMateIndex - 1].id
+                } else {
+                    println("⚠️ Invalid assignee number. Skipping assignee.")
+                    null
+                }
+            } else null
+        }
 
-        val assigneeId = if (assigneeInput.isNotBlank()) UUID.fromString(assigneeInput) else null
-        val stateId = UUID.fromString(stateInput)
+
+        println("Available task states:")
+        dummyStates.forEachIndexed { index, state ->
+            println("${index + 1}. ${state.name}")
+        }
+
+        val selectedStateIndex = inputReader.readInt("Select task state (1-${dummyStates.size}): ", 1, dummyStates.size)
+        val stateId = dummyStates[selectedStateIndex - 1].id
 
         val newTask = Task(
             id = UUID.randomUUID(),
             title = title,
             description = description,
             projectId = projectId,
-            assigneeId = UUID.randomUUID(),
-            stateId = UUID.randomUUID(),
+            assigneeId = assigneeId,
+            stateId = stateId,
             creationDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         )
 
         try {
             createTaskUseCase(newTask)
             println("✅ Task '${newTask.title}' created successfully!")
+            viewProjectSwimlaneView(dummyStates, projectId)
             saveLogUseCase(
                 History(
                     id = UUID.randomUUID(),
                     projectId = projectId,
                     taskId = newTask.id,
                     actionType = ActionType.TASK_CREATED,
-                    //TODO : add user id
-                    userId = UUID.randomUUID(),
+                    userId = user.id,
                     currentStateId = stateId,
                     newStateId = newTask.stateId,
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -163,7 +240,7 @@ class ProjectDashboardCli(
     }
 
     override fun assignMateToProject(projectId: UUID, mateId: UUID) {
-        if (assignMateUseCase(projectId,mateId)) {
+        if (assignMateUseCase(projectId, mateId)) {
             println("👥 Mate assigned to project successfully!")
             saveLogUseCase(
                 History(

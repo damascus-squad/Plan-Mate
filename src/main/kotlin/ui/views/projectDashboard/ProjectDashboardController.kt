@@ -6,7 +6,7 @@ import java.util.*
 interface ProjectDashboardController {
     fun editProject(projectId: UUID)
     fun deleteTask(taskId: UUID)
-    fun createTask(projectId: UUID)
+    fun createTask(projectId: UUID, currentUser: User)
     fun assignMateToProject(
         projectId: UUID,
         mateId: UUID,

@@ -18,7 +18,8 @@ class AssignMateUseCase(
         }
 
         val mates = project.assignedMatesIds.toMutableList()
-        val alreadyAssigned = mateId !in mates
+
+        val alreadyAssigned = mateId in mates
 
         if (!alreadyAssigned) mates.add(mateId)
 

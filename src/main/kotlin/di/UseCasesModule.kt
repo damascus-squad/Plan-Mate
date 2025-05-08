@@ -1,5 +1,7 @@
 package di
 
+import logic.usecase.auditLog.GetLogsByProjectIdUseCase
+import logic.usecase.auditLog.GetLogsByTaskIdUseCase
 import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.auth.AuthenticateUserLoginUseCase
 import logic.usecase.auth.CreateMateUseCase
@@ -36,5 +38,6 @@ val useCaseModule = module {
 
     single { GetTaskStateByIdUseCase(get()) }
     single { SaveLogUseCase(get()) }
+    single { GetLogsByProjectIdUseCase(get()) }
 
 }
