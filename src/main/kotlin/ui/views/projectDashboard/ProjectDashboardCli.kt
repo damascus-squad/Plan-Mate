@@ -46,9 +46,9 @@ class ProjectDashboardCli(
 ) : ProjectDashboardController {
 
     private val dummyStates = listOf(
-        TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"), "TODO"),
-        TaskState(UUID.fromString("22222222-2222-2222-2222-222222222222"), "In Progress"),
-        TaskState(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Done"),
+        TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"),"TODO",1),
+        TaskState(UUID.fromString("22222222-2222-2222-2222-222222222222"), "In Progress", 1),
+        TaskState(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Done", 1),
     )
 
     override fun start(projectId: UUID, currentUser: User) {
