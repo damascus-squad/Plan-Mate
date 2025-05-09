@@ -3,6 +3,8 @@ package ui.views
 import logic.exception.NoLogException
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
 import logic.usecase.auditLog.GetLogsByTaskIdUseCase
+import logic.usecase.project.GetProjectUseCase
+import logic.usecase.task.GetTasksByProjectUseCase
 import ui.util.TerminalColor
 import ui.util.withStyle
 import java.util.*

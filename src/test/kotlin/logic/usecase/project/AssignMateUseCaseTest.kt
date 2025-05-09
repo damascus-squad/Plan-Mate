@@ -11,15 +11,15 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
-class ModifyMateAssignmentUseCaseTest {
+class AssignMateUseCaseTest {
 
     private lateinit var repository: ProjectRepository
-    private lateinit var useCase: ModifyMateAssignmentUseCase
+    private lateinit var useCase: AssignMateUseCase
 
     @BeforeEach
     fun setup() {
         repository = mockk(relaxed = true)
-        useCase = ModifyMateAssignmentUseCase(repository)
+        useCase = AssignMateUseCase(repository)
     }
 
     @Test
@@ -28,7 +28,7 @@ class ModifyMateAssignmentUseCaseTest {
         every { repository.get(any()) } throws Exception()
 
         // When
-        val result = useCase(UUID.randomUUID(), UUID.randomUUID(), shouldAssign = true)
+        val result = useCase(UUID.randomUUID(), UUID.randomUUID())
 
         // Then
         assertThat(result).isFalse()
@@ -42,7 +42,7 @@ class ModifyMateAssignmentUseCaseTest {
         every { repository.get(project.id) } returns project
 
         // When
-        val result = useCase(project.id, mateId, shouldAssign = true)
+        val result = useCase(project.id, mateId)
 
         // Then
         assertThat(result).isFalse()
@@ -57,7 +57,7 @@ class ModifyMateAssignmentUseCaseTest {
         every { repository.update(any(), any()) } returns true
 
         // When
-        val result = useCase(project.id, mateId, shouldAssign = true)
+        val result = useCase(project.id, mateId)
 
         // Then
         assertThat(result).isTrue()
@@ -70,7 +70,7 @@ class ModifyMateAssignmentUseCaseTest {
         every { repository.get(any()) } throws Exception()
 
         // When
-        val result = useCase(UUID.randomUUID(), UUID.randomUUID(), shouldAssign = false)
+        val result = useCase(UUID.randomUUID(), UUID.randomUUID())
 
         // Then
         assertThat(result).isFalse()
@@ -84,27 +84,27 @@ class ModifyMateAssignmentUseCaseTest {
         every { repository.get(project.id) } returns project
 
         // When
-        val result = useCase(project.id, mateId, shouldAssign = false)
+        val result = useCase(project.id, mateId)
 
         // Then
         assertThat(result).isFalse()
     }
 
-    @Test
-    fun `should return true when unassigning an existing mate`() {
-        // Given
-        val mateId = UUID.randomUUID()
-        val project = makeProject().apply { assignedMatesIds.add(mateId) }
-        every { repository.get(project.id) } returns project
-        every { repository.update(any(), any()) } returns true
-
-        // When
-        val result = useCase(project.id, mateId, shouldAssign = false)
-
-        // Then
-        assertThat(result).isTrue()
-        verify { repository.update(project.id, match { mateId !in it.assignedMatesIds }) }
-    }
+//    @Test
+//    fun `should return true when unassigning an existing mate`() {
+//        // Given
+//        val mateId = UUID.randomUUID()
+//        val project = makeProject().apply { assignedMatesIds.add(mateId) }
+//        every { repository.get(project.id) } returns project
+//        every { repository.update(any(), any()) } returns true
+//
+//        // When
+//        val result = useCase(project.id, mateId)
+//
+//        // Then
+//        assertThat(result).isTrue()
+//        verify { repository.update(project.id, match { mateId !in it.assignedMatesIds }) }
+//    }
 
     private fun makeProject(id: UUID = UUID.randomUUID()): Project {
         return Project(

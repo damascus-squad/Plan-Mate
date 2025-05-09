@@ -6,6 +6,8 @@ import logic.model.User
 import logic.model.UserRole
 import logic.usecase.project.GetAllProjectsByMateIdUseCase
 import logic.usecase.project.GetAllProjectsUseCase
+import org.damascus.ui.views.projectDashboard.ProjectDashboardCli
+import org.damascus.ui.views.projectDashboard.ProjectDashboardController
 import ui.io.InputReader
 import ui.util.TerminalColor
 import ui.util.printTable
@@ -14,7 +16,8 @@ import ui.util.withStyle
 class ProjectViewCli(
     private val consoleUserInput: InputReader,
     private val getAllProjectsUseCase: GetAllProjectsUseCase,
-    private val getAllProjectsByMateIdUseCase: GetAllProjectsByMateIdUseCase
+    private val getAllProjectsByMateIdUseCase: GetAllProjectsByMateIdUseCase,
+    private val projectDashboardCli: ProjectDashboardController
 
 ) : ProjectView {
 
@@ -51,6 +54,7 @@ class ProjectViewCli(
 
         val selectedProject = projects[choice - 1]
         println("\nYou selected: ${selectedProject.name} (ID: ${selectedProject.id})")
+        projectDashboardCli.start(selectedProject.id, currentUser)
         return selectedProject
     }
 }

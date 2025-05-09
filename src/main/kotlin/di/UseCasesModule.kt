@@ -1,10 +1,14 @@
 package di
 
+import logic.usecase.auditLog.GetLogsByProjectIdUseCase
+import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.auth.AuthenticateUserLoginUseCase
 import logic.usecase.auth.CreateMateUseCase
 import logic.usecase.project.*
 import logic.usecase.state.*
 import logic.usecase.task.*
+import org.damascus.logic.usecase.auth.GetAllMatesUseCase
+import org.damascus.logic.usecase.project.UnassignMateUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -15,12 +19,14 @@ val useCaseModule = module {
     single { UpdateProjectUseCase(get()) }
     single { GetAllProjectsByMateIdUseCase(get()) }
     single { GetProjectUseCase(get()) }
-    single { ModifyMateAssignmentUseCase(get()) }
+    single { AssignMateUseCase(get()) }
+    single { UnassignMateUseCase(get()) }
     single { GetProjectStateUseCase(get(), get()) }
 
     // Authentication use cases
     single { CreateMateUseCase(get()) }
     single { AuthenticateUserLoginUseCase(get()) }
+    single { GetAllMatesUseCase(get())}
 
     // Task State use cases
     single { CheckTaskStateExistsUseCase(get()) }
@@ -37,4 +43,9 @@ val useCaseModule = module {
     single { DeleteTaskUseCase(get()) }
     single { GetTaskUseCase(get()) }
     single { GetTasksByProjectUseCase(get()) }
+
+    single { GetTaskStateByIdUseCase(get()) }
+    single { SaveLogUseCase(get()) }
+    single { GetLogsByProjectIdUseCase(get()) }
+
 }
