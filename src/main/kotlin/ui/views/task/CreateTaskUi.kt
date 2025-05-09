@@ -8,7 +8,7 @@ import logic.model.*
 import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.task.CreateTaskUseCase
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
-import org.damascus.ui.views.admin.SelectMateUi
+import org.damascus.ui.views.user.SelectMateUi
 import ui.io.InputReader
 import java.util.*
 

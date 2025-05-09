@@ -2,13 +2,10 @@ package org.damascus.ui.views.project
 
 import logic.model.Project
 import logic.model.User
-import logic.usecase.project.GetAdminProjectsUseCase
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
-import org.damascus.ui.views.admin.SelectMateUi
+import org.damascus.ui.views.user.SelectMateUi
 import ui.io.Display
 import ui.util.UiAction
-import ui.views.project.SelectProjectUi
-import java.util.UUID
 
 class UpdateProjectUi(
     private val display: Display,

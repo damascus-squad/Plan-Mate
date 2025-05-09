@@ -17,8 +17,8 @@ import logic.repo.DataSource
 import logic.service.HashingService
 import logic.service.MD5HashingService
 import org.damascus.ui.views.admin.AdminDashboardUi
-import org.damascus.ui.views.admin.MateDashboardUi
-import org.damascus.ui.views.admin.SelectMateUi
+import org.damascus.ui.views.user.MateDashboardUi
+import org.damascus.ui.views.user.SelectMateUi
 import org.damascus.ui.views.auditLog.ProjectLogUi
 import org.damascus.ui.views.auditLog.TaskLogUi
 import org.damascus.ui.views.project.*
@@ -93,7 +93,7 @@ val appModule = module {
     single<InputReader> { ConsoleUserInput() }
 
     single { AdminDashboardUi(get(), get(), get()) }
-    single { MateDashboardUi(get()) }
+    single { MateDashboardUi(get(), get(), get(), get()) }
     single { SelectMateUi(get(), get()) }
     single { AssignMateToProjectUi(get(), get(), get(), get()) }
     single { DeleteProjectUi(get(), get(), get(), get()) }

@@ -2,7 +2,7 @@ package ui
 
 import logic.model.UserRole
 import org.damascus.ui.views.admin.AdminDashboardUi
-import org.damascus.ui.views.admin.MateDashboardUi
+import org.damascus.ui.views.user.MateDashboardUi
 import ui.views.LoginView
 
 class PlanMateConsoleUi(

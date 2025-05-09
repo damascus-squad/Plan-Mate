@@ -19,12 +19,12 @@ class TaskCLI(
     private val getTaskUseCase: GetTaskUseCase,
 ) : TaskUIController {
     fun start(task: Task) {
-        viewTaskDetails(task)
+        viewTaskDetails(task.id)
         display.displayMenu(
             listOf(
-                UiAction("Update Task") { editTask(taskId) },
-                UiAction("Delete Task") { deleteTask(taskId) },
-                UiAction("Assign Task to Mate") { assignTaskToMateUi(task) }
+                UiAction("Update Task") { editTask(task.id) },
+                UiAction("Delete Task") { deleteTask(task.id) },
+//                UiAction("Assign Task to Mate") { assignTaskToMateUi(task) }
             ),
             menuTitle = "Actions for Task: ${task.title}"
         )
@@ -55,16 +55,6 @@ class TaskCLI(
         } else {
             println("❌ Deletion canceled.")
         }
-    }
-
-    override fun viewTaskDetails(taskId: UUID) {
-        val task = getTaskUseCase(taskId)
-        println("\n📋 Task Details:")
-        println("Title: ${task.title}")
-        println("Description: ${task.description}")
-        println("Status: ${taskStateRepository.getTaskStateById(taskId)}")
-        println("Assignee: ${task.assigneeId}")
-        println("Created At: ${task.creationDate}")
     }
 
     private fun updateField(fieldName: String, updatedTask: Task): Task {

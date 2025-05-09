@@ -1,7 +1,6 @@
-package org.damascus.ui.views.admin
+package org.damascus.ui.views.user
 
 import logic.model.User
-import org.damascus.logic.usecase.auth.GetAllMatesUseCase
 import ui.io.Display
 import ui.io.InputReader
 import ui.util.printTable
@@ -12,13 +11,6 @@ class SelectMateUi(
 ) {
 
     operator fun invoke(mates: List<User>): User {
-//        val availableMates = try {
-//            getAllMatesUseCase()
-//        } catch (e: NoMatesAvailableException) {
-//            println("❌ ${e.message}")
-//            exitProcess(1)
-//        }
-
         var selectedIndex = 0
         if (mates.isEmpty()) {
             display.writeError(errorMessage = " No mates assigned to this project.")
