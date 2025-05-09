@@ -28,9 +28,9 @@ class ConsoleUserInput : InputReader {
         }
     }
 
-    override fun readBoolean(): Boolean {
+    override fun readBoolean(prompt: String): Boolean {
         while (true) {
-            print("👉 Do you like it? (yes/no): ".withStyle(TerminalColor.Yellow))
+            print("👉 $prompt: ".withStyle(TerminalColor.Yellow))
             when (readlnOrNull()?.trim()?.lowercase()) {
                 "yes" -> return true
                 "no" -> return false

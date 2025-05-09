@@ -11,8 +11,6 @@ class ProjectUi(
     private val consoleDisplay: Display,
     private val getAdminProjectsUi: GetAdminProjectsUi,
     private val createProjectUi: CreateProjectUi,
-    private val updateProjectUi: UpdateProjectUi,
-    private val deleteProjectUi: DeleteProjectUi,
     private val projectDashboardCli: ProjectDashboardCli,
     private val selectProjectUi: SelectProjectUi,
     private val getAdminProjectsUseCase: GetAdminProjectsUseCase
@@ -25,7 +23,7 @@ class ProjectUi(
                 projectDashboardCli.start(
                     selectProjectUi(getAdminProjectsUseCase()), currentUser)
             } ,
-            UiAction(name = "➕ Create a New Project") { createProjectUi() },
+            UiAction(name = "➕ Create a New Project") { createProjectUi() }
 //            UiAction(name = "✏️ Update an Existing Project") { updateProjectUi(currentUser) },
 //            UiAction(name = "🗑️ Delete a Project") { deleteProjectUi() },
         )

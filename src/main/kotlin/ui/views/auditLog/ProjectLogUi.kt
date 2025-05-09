@@ -16,9 +16,9 @@ class ProjectLogUi (
 
         try {
             val log = getLogsByProjectId(projectId)
-            display.write("📄 Log for Project ID [$projectName]:\n$log")
+            display.write("📄 Log for Project Name [$projectName]:\n$log")
         } catch (e: NoLogException) {
-            display.writeError(errorMessage = "No log found for Project ID: $projectName")
+            display.writeError(errorMessage = "No log found for Project Name: $projectName")
         }
     }
 }

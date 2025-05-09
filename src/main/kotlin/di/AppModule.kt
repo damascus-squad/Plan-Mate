@@ -30,8 +30,7 @@ import ui.io.ConsoleUserInput
 import ui.io.Display
 import ui.io.InputReader
 import org.damascus.ui.views.projectDashboard.ProjectDashboardCli
-import org.damascus.ui.views.task.CreateTaskUi
-import org.damascus.ui.views.task.GetAllTasksByProjectIdUi
+import org.damascus.ui.views.task.*
 import ui.views.LoginView
 import ui.views.project.SelectProjectUi
 import ui.views.task.TaskCLI
@@ -103,9 +102,8 @@ val appModule = module {
     single { GetAdminProjectsUi(get(), get()) }
     single { GetMateProjectsUi(get(), get()) }
     single { SelectProjectUi(get(), get(), get()) }
-    single { ProjectUi(get(), get(), get(), get(), get(), get(), get(), get()) }
+    single { ProjectUi(get(), get(), get(), get(), get(), get()) }
     single { UnAssignMateFromProjectUi(get(), get(), get(), get()) }
-    single { LoginView(get(), get(), get()) }
     single { CreateTaskUi(get(), get(),get(), get(),get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
     single { PlanMateConsoleUi(get(), get(), get()) }
@@ -113,5 +111,10 @@ val appModule = module {
     single { ProjectDashboardCli(get(), get(), get(), get(), get(), get()) }
     single { ProjectLogUi(get(), get(), get()) }
     single { TaskLogUi(get(), get(), get()) }
-    single { GetAllTasksByProjectIdUi(get()) }
+    single { GetAllTasksByProjectIdUi(get(),get()) }
+    single { DeleteTaskUi(get(), get()) }
+    single { UpdateProjectUi(get(), get(),get(), get(), get(), get()) }
+    single { SelectTaskUi(get(), get(), get()) }
+    single { TaskDashboardUi(get(), get(), get(), get()) }
+    single { LoginView(get(), get(), get()) }
 }

@@ -1,4 +1,4 @@
-package org.damascus.ui.views
+package org.damascus.ui.views.task
 
 import logic.model.Task
 import logic.usecase.task.GetTaskUseCase

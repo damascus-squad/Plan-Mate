@@ -37,7 +37,7 @@ class ProjectDashboardCli(
             UiAction("Delete Project") { deleteProjectUi(currentUser,currentProject) },
             UiAction("Create Task") { createTaskUi(currentProject, currentUser) },
             UiAction("Show History") { projectLogUi(currentProject.id) },
-            UiAction("Display Tasks Board") { getAllTasksByProjectIdUi(dummyStates, currentProject.id) }
+            UiAction("Display Tasks Board") { getAllTasksByProjectIdUi( currentProject) }
         )
 
         val mateActions = listOf(
@@ -51,6 +51,6 @@ class ProjectDashboardCli(
         }
 
         display.displayMenu(actions, menuTitle = "Project Dashboard")
-        getAllTasksByProjectIdUi(dummyStates, currentProject.id)
+        getAllTasksByProjectIdUi(currentProject)
     }
 }

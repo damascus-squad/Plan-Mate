@@ -24,7 +24,7 @@ class DeleteProjectUi (
 ){
     operator fun invoke (admin: User, currentProject:Project) {
         try {
-            val confirm = inputReader.readBoolean()
+            val confirm = inputReader.readBoolean("Are you sure you want to delete this Project? (yes/no): ")
             if (confirm) {
                 deleteProjectUseCase(currentProject.id)
                 saveLogUseCase(
