@@ -21,7 +21,7 @@ class AssignMateUseCase(
 
         val alreadyAssigned = mateId in mates
 
-        if (!alreadyAssigned) mates.add(mateId)
+        if (!alreadyAssigned) mates.add(mateId) else return false
 
         val updatedProject = project.copy(assignedMatesIds = mates)
         return repository.update(projectId, updatedProject)
