@@ -1,6 +1,8 @@
 package ui.util
 
-enum class TerminalColor(val code: String) {
+import logic.model.Project
+
+enum class TerminalColor(private val code: String) {
     Red("\u001B[31m"),
     Green("\u001B[32m"),
     Yellow("\u001B[33m"),
@@ -13,30 +15,20 @@ enum class TerminalColor(val code: String) {
 }
 
 fun String.withStyle(color: TerminalColor) = color.wrap(this)
-//
-//fun List<Transaction>.printColoredTable() {
-//    val headers = listOf(
-//        "ID",
-//        "Amount",
-//        "Type",
-//        "Category",
-//        "Description",
-//        "Date"
-//    )
-//
-//    val data = map {
-//        listOf(
-//            it.id.toString().take(7),
-//            it.amount,
-//            it.transactionType,
-//            it.category.name,
-//            it.description ?: "-",
-//            it.date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a"))
-//        )
-//    }
-//
-//    printTable(headers, data)
-//}
+
+fun List<Project>.printProjectTable() {
+    val headers = listOf("No", "Name", "ID", "Mates Count", "Created Date")
+    val rows = this.mapIndexed { index, project ->
+        listOf(
+            (index + 1).toString(),
+            project.name,
+            project.id.toString().take(8),
+            project.assignedMatesIds.size.toString(),
+            project.creationDate.toString()
+        )
+    }
+    printTable(headers, rows)
+}
 
 //fun TransactionReport.printColoredTable() {
 //    val headers = listOf(
