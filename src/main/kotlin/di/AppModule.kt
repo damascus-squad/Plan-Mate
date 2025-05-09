@@ -98,5 +98,5 @@ val appModule = module {
     single { LoginView(get(), get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
     single { PlanMateConsoleUi(get(), get(), get()) }
-    single<ProjectDashboardController>{ ProjectDashboardCli(get(),get(),get(),get(),get(),get(),get(),get(),get(),get(),get(),get(), get()) }
+    single<ProjectDashboardController>{ ProjectDashboardCli(get(),get(),get(),get(),get(),get(),get(),get(),get(),get(),get(),get(), get(), get()) }
 }

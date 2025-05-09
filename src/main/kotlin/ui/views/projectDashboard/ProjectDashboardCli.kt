@@ -4,19 +4,19 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.exception.NoMatesAvailableException
+import logic.exception.ProjectNotFoundException
 import logic.exception.TaskAlreadyExistsException
 import logic.exception.TaskNotFoundException
 import logic.model.*
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
-import logic.usecase.auditLog.GetLogsByTaskIdUseCase
 import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.project.GetProjectUseCase
 import logic.usecase.project.AssignMateUseCase
+import logic.usecase.project.DeleteProjectUseCase
 import logic.usecase.project.UpdateProjectUseCase
 import logic.usecase.state.GetTaskStateByIdUseCase
 import logic.usecase.task.CreateTaskUseCase
 import logic.usecase.task.DeleteTaskUseCase
-import logic.usecase.task.GetTaskUseCase
 import logic.usecase.task.GetTasksByProjectUseCase
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
 import org.damascus.logic.usecase.project.UnassignMateUseCase
@@ -33,6 +33,7 @@ class ProjectDashboardCli(
     private val inputReader: InputReader,
     private val getProjectUseCase: GetProjectUseCase,
     private val deleteTaskUseCase: DeleteTaskUseCase,
+    private val deleteProjectUseCase: DeleteProjectUseCase,
     private val updateProjectUseCase: UpdateProjectUseCase,
     private val createTaskUseCase: CreateTaskUseCase,
     private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase,
@@ -44,7 +45,7 @@ class ProjectDashboardCli(
     private val getLogsByProjectIdUseCase: GetLogsByProjectIdUseCase,
 ) : ProjectDashboardController {
 
-    val dummyStates = listOf(
+    private val dummyStates = listOf(
         TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"), "TODO"),
         TaskState(UUID.fromString("22222222-2222-2222-2222-222222222222"), "In Progress"),
         TaskState(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Done"),
@@ -53,12 +54,12 @@ class ProjectDashboardCli(
     override fun start(projectId: UUID, currentUser: User) {
 
         val adminActions = listOf(
-            UiAction("Edit Project") { editProject(projectId) },
-            UiAction("Delete Project") { },
+            UiAction("Edit Project") { editProject(projectId, currentUser) },
+            UiAction("Delete Project") { deleteProject(projectId) },
             UiAction("Assign Mate") { assignMateToProject(projectId, selectMateFromList()) },
-            UiAction("Remove Mate") { removeMate(projectId, selectMateFromList()) },
-            UiAction("Show History") {showHistory(projectId, currentUser) },
-            UiAction("Create Task") { createTask(projectId,currentUser) },
+            UiAction("Remove Mate") { unassignMateFromProject(projectId, selectMateFromList()) },
+            UiAction("Show History") { showHistory(projectId, currentUser) },
+            UiAction("Create Task") { createTask(projectId, currentUser) },
             UiAction("Display Tasks Board") { viewProjectSwimlaneView(dummyStates, projectId) }
         )
 
@@ -76,7 +77,21 @@ class ProjectDashboardCli(
         viewProjectSwimlaneView(dummyStates, projectId)
     }
 
-    private fun showHistory(projectId: UUID, user: User){
+    override fun deleteProject(projectId: UUID) {
+        try {
+            val confirm = inputReader.readString("Are you sure you want to delete project $projectId? (yes/no): ")
+            if (confirm.equals("yes", ignoreCase = true)) {
+                deleteProjectUseCase(projectId)
+                println("🗑️ Project $projectId deleted successfully!")
+            } else {
+                println("❌ Project deletion canceled.")
+            }
+        } catch (e: ProjectNotFoundException) {
+            println("Error: ${e.message}")
+        }
+    }
+
+    private fun showHistory(projectId: UUID, user: User) {
         val projectLogs = getLogsByProjectIdUseCase(projectId)
 
         if (projectLogs.isEmpty()) {
@@ -112,7 +127,7 @@ class ProjectDashboardCli(
                 ActionType.PROJECT_CREATED -> """created the project "${project.name}""""
 
                 ActionType.PROJECT_MODIFIED -> {
-                        """modified the project "${project.name}""""
+                    """modified the project "${project.name}""""
                 }
 
                 ActionType.PROJECT_DELETED -> """deleted the project "${project.name}""""
@@ -141,20 +156,21 @@ class ProjectDashboardCli(
         printTable(headers, tableRows)
     }
 
-    override fun editProject(projectId: UUID) {
-//        val updatedProject = getProjectUseCase(projectId)
-//
-//        display.displayMenu(
-//            listOf(
-//                UiAction("Title") { updateField("Title", updatedProject) },
-//                UiAction("Assign Mate") { updateField("Assign Mate", updatedProject) }
-//            ),
-//            menuTitle = "\nSelect the field you want to update:"
-//        )
-//
-//        updateProjectUseCase(projectId, updatedProject)
-//
-//        println("✅ Task updated successfully!")
+    override fun editProject(projectId: UUID, currentUser: User) {
+        val updatedProject = getProjectUseCase(projectId)
+
+        display.displayMenu(
+            listOf(
+                UiAction("Title") { updateField("Title", updatedProject, currentUser = currentUser) },
+                UiAction("Assign Mate") { updateField("Assign Mate", updatedProject, currentUser = currentUser) },
+                UiAction("Remove Mate") { updateField("Remove Mate", updatedProject, currentUser = currentUser) },
+            ),
+            menuTitle = "\nSelect the field you want to update:"
+        )
+
+        updateProjectUseCase(projectId, updatedProject)
+
+        println("✅ Task updated successfully!")
     }
 
     override fun deleteTask(taskId: UUID) {
@@ -171,12 +187,12 @@ class ProjectDashboardCli(
         }
     }
 
-    override fun createTask(projectId: UUID, user: User) {
+    override fun createTask(projectId: UUID, currentUser: User) {
         val title = inputReader.readString("Enter task title: ")
         val description = inputReader.readString("Enter task description: ")
         val project = getProjectUseCase(projectId)
         var assigneeInput = ""
-        var assigneeId :UUID? = null
+        var assigneeId: UUID? = null
         val mates = getAllMatesUseCase().filter { it.id in project.assignedMatesIds }
 
         if (mates.isEmpty()) {
@@ -228,7 +244,7 @@ class ProjectDashboardCli(
                     projectId = projectId,
                     taskId = newTask.id,
                     actionType = ActionType.TASK_CREATED,
-                    userId = user.id,
+                    userId = currentUser.id,
                     currentStateId = stateId,
                     newStateId = newTask.stateId,
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
@@ -259,59 +275,77 @@ class ProjectDashboardCli(
         }
     }
 
-//    private fun updateField(fieldName: String, updatedProject: Project): Project {
-//        println("You selected: $fieldName")
-//        when (fieldName) {
-//            "Title" -> {
-//                val newTitle = inputReader.readString("Enter new title (leave blank to keep existing): ")
-//                if (newTitle.isNotBlank()) {
-//                    saveLogUseCase(
-//                        History(
-//                            id = UUID.randomUUID(),
-//                            projectId = updatedProject.id,
-//                            taskId = History.NO_UUID,
-//                            actionType = ActionType.PROJECT_MODIFIED,
-//                            //TODO : add user id
-//                            userId = UUID.randomUUID(),
-//                            currentStateId = History.NO_UUID,
-//                            newStateId = History.NO_UUID,
-//                            actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-//                        )
-//                    )
-//                    return updatedProject.copy(name = newTitle)
-//                } else {
-//                    println("No change to title.")
-//                    return updatedProject
-//                }
-//            }
-//
-//            "Assign Mate" -> {
-//                //TODO: mate name
-//                val mateIdStr = inputReader.readString("Enter mate ID to assign/remove: ")
-//                try {
-//                    val mateId = UUID.fromString(mateIdStr)
-//                    val action = inputReader.readString("Type 'assign' to assign or 'remove' to unassign: ").lowercase()
-//
-//                    val shouldAssign = when (action) {
-//                        "assign" -> true
-//                        "remove" -> false
-//                        else -> {
-//                            println("Invalid action. Use 'assign' or 'remove'.")
-//                            return updatedProject
-//                        }
-//                    }
-//                    assignMateToProject(updatedProject.id, mateId, shouldAssign)
-//                    println("Mate $action successfully.")
-//                    return updatedProject
-//                } catch (e: IllegalArgumentException) {
-//                    println("Error: ${e.message}.")
-//                    return updatedProject
-//                }
-//            }
-//
-//            else -> return updatedProject
-//        }
-//    }
+    override fun unassignMateFromProject(projectId: UUID, mateId: UUID) {
+        if (removeMate(projectId, mateId)) {
+            println("👤 Mate unassigned from project successfully!")
+            saveLogUseCase(
+                History(
+                    id = UUID.randomUUID(),
+                    projectId = projectId,
+                    taskId = UUID.randomUUID(),
+                    actionType = ActionType.PROJECT_MODIFIED,
+                    userId = mateId,
+                    currentStateId = History.NO_UUID,
+                    newStateId = History.NO_UUID,
+                    actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+            )
+        } else {
+            println("⚠️ Failed to unassign mate.")
+        }
+    }
+
+    private fun updateField(fieldName: String, updatedProject: Project, currentUser: User): Project {
+        println("You selected: $fieldName")
+        when (fieldName) {
+            "Title" -> {
+                val newTitle = inputReader.readString("Enter new title (or type 's' to keep current): ")
+
+                if (newTitle.lowercase() != "s") {
+                    saveLogUseCase(
+                        History(
+                            id = UUID.randomUUID(),
+                            projectId = updatedProject.id,
+                            taskId = History.NO_UUID,
+                            actionType = ActionType.PROJECT_MODIFIED,
+                            userId = currentUser.id,
+                            currentStateId = History.NO_UUID,
+                            newStateId = History.NO_UUID,
+                            actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                        )
+                    )
+                    println("✅ Title updated successfully!")
+                    return updatedProject.copy(name = newTitle)
+                } else {
+                    println("ℹ️ Title unchanged.")
+                    return updatedProject
+                }
+            }
+
+            "Assign Mate" -> {
+                assignMateToProject(projectId = updatedProject.id, selectMateFromList())
+            }
+
+            "Remove Mate" -> {
+                val removedMate = selectMateFromList()
+                saveLogUseCase(
+                    History(
+                        id = UUID.randomUUID(),
+                        projectId = updatedProject.id,
+                        taskId = History.NO_UUID,
+                        actionType = ActionType.PROJECT_MODIFIED,
+                        userId = currentUser.id,
+                        currentStateId = History.NO_UUID,
+                        newStateId = History.NO_UUID,
+                        actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                    )
+                )
+                updatedProject.assignedMatesIds.remove(removedMate)
+                return updatedProject
+            }
+        }
+        return updatedProject
+    }
 
     private fun selectMateFromList(): UUID {
         val availableMates = try {
@@ -336,4 +370,5 @@ class ProjectDashboardCli(
 
         return availableMates[selectedIndex - 1].id
     }
+
 }
