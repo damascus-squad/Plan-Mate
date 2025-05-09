@@ -9,7 +9,6 @@ import logic.model.Project
 import logic.model.User
 import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.project.UpdateProjectUseCase
-import ui.io.ConsoleDisplay
 import ui.io.Display
 import ui.io.InputReader
 import java.util.*

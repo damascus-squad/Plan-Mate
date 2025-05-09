@@ -24,7 +24,7 @@ class ConsoleDisplay(
             try {
                 // User-friendly input prompt
                 val input = inputReader.readInt(
-                    prompt = "\n👉 Enter your choice: ".withStyle(TerminalColor.Yellow),
+                    prompt = " Enter your choice: " .withStyle(TerminalColor.Yellow),
                     min = 0,
                     max = uiActionList.size
                 )
@@ -48,5 +48,13 @@ class ConsoleDisplay(
             println("\n🔄 Press Enter to return to menu...".withStyle(TerminalColor.Reset))
             readlnOrNull()
         }
+    }
+
+    override fun write(prompt: String) {
+        println(prompt.withStyle(TerminalColor.Blue))
+    }
+
+    override fun writeError(errorMessage: String) {
+        println("❌ $errorMessage".withStyle(TerminalColor.Red))
     }
 }

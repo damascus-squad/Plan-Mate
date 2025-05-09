@@ -11,6 +11,7 @@ class SelectProjectUi(
     private val getProjectUseCase: GetProjectUseCase
 ){
     operator fun invoke(projects: List<Project>): Project {
+
         val choice = consoleUserInput.readInt(
             prompt = "Enter project number to select: ",
             min = 1,

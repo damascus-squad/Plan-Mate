@@ -13,7 +13,6 @@ import logic.model.UserRole
 import logic.usecase.project.CreateProjectUseCase
 import logic.usecase.project.GetMateProjectsUseCase
 import logic.usecase.project.GetAdminProjectsUseCase
-import org.damascus.ui.views.projectDashboard.ProjectDashboardController
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

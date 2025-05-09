@@ -18,14 +18,15 @@ class TaskCLI(
     private val taskStateRepository: TaskStateRepository,
     private val getTaskUseCase: GetTaskUseCase,
 ) : TaskUIController {
-    fun start(taskId: UUID) {
-        viewTaskDetails(taskId)
+    fun start(task: Task) {
+        viewTaskDetails(task)
         display.displayMenu(
             listOf(
-                UiAction("Edit Task") { editTask(taskId) },
-                UiAction("Delete Task") { deleteTask(taskId) }
+                UiAction("Update Task") { editTask(taskId) },
+                UiAction("Delete Task") { deleteTask(taskId) },
+                UiAction("Assign Task to Mate") { assignTaskToMateUi(task) }
             ),
-            menuTitle = "Task Management"
+            menuTitle = "Actions for Task: ${task.title}"
         )
     }
 

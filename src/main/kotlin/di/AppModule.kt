@@ -16,7 +16,12 @@ import logic.model.TaskState
 import logic.repo.DataSource
 import logic.service.HashingService
 import logic.service.MD5HashingService
-import org.damascus.ui.views.admin.AdminDashboardView
+import org.damascus.ui.views.admin.AdminDashboardUi
+import org.damascus.ui.views.admin.MateDashboardUi
+import org.damascus.ui.views.admin.SelectMateUi
+import org.damascus.ui.views.auditLog.ProjectLogUi
+import org.damascus.ui.views.auditLog.TaskLogUi
+import org.damascus.ui.views.project.*
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ui.PlanMateConsoleUi
@@ -25,11 +30,10 @@ import ui.io.ConsoleUserInput
 import ui.io.Display
 import ui.io.InputReader
 import org.damascus.ui.views.projectDashboard.ProjectDashboardCli
-import org.damascus.ui.views.projectDashboard.ProjectDashboardController
-import org.koin.core.scope.get
+import org.damascus.ui.views.task.CreateTaskUi
+import org.damascus.ui.views.task.GetAllTasksByProjectIdUi
 import ui.views.LoginView
-import ui.views.project.ProjectView
-import ui.views.project.ProjectViewCli
+import ui.views.project.SelectProjectUi
 import ui.views.task.TaskCLI
 
 val appModule = module {
@@ -89,14 +93,25 @@ val appModule = module {
     single<Display> { ConsoleDisplay(get()) }
     single<InputReader> { ConsoleUserInput() }
 
-    single<ProjectView> { ProjectViewCli(get(), get(), get(), get()) }
-    single { AdminDashboardView(get(), get(), get(), get(), get()) }
-    single<ProjectView> { ProjectViewCli(get(), get(), get(), get()) }
-    single { AdminDashboardView(get(), get(), get(), get(), get()) }
-    single { LoginView(get(), get()) }
+    single { AdminDashboardUi(get(), get(), get()) }
+    single { MateDashboardUi(get()) }
+    single { SelectMateUi(get(), get()) }
+    single { AssignMateToProjectUi(get(), get(), get(), get()) }
+    single { DeleteProjectUi(get(), get(), get(), get()) }
+    single { UpdateProjectUi(get(), get(), get(), get(), get(), get()) }
+    single { UpdateProjectTitleUi(get(), get(), get(), get()) }
+    single { GetAdminProjectsUi(get(), get()) }
+    single { GetMateProjectsUi(get(), get()) }
+    single { SelectProjectUi(get(), get(), get()) }
+    single { ProjectUi(get(), get(), get(), get(), get(), get(), get(), get()) }
+    single { UnAssignMateFromProjectUi(get(), get(), get(), get()) }
+    single { LoginView(get(), get(), get()) }
+    single { CreateTaskUi(get(), get(),get(), get(),get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
     single { PlanMateConsoleUi(get(), get(), get()) }
-    single<ProjectDashboardController> {
-        ProjectDashboardCli(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
-    }
+    single { CreateProjectUi(get(), get(), get()) }
+    single { ProjectDashboardCli(get(), get(), get(), get(), get(), get()) }
+    single { ProjectLogUi(get(), get(), get()) }
+    single { TaskLogUi(get(), get(), get()) }
+    single { GetAllTasksByProjectIdUi(get()) }
 }

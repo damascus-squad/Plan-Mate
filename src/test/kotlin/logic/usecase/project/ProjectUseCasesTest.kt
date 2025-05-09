@@ -92,7 +92,7 @@ class ProjectUseCasesTest {
         val project2 = makeProject(UUID.randomUUID())
         every { repository.getAll() } returns listOf(project, project2)
 
-        val result = GetAllProjectsUseCase(repository).invoke()
+        val result = GetAdminProjectsUseCase(repository).invoke()
 
         assertThat(result).containsExactly(project, project2)
     }
@@ -101,7 +101,7 @@ class ProjectUseCasesTest {
     fun `get all projects use case should return empty list when no projects exist`() {
         every { repository.getAll() } returns listOf()
 
-        val result = GetAllProjectsUseCase(repository).invoke()
+        val result = GetAdminProjectsUseCase(repository).invoke()
 
         assertThat(result).isEmpty()
     }
@@ -112,7 +112,7 @@ class ProjectUseCasesTest {
         val projectWithMate = makeProject(UUID.randomUUID()).apply { assignedMatesIds.add(mateId) }
         every { repository.getAllProjectsByMateId(mateId) } returns listOf(projectWithMate)
 
-        val result = GetAllProjectsByMateIdUseCase(repository).invoke(mateId)
+        val result = GetMateProjectsUseCase(repository).invoke(mateId)
 
         assertThat(result).containsExactly(projectWithMate)
     }
@@ -122,7 +122,7 @@ class ProjectUseCasesTest {
         val mateId = UUID.randomUUID()
         every { repository.getAllProjectsByMateId(mateId) } returns listOf()
 
-        val result = GetAllProjectsByMateIdUseCase(repository).invoke(mateId)
+        val result = GetMateProjectsUseCase(repository).invoke(mateId)
 
         assertThat(result).isEmpty()
     }

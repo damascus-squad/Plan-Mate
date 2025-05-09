@@ -10,19 +10,18 @@ import logic.usecase.project.CreateProjectUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import ui.io.ConsoleDisplay
-import org.damascus.ui.views.admin.AdminDashboardView
+import org.damascus.ui.views.admin.AdminDashboardUi
 import org.junit.jupiter.api.assertThrows
 import ui.io.InputReader
 import ui.views.project.ProjectView
-import ui.views.project.ProjectViewCli
 import java.util.*
 
-class AdminDashboardViewTest {
+class AdminDashboardUiTest {
     private lateinit var consoleDisplay: ConsoleDisplay
     private lateinit var projectView: ProjectView
     private lateinit var consoleUserInput: InputReader
     private lateinit var createProjectUseCase: CreateProjectUseCase
-    private lateinit var adminDashboardView: AdminDashboardView
+    private lateinit var adminDashboardUi: AdminDashboardUi
     private lateinit var createMateUseCase: CreateMateUseCase
 
 
@@ -33,7 +32,7 @@ class AdminDashboardViewTest {
         createMateUseCase = mockk(relaxed = true)
         consoleUserInput = mockk(relaxed = true)
         createProjectUseCase = mockk(relaxed = true)
-        adminDashboardView = AdminDashboardView(consoleDisplay,consoleUserInput, projectView, createMateUseCase,createProjectUseCase)
+        adminDashboardUi = AdminDashboardUi(consoleDisplay,consoleUserInput, projectView, createMateUseCase,createProjectUseCase)
     }
 
     @Test
@@ -46,7 +45,7 @@ class AdminDashboardViewTest {
         )
 
         // When
-        adminDashboardView.showDashboard(admin)
+        adminDashboardUi.showDashboard(admin)
 
         // Then
         verify(exactly = 1) { consoleDisplay.displayMenu(any(), any()) }
@@ -62,7 +61,7 @@ class AdminDashboardViewTest {
         )
 
         // when
-        adminDashboardView.showDashboard(notAdmin)
+        adminDashboardUi.showDashboard(notAdmin)
 
         // Then
         verify { projectView wasNot Called }
@@ -75,7 +74,7 @@ class AdminDashboardViewTest {
 
         // When && Then
         assertThrows<UnauthorizedActionException> {
-            adminDashboardView.createProject(mate)
+            adminDashboardUi.createProject(mate)
         }
     }
 
@@ -87,7 +86,7 @@ class AdminDashboardViewTest {
         val admin = createUser(UserRole.ADMIN, "admin")
 
         // When
-        adminDashboardView.createProject(admin)
+        adminDashboardUi.createProject(admin)
 
         // Then
         verify { createProjectUseCase(match { it.name == "Test Project" }) }
@@ -101,7 +100,7 @@ class AdminDashboardViewTest {
         val admin = createUser(UserRole.ADMIN, "admin")
 
         // When
-        adminDashboardView.createProject(admin)
+        adminDashboardUi.createProject(admin)
 
         // Then
         verify { createProjectUseCase(any()) }

@@ -14,10 +14,10 @@ import org.koin.dsl.module
 val useCaseModule = module {
     // Project use cases
     single { CreateProjectUseCase(get()) }
-    single { GetAllProjectsUseCase(get()) }
+    single { GetAdminProjectsUseCase(get()) }
     single { DeleteProjectUseCase(get()) }
     single { UpdateProjectUseCase(get()) }
-    single { GetAllProjectsByMateIdUseCase(get()) }
+    single { GetMateProjectsUseCase(get()) }
     single { GetProjectUseCase(get()) }
     single { AssignMateUseCase(get()) }
     single { UnassignMateUseCase(get()) }
@@ -27,6 +27,8 @@ val useCaseModule = module {
     single { CreateMateUseCase(get()) }
     single { AuthenticateUserLoginUseCase(get()) }
     single { GetAllMatesUseCase(get())}
+    single { AssignMateUseCase(get()) }
+    single { UnassignMateUseCase(get()) }
 
     // Task State use cases
     single { CheckTaskStateExistsUseCase(get()) }
