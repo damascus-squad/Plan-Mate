@@ -191,7 +191,7 @@ class ProjectDashboardCli(
         val title = inputReader.readString("Enter task title: ")
         val description = inputReader.readString("Enter task description: ")
         val project = getProjectUseCase(projectId)
-        var assigneeInput = ""
+        val assigneeInput: String
         var assigneeId: UUID? = null
         val mates = getAllMatesUseCase().filter { it.id in project.assignedMatesIds }
 
