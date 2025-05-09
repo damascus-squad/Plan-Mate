@@ -4,4 +4,6 @@ import ui.util.UiAction
 
 interface Display {
     fun displayMenu(uiActionList: List<UiAction>, menuTitle: String)
+    fun write(prompt: String)
+    fun writeError(errorMessage: String)
 }
