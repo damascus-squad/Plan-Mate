@@ -25,7 +25,7 @@ class CheckTaskStateExistsUseCaseTest {
     @Test
     fun `should return true when state exists`() {
         val stateId = UUID.randomUUID()
-        val taskState = TaskState(stateId, "In Progress")
+        val taskState = TaskState(stateId, "In Progress", 1)
         //given
         every { repository.exist(taskState.name) } returns true
 
@@ -40,7 +40,7 @@ class CheckTaskStateExistsUseCaseTest {
     @Test
     fun `should return false when state doesn't exist`() {
         val stateId = UUID.randomUUID()
-        val taskState = TaskState(stateId, "In Progress")
+        val taskState = TaskState(stateId, "In Progress", 1)
 
         //given
         every { repository.exist(taskState.name) } returns false

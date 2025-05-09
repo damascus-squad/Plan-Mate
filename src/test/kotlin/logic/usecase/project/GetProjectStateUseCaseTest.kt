@@ -23,9 +23,9 @@ class GetProjectStateUseCaseTest {
     private lateinit var getProjectStateUseCase: GetProjectStateUseCase
 
     private val taskStatesList = listOf(
-        TaskState(UUID.randomUUID(), "TODO"),
-        TaskState(UUID.randomUUID(), "DONE"),
-        TaskState(UUID.randomUUID(), "In Progress")
+        TaskState(UUID.randomUUID(), "TODO", 1),
+        TaskState(UUID.randomUUID(), "DONE", 1),
+        TaskState(UUID.randomUUID(), "In Progress", 1)
     )
 
     @BeforeEach
@@ -74,6 +74,7 @@ class GetProjectStateUseCaseTest {
             id = id,
             name = "Dummy",
             assignedMatesIds = mutableListOf(),
+            allowedStatesIds = mutableListOf(),
             creationDate = LocalDateTime(2023, 10, 7, 3, 30, 0)
         )
     }

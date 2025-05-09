@@ -81,7 +81,7 @@ class CsvDataSource<T>(
         const val INDEX_NOT_FOUND = -1
     }
 
-    private fun createFileIfNotExists(){
+    private fun createFileIfNotExists() {
         if (!file.exists()) {
             file.parentFile.mkdirs()
             file.writeText("$header\n")

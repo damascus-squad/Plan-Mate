@@ -51,6 +51,7 @@ class AdminDashboardView(
             id = UUID.randomUUID(),
             name = name,
             assignedMatesIds = mutableListOf(),
+            allowedStatesIds = mutableListOf(),
             creationDate = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         )
 

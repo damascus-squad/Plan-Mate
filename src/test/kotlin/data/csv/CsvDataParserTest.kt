@@ -59,11 +59,12 @@ class CsvDataParserTest {
     @Test
     fun `parseProject should return a valid project when csv entry is a valid project`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]};${listOfUUIDs[2]};${listOfUUIDs[3]},${date1}"
+        val csvEntry = "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]};${listOfUUIDs[2]};${listOfUUIDs[3]},${listOfUUIDs[4]};${listOfUUIDs[5]},${date1}"
         val expectedProject = Project(
             listOfUUIDs[0],
             "projectName",
             mutableListOf(listOfUUIDs[1], listOfUUIDs[2], listOfUUIDs[3]),
+            mutableListOf(listOfUUIDs[4], listOfUUIDs[5]),
             date1
         )
 
@@ -78,13 +79,14 @@ class CsvDataParserTest {
     fun `parseProject should ignore blank mates when csv entry contains blank entries`() {
         // Given
         val csvEntry =
-            "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]};;;${listOfUUIDs[2]};${listOfUUIDs[3]},${date1}"
+            "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]};;;${listOfUUIDs[2]};${listOfUUIDs[3]},${listOfUUIDs[4]};${listOfUUIDs[5]},${date1}"
         val expectedProject = Project(
             listOfUUIDs[0],
             "projectName",
             mutableListOf(
                 listOfUUIDs[1], listOfUUIDs[2], listOfUUIDs[3]
             ),
+            mutableListOf(listOfUUIDs[4], listOfUUIDs[5]),
             date1
         )
 
@@ -98,7 +100,7 @@ class CsvDataParserTest {
     @Test
     fun `parseProject should throw CsvParsingException when csv entry is invalid`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]},details,2024-05-01T12:00"
+        val csvEntry = "${listOfUUIDs[0]},projectName,,,${listOfUUIDs[1]},details,2024-05-01T12:00"
 
         // When && Then
         assertThrows<CsvParsingException> {
@@ -165,11 +167,12 @@ class CsvDataParserTest {
     @Test
     fun `parseState should return a valid state when csv entry is a valid state`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},Backlog"
+        val csvEntry = "${listOfUUIDs[0]},Backlog,1"
 
         val expectedTaskState = TaskState(
             id = listOfUUIDs[0],
             name = "Backlog",
+            projectReferencesCount = 1
         )
 
         // When
@@ -182,7 +185,7 @@ class CsvDataParserTest {
     @Test
     fun `parseState should throw CsvParsingException when csv entry is invalid`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},,,Backlog"
+        val csvEntry = "${listOfUUIDs[0]},,,Backlog,1"
 
         // When && Then
         assertThrows<CsvParsingException> {

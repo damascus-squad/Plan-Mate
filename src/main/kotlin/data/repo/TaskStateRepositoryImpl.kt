@@ -2,6 +2,7 @@ package data.repo
 
 import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
+import logic.model.History.Companion.NO_TASK_STATE
 import logic.model.TaskState
 import logic.repo.DataSource
 import logic.repo.TaskStateRepository
@@ -13,9 +14,9 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         return dataSource.read()
     }
 
-    override fun getStateById(id: UUID): TaskState {
+    override fun getTaskStateById(id: UUID): TaskState {
         return dataSource.read().firstOrNull { it.id == id }
-            ?: throw StateNotFoundException()
+            ?: NO_TASK_STATE
     }
 
     override fun create(taskState: TaskState): Boolean {
@@ -40,7 +41,35 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         if (!exist(taskState.name)) {
             throw StateNotFoundException()
         }
+
+        /**
+         * This would need refactoring if the system would be used by more than one user at once
+         * So this should be treated as a critical section then and protected by a mutex
+         */
+
+        if (taskState.projectReferencesCount > 1) {
+            update(
+                taskState = taskState,
+                updatedTaskState = taskState.copy(projectReferencesCount = taskState.projectReferencesCount - 1)
+            )
+
+            return true
+        }
+
         dataSource.delete(taskState.id)
+
+        return true
+    }
+
+    override fun incrementProjectReferences(taskState: TaskState): Boolean {
+        if (!exist(taskState.name)) {
+            throw StateNotFoundException()
+        }
+
+        update(
+            taskState = taskState,
+            updatedTaskState = taskState.copy(projectReferencesCount = taskState.projectReferencesCount + 1)
+        )
 
         return true
     }

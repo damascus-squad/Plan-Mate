@@ -44,6 +44,7 @@ class CsvDataSerializerTest {
             id = listOfUUIDs[0],
             name = "Project",
             assignedMatesIds = mutableListOf(listOfUUIDs[1], listOfUUIDs[2]),
+            allowedStatesIds = mutableListOf(listOfUUIDs[3], listOfUUIDs[4]),
             creationDate = date1
         )
 
@@ -55,6 +56,7 @@ class CsvDataSerializerTest {
             listOfUUIDs[0],
             "Project",
             listOf(listOfUUIDs[1], listOfUUIDs[2]).joinToString(LIST_SEPARATOR),
+            listOf(listOfUUIDs[3], listOfUUIDs[4]).joinToString(LIST_SEPARATOR),
             "2024-05-01T12:00"
         ).joinToString(",")
 
@@ -127,6 +129,7 @@ class CsvDataSerializerTest {
         val taskState = TaskState(
             id = listOfUUIDs[0],
             name = "Backlog",
+            projectReferencesCount = 1,
         )
 
         // When
@@ -135,7 +138,8 @@ class CsvDataSerializerTest {
         // Then
         val expected = listOf(
             listOfUUIDs[0],
-            "Backlog"
+            "Backlog",
+            "1"
         ).joinToString(",")
 
         assertThat(result).isEqualTo(expected)

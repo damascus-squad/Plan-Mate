@@ -111,6 +111,7 @@ class ModifyMateAssignmentUseCaseTest {
             id = id,
             name = "Dummy",
             assignedMatesIds = mutableListOf(),
+            allowedStatesIds = mutableListOf(),
             creationDate = LocalDateTime(2023, 10, 7, 3, 30, 0)
         )
     }

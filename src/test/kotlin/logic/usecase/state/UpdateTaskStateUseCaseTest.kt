@@ -25,8 +25,8 @@ class UpdateTaskStateUseCaseTest {
 
     @Test
     fun `should update state when it exists`() {
-        val updatedTaskState = TaskState(UUID.randomUUID(), "In Progress")
-        val existTaskState = TaskState(UUID.randomUUID(), "Done")
+        val updatedTaskState = TaskState(UUID.randomUUID(), "In Progress", 1)
+        val existTaskState = TaskState(UUID.randomUUID(), "Done", 1)
         //given
         every { repository.exist(updatedTaskState.name) } returns true
         every { repository.update(existTaskState, updatedTaskState) } returns true
@@ -43,8 +43,8 @@ class UpdateTaskStateUseCaseTest {
 
     @Test
     fun `should throw StateNotFoundException when state doesn't exist`() {
-        val updatedTaskState = TaskState(UUID.randomUUID(), "New")
-        val existTaskState = TaskState(UUID.randomUUID(), "Done")
+        val updatedTaskState = TaskState(UUID.randomUUID(), "New", 1)
+        val existTaskState = TaskState(UUID.randomUUID(), "Done", 1)
 
         //given
         every { repository.exist(updatedTaskState.name) } returns false
