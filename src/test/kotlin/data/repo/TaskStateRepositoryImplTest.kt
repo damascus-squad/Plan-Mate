@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
+import logic.model.History.Companion.NO_TASK_STATE
 import logic.model.TaskState
 import logic.repo.DataSource
 import org.junit.jupiter.api.BeforeEach
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
 
-class StateRepositoryImplTest {
+class TaskStateRepositoryImplTest {
     private lateinit var dataSource: DataSource<TaskState>
     private lateinit var stateRepositoryImpl: TaskStateRepositoryImpl
 
@@ -44,7 +45,7 @@ class StateRepositoryImplTest {
 
         //when
         val targetId = fakeTaskStates[0].id
-        val result = stateRepositoryImpl.getStateById(targetId)
+        val result = stateRepositoryImpl.getTaskStateById(targetId)
 
         //then
         assertThat(result).isEqualTo(fakeTaskStates[0])
@@ -53,21 +54,22 @@ class StateRepositoryImplTest {
     }
 
     @Test
-    fun `getStateById should throw StateNotFoundException if state doesn't exist`() {
+    fun `getStateById should return NO_TASK_STATE if state doesn't exist`() {
         // given
         val nonExistentID = UUID.randomUUID()
         every { dataSource.read() } returns fakeTaskStates
 
-        // when && then
-        assertThrows<StateNotFoundException> {
-            stateRepositoryImpl.getStateById(nonExistentID)
-        }
+        // when
+        val result = stateRepositoryImpl.getTaskStateById(nonExistentID)
+
+        // Then
+        assertThat(result).isEqualTo(NO_TASK_STATE)
         verify { dataSource.read() }
     }
 
     @Test
     fun `create should add new state when it doesn't exist`() {
-        val newTaskState = TaskState(UUID.randomUUID(), "New")
+        val newTaskState = TaskState(UUID.randomUUID(), "New", 1)
 
         //given
         every { dataSource.read() } returns fakeTaskStates
@@ -118,7 +120,7 @@ class StateRepositoryImplTest {
         every { dataSource.read() } returns fakeTaskStates
 
         // when
-        val nonExistentTaskState = TaskState(UUID.randomUUID(), "Unknown")
+        val nonExistentTaskState = TaskState(UUID.randomUUID(), "Unknown", 1)
         val updatedTaskState = nonExistentTaskState.copy(name = "In Progress")
         //then
         assertThrows<StateNotFoundException> {
@@ -144,12 +146,59 @@ class StateRepositoryImplTest {
     }
 
     @Test
+    fun `delete should keep state & decrement projectReferencesCount by 1 when it's more than 1`() {
+        // Given
+        val taskStateToDelete = TaskState(
+            id = UUID.randomUUID(),
+            name = "SuperUsedTask",
+            projectReferencesCount = 40
+        )
+
+        every { dataSource.read() } returns listOf(taskStateToDelete)
+
+        // When
+        val result = stateRepositoryImpl.delete(taskStateToDelete)
+
+        // Then
+        assertThat(result).isTrue()
+        verify(exactly = 0) { dataSource.delete(any()) }
+        verify(exactly = 1) {
+            dataSource.update(
+                taskStateToDelete.id,
+                taskStateToDelete.copy(
+                    projectReferencesCount = 39
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `delete should delete state when projectReferencesCount when it's exactly 1`() {
+        // Given
+        val taskStateToDelete = TaskState(
+            id = UUID.randomUUID(),
+            name = "SuperUsedTask",
+            projectReferencesCount = 1
+        )
+
+        every { dataSource.read() } returns listOf(taskStateToDelete)
+
+        // When
+        val result = stateRepositoryImpl.delete(taskStateToDelete)
+
+        // Then
+        assertThat(result).isTrue()
+        verify(exactly = 0) { dataSource.update(any(), any()) }
+        verify(exactly = 1) { dataSource.delete(taskStateToDelete.id) }
+    }
+
+    @Test
     fun `delete should throw StateNotFoundException when state does not exist for delete`() {
         // given
         every { dataSource.read() } returns fakeTaskStates
 
         // when
-        val taskStateToDelete = TaskState(UUID.randomUUID(), "Unknown")
+        val taskStateToDelete = TaskState(UUID.randomUUID(), "Unknown", 1)
 
         // then
         assertThrows<StateNotFoundException> {
@@ -177,7 +226,7 @@ class StateRepositoryImplTest {
     fun `exist should return false when state does not exist`() {
         // given
         val id = UUID.randomUUID()
-        val nonExistentTaskState = TaskState(id, "Done")
+        val nonExistentTaskState = TaskState(id, "Done", 1)
         every { dataSource.read() } returns fakeTaskStates
 
         // when
@@ -188,10 +237,50 @@ class StateRepositoryImplTest {
         verify { dataSource.read() }
     }
 
-    private val fakeTaskStates = listOf(
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000001"), "In Progress"),
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000002"), "In Review"),
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Completed")
+    @Test
+    fun `incrementProjectReferences should throw StateNotFoundException when state does not exist for delete`() {
+        // Given
+        val taskStateToDelete = TaskState(UUID.randomUUID(), "Unknown", 1)
+        every { dataSource.read() } returns fakeTaskStates
 
+        // When && Then
+        assertThrows<StateNotFoundException> {
+            stateRepositoryImpl.incrementProjectReferences(taskStateToDelete)
+        }
+
+        verify(exactly = 1) { dataSource.read() }
+        verify(exactly = 0) { dataSource.update(any(), any()) }
+    }
+
+    @Test
+    fun `incrementProjectReferences should increment projectReferencesCount by 1 when it exists`() {
+        // Given
+        val taskStateToDelete = TaskState(
+            id = UUID.randomUUID(),
+            name = "SuperUsedTask",
+            projectReferencesCount = 1
+        )
+
+        every { dataSource.read() } returns listOf(taskStateToDelete)
+
+        // When
+        val result = stateRepositoryImpl.incrementProjectReferences(taskStateToDelete)
+
+        // Then
+        assertThat(result).isTrue()
+        verify(exactly = 1) {
+            dataSource.update(
+                taskStateToDelete.id,
+                taskStateToDelete.copy(
+                    projectReferencesCount = 2
+                )
+            )
+        }
+    }
+
+    private val fakeTaskStates = listOf(
+        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000001"), "In Progress", 1),
+        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000002"), "In Review", 1),
+        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Completed", 1)
     )
 }

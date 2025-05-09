@@ -25,7 +25,7 @@ class CreateTaskStateUseCaseTest {
 
     @Test
     fun `should create new task state when it does not exist`() {
-        val newState = TaskState(UUID.randomUUID(), "To Do")
+        val newState = TaskState(UUID.randomUUID(), "To Do", 1)
 
         //given
         every { repository.exist(newState.name) } returns false
@@ -43,7 +43,7 @@ class CreateTaskStateUseCaseTest {
     @Test
     fun `should throw DuplicateStateException when task state already exists`() {
         val existingId = UUID.randomUUID()
-        val existingState = TaskState(existingId, "In Progress")
+        val existingState = TaskState(existingId, "In Progress", 1)
 
         // given
         every { repository.exist(existingState.name) } returns true

@@ -8,6 +8,7 @@ import kotlinx.datetime.LocalDateTime
 import logic.exception.ProjectNotFoundException
 import logic.model.Project
 import logic.repo.DataSource
+import logic.usecase.project.makeProject
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -242,13 +243,14 @@ class ProjectRepositoryImplTest {
         verify { dataSource.read() }
     }
 
-}
+    private fun makeProject(id: UUID): Project {
+        return Project(
+            id = id,
+            "name",
+            mutableListOf(),
+            mutableListOf(),
+            LocalDateTime(2023, 10, 7, 3, 30, 0),
+        )
+    }
 
-fun makeProject(id: UUID): Project {
-    return Project(
-        id = id,
-        "name",
-        mutableListOf(),
-        LocalDateTime(2023, 10, 7, 3, 30, 0),
-    )
 }

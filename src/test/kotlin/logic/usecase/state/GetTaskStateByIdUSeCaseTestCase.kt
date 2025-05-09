@@ -4,11 +4,10 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import logic.exception.StateNotFoundException
+import logic.model.History.Companion.NO_TASK_STATE
 import logic.model.TaskState
 import logic.repo.TaskStateRepository
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.assertThrows
 import java.util.*
 import kotlin.test.Test
 
@@ -25,33 +24,33 @@ class GetTaskStateByIdUSeCaseTestCase {
 
     @Test
     fun `should return task state when it exists`() {
-        val taskState = TaskState(UUID.randomUUID(), "In Progress")
+        val taskState = TaskState(UUID.randomUUID(), "In Progress", 1)
 
         //given
-        every { repository.getStateById(taskState.id) } returns taskState
+        every { repository.getTaskStateById(taskState.id) } returns taskState
 
         //when
         val result = getTaskStateByIdUseCase(taskState.id)
 
         //then
         assertThat(result).isEqualTo(taskState)
-        verify(exactly = 1) { repository.getStateById(taskState.id) }
+        verify(exactly = 1) { repository.getTaskStateById(taskState.id) }
     }
 
 
     @Test
-    fun `should throw StateNotFoundException when task state is not found`() {
+    fun `should return NO_TASK_STATE when task state is not found`() {
         val taskStateId = UUID.randomUUID()
 
         // given
-        every { repository.getStateById(taskStateId) } returns null
+        every { repository.getTaskStateById(taskStateId) } returns NO_TASK_STATE
 
         // when && then
-        assertThrows<StateNotFoundException> {
-            getTaskStateByIdUseCase(taskStateId)
-        }
+        val result = getTaskStateByIdUseCase(taskStateId)
 
-        verify(exactly = 1) { repository.getStateById(taskStateId) }
+        // Then
+        assertThat(result).isEqualTo(NO_TASK_STATE)
+        verify(exactly = 1) { repository.getTaskStateById(taskStateId) }
     }
 
 

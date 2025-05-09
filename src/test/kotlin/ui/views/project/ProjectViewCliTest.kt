@@ -42,6 +42,7 @@ class ProjectViewCliTest {
             id = UUID.randomUUID(),
             name = "Project 1",
             assignedMatesIds = mutableListOf(UUID.randomUUID()),
+            allowedStatesIds = mutableListOf(UUID.randomUUID()),
             creationDate = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         )
     }
