@@ -21,13 +21,13 @@ class CreateProjectUi (
             name = name,
             assignedMatesIds = mutableListOf(),
             allowedStatesIds = mutableListOf(),
-            creationDate = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+            creationDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         )
 
         if (createProjectUseCase(project)) {
-            display.write("Added Project ${project.name}")
+            display.write(prompt = "Added Project ${project.name}")
         } else {
-            display.writeError("Project already exists.")
+            display.writeError(errorMessage = "Project already exists.")
         }
     }
 }
