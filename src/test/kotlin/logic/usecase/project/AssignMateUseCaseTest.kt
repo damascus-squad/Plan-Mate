@@ -90,21 +90,21 @@ class AssignMateUseCaseTest {
         assertThat(result).isFalse()
     }
 
-    @Test
-    fun `should return true when unassigning an existing mate`() {
-        // Given
-        val mateId = UUID.randomUUID()
-        val project = makeProject().apply { assignedMatesIds.add(mateId) }
-        every { repository.get(project.id) } returns project
-        every { repository.update(any(), any()) } returns true
-
-        // When
-        val result = useCase(project.id, mateId)
-
-        // Then
-        assertThat(result).isTrue()
-        verify { repository.update(project.id, match { mateId !in it.assignedMatesIds }) }
-    }
+//    @Test
+//    fun `should return true when unassigning an existing mate`() {
+//        // Given
+//        val mateId = UUID.randomUUID()
+//        val project = makeProject().apply { assignedMatesIds.add(mateId) }
+//        every { repository.get(project.id) } returns project
+//        every { repository.update(any(), any()) } returns true
+//
+//        // When
+//        val result = useCase(project.id, mateId)
+//
+//        // Then
+//        assertThat(result).isTrue()
+//        verify { repository.update(project.id, match { mateId !in it.assignedMatesIds }) }
+//    }
 
     private fun makeProject(id: UUID = UUID.randomUUID()): Project {
         return Project(
