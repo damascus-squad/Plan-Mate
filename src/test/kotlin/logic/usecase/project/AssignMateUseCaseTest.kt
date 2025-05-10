@@ -7,6 +7,7 @@ import io.mockk.verify
 import kotlinx.datetime.LocalDateTime
 import logic.model.Project
 import logic.repo.ProjectRepository
+import org.damascus.logic.usecase.project.ManageMateAssignmentUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -14,12 +15,12 @@ import java.util.*
 class AssignMateUseCaseTest {
 
     private lateinit var repository: ProjectRepository
-    private lateinit var useCase: AssignMateUseCase
+    private lateinit var useCase: ManageMateAssignmentUseCase
 
     @BeforeEach
     fun setup() {
         repository = mockk(relaxed = true)
-        useCase = AssignMateUseCase(repository)
+        useCase = ManageMateAssignmentUseCase(repository)
     }
 
     @Test
@@ -28,7 +29,7 @@ class AssignMateUseCaseTest {
         every { repository.get(any()) } throws Exception()
 
         // When
-        val result = useCase(UUID.randomUUID(), UUID.randomUUID())
+        val result = useCase.assign(UUID.randomUUID(), UUID.randomUUID())
 
         // Then
         assertThat(result).isFalse()
@@ -42,7 +43,7 @@ class AssignMateUseCaseTest {
         every { repository.get(project.id) } returns project
 
         // When
-        val result = useCase(project.id, mateId)
+        val result = useCase.assign(project.id, mateId)
 
         // Then
         assertThat(result).isFalse()
@@ -57,7 +58,7 @@ class AssignMateUseCaseTest {
         every { repository.update(any(), any()) } returns true
 
         // When
-        val result = useCase(project.id, mateId)
+        val result = useCase.assign(project.id, mateId)
 
         // Then
         assertThat(result).isTrue()
@@ -70,7 +71,7 @@ class AssignMateUseCaseTest {
         every { repository.get(any()) } throws Exception()
 
         // When
-        val result = useCase(UUID.randomUUID(), UUID.randomUUID())
+        val result = useCase.assign(UUID.randomUUID(), UUID.randomUUID())
 
         // Then
         assertThat(result).isFalse()
@@ -84,7 +85,7 @@ class AssignMateUseCaseTest {
         every { repository.get(project.id) } returns project
 
         // When
-        val result = useCase(project.id, mateId)
+        val result = useCase.assign(project.id, mateId)
 
         // Then
         assertThat(result).isFalse()

@@ -10,16 +10,15 @@ import logic.exception.TaskNotFoundException
 import logic.model.*
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
 import logic.usecase.auditLog.SaveLogUseCase
-import logic.usecase.project.GetProjectUseCase
-import logic.usecase.project.AssignMateUseCase
 import logic.usecase.project.DeleteProjectUseCase
+import logic.usecase.project.GetProjectUseCase
 import logic.usecase.project.UpdateProjectUseCase
 import logic.usecase.state.GetTaskStateByIdUseCase
 import logic.usecase.task.CreateTaskUseCase
 import logic.usecase.task.DeleteTaskUseCase
 import logic.usecase.task.GetTasksByProjectUseCase
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
-import org.damascus.logic.usecase.project.UnassignMateUseCase
+import org.damascus.logic.usecase.project.ManageMateAssignmentUseCase
 import ui.io.Display
 import ui.io.InputReader
 import ui.util.UiAction
@@ -39,14 +38,13 @@ class ProjectDashboardCli(
     private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase,
     private val getTasksByProjectUseCase: GetTasksByProjectUseCase,
     private val saveLogUseCase: SaveLogUseCase,
-    private val assignMateUseCase: AssignMateUseCase,
-    private val removeMate: UnassignMateUseCase,
+    private val manageMateAssignmentUseCase: ManageMateAssignmentUseCase,
     private val getAllMatesUseCase: GetAllMatesUseCase,
     private val getLogsByProjectIdUseCase: GetLogsByProjectIdUseCase,
 ) : ProjectDashboardController {
 
     private val dummyStates = listOf(
-        TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"),"TODO",1),
+        TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"), "TODO", 1),
         TaskState(UUID.fromString("22222222-2222-2222-2222-222222222222"), "In Progress", 1),
         TaskState(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Done", 1),
     )
@@ -256,7 +254,7 @@ class ProjectDashboardCli(
     }
 
     override fun assignMateToProject(projectId: UUID, mateId: UUID) {
-        if (assignMateUseCase(projectId, mateId)) {
+        if (manageMateAssignmentUseCase.assign(projectId, mateId)) {
             println("👥 Mate assigned to project successfully!")
             saveLogUseCase(
                 History(
@@ -276,7 +274,7 @@ class ProjectDashboardCli(
     }
 
     override fun unassignMateFromProject(projectId: UUID, mateId: UUID) {
-        if (removeMate(projectId, mateId)) {
+        if (manageMateAssignmentUseCase.unAssign(projectId, mateId)) {
             println("👤 Mate unassigned from project successfully!")
             saveLogUseCase(
                 History(

@@ -8,7 +8,7 @@ import logic.usecase.project.*
 import logic.usecase.state.*
 import logic.usecase.task.*
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
-import org.damascus.logic.usecase.project.UnassignMateUseCase
+import org.damascus.logic.usecase.project.ManageMateAssignmentUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
@@ -19,8 +19,7 @@ val useCaseModule = module {
     single { UpdateProjectUseCase(get()) }
     single { GetAllProjectsByMateIdUseCase(get()) }
     single { GetProjectUseCase(get()) }
-    single { AssignMateUseCase(get()) }
-    single { UnassignMateUseCase(get()) }
+    single { ManageMateAssignmentUseCase(get()) }
     single { GetProjectStateUseCase(get(), get()) }
 
     // Authentication use cases
