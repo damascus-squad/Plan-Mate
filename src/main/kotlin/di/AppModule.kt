@@ -17,8 +17,6 @@ import logic.repo.DataSource
 import logic.service.HashingService
 import logic.service.MD5HashingService
 import org.damascus.ui.views.admin.AdminDashboardUi
-import org.damascus.ui.views.user.MateDashboardUi
-import org.damascus.ui.views.user.SelectMateUi
 import org.damascus.ui.views.auditLog.ProjectLogUi
 import org.damascus.ui.views.auditLog.TaskLogUi
 import org.damascus.ui.views.project.*
@@ -29,8 +27,9 @@ import ui.io.ConsoleDisplay
 import ui.io.ConsoleUserInput
 import ui.io.Display
 import ui.io.InputReader
-import org.damascus.ui.views.projectDashboard.ProjectDashboardCli
+import org.damascus.ui.views.projectDashboard.ProjectManagementUi
 import org.damascus.ui.views.task.*
+import org.damascus.ui.views.user.*
 import ui.views.LoginView
 import ui.views.project.SelectProjectUi
 import ui.views.task.TaskCLI
@@ -93,7 +92,7 @@ val appModule = module {
     single<InputReader> { ConsoleUserInput() }
 
     single { AdminDashboardUi(get(), get(), get()) }
-    single { MateDashboardUi(get(), get(), get(), get()) }
+    single { MateDashboardUi(get(), get(), get(), get(), get()) }
     single { SelectMateUi(get(), get()) }
     single { AssignMateToProjectUi(get(), get(), get(), get()) }
     single { DeleteProjectUi(get(), get(), get(), get()) }
@@ -102,13 +101,13 @@ val appModule = module {
     single { GetAdminProjectsUi(get(), get()) }
     single { GetMateProjectsUi(get(), get()) }
     single { SelectProjectUi(get(), get(), get()) }
-    single { ProjectUi(get(), get(), get(), get(), get(), get()) }
+    single { AllProjectsUi(get(), get(), get(), get(), get(), get()) }
     single { UnAssignMateFromProjectUi(get(), get(), get(), get()) }
     single { CreateTaskUi(get(), get(),get(), get(),get()) }
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
-    single { PlanMateConsoleUi(get(), get(), get()) }
-    single { CreateProjectUi(get(), get(), get()) }
-    single { ProjectDashboardCli(get(), get(), get(), get(), get(), get()) }
+    single { PlanMateConsoleUi(get(), get(), get(), get()) }
+    single { CreateProjectUi(get(), get(), get(), get()) }
+    single { ProjectManagementUi(get(), get(), get(), get(), get(), get()) }
     single { ProjectLogUi(get(), get(), get()) }
     single { TaskLogUi(get(), get(), get()) }
     single { GetAllTasksByProjectIdUi(get(),get()) }
@@ -117,4 +116,8 @@ val appModule = module {
     single { SelectTaskUi(get(), get(), get()) }
     single { TaskDashboardUi(get(), get(), get(), get()) }
     single { LoginView(get(), get(), get()) }
+    single { TaskUI(get(), get(), get(), get(), get()) }
+    single { CreateMateUi(get()) }
+    single { GetAllMatesUi(get(), get()) }
+    single { MateManagementUi(get(), get(), get()) }
 }
