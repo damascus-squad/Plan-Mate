@@ -1,7 +1,6 @@
 package org.damascus.ui.views.task
 
 import logic.model.Project
-import logic.model.TaskState
 import logic.usecase.state.GetTaskStateByIdUseCase
 import logic.usecase.task.GetTasksByProjectUseCase
 import ui.util.printTable
@@ -25,7 +24,12 @@ class GetAllTasksByProjectIdUi (
 
         val tableRows = (0 until maxRows).map { rowIndex ->
             groupedTasks.map { (_, tasks) ->
-                tasks.getOrNull(rowIndex)?.title ?: ""
+                val task = tasks.getOrNull(rowIndex)
+                if (task != null) {
+                    "${rowIndex + 1}. ${task.title}"
+                } else {
+                    ""
+                }
             }
         }
 
