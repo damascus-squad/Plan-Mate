@@ -13,13 +13,12 @@ class GetAllTasksByProjectIdUi (
     operator fun invoke(currentProject: Project) {
         val projectTasks = getTasksByProjectUseCase(currentProject.id)
 
-        val allowedStates: MutableList<TaskState> = mutableListOf()
-        projectTasks.forEach {task->
-             allowedStates.add(getTaskStateUseCase(task.id))
-        }
+        val allowedStates = currentProject.allowedStatesIds.map { getTaskStateUseCase(it) }
+
+        val groupedTasksMap = projectTasks.groupBy { it.stateId }
 
         val groupedTasks = allowedStates.map { state ->
-            state.name to projectTasks.filter { it.stateId == state.id }
+            state.name to (groupedTasksMap[state.id] ?: emptyList())
         }
 
         val maxRows = groupedTasks.maxOfOrNull { it.second.size } ?: 0
@@ -31,6 +30,7 @@ class GetAllTasksByProjectIdUi (
         }
 
         val headers = allowedStates.map { it.name }
+
         printTable(headers, tableRows)
     }
 }

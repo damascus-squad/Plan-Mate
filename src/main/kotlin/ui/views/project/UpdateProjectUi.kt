@@ -6,6 +6,7 @@ import org.damascus.logic.usecase.auth.GetAllMatesUseCase
 import org.damascus.ui.views.user.SelectMateUi
 import ui.io.Display
 import ui.util.UiAction
+import ui.util.printProjectDetails
 
 class UpdateProjectUi(
     private val display: Display,
@@ -18,19 +19,23 @@ class UpdateProjectUi(
     operator fun invoke(currentUser: User, currentProject: Project) {
 
         display.displayMenu(
-            listOf(
+            uiActionList = listOf(
                 UiAction("Title") { updateProjectTitleUi(currentProject, currentUser) },
                 UiAction("Assign Mate") {
-                    assignMateToProjectUi(
-                        currentProject,
-                        selectMateUi(getAllMatesUseCase()).id
-                    )
+                    val selectedMate = selectMateUi(getAllMatesUseCase())
+                    if (selectedMate != null) {
+                        assignMateToProjectUi(currentProject, selectedMate.id)
+                    } else {
+                        display.write(prompt = "❗ No mate selected for assignment.")
+                    }
                 },
                 UiAction("Remove Mate") {
-                    unAssignMateFromProjectUi(
-                        currentProject,
-                        selectMateUi(getAllMatesUseCase()).id
-                    )
+                    val selectedMate = selectMateUi(getAllMatesUseCase())
+                    if (selectedMate != null) {
+                        unAssignMateFromProjectUi(currentProject, selectedMate.id)
+                    } else {
+                        display.write(prompt = "❗ No mate selected for Remove.")
+                    }
                 },
             ),
             menuTitle = "\nSelect the field you want to update:"

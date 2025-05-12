@@ -12,10 +12,11 @@ import java.util.*
 class CreateProjectUi (
     private val inputReader:InputReader,
     private val display: Display,
-    private val createProjectUseCase: CreateProjectUseCase
+    private val createProjectUseCase: CreateProjectUseCase,
+    private val getAdminProjectsUi: GetAdminProjectsUi
 ){
     operator fun invoke(){
-        val name = inputReader.readString("Enter project name:")
+        val name = inputReader.readString("Enter project name")
         val project = Project(
             id = UUID.randomUUID(),
             name = name,
@@ -25,7 +26,8 @@ class CreateProjectUi (
         )
 
         if (createProjectUseCase(project)) {
-            display.write(prompt = "Added Project ${project.name}")
+            display.write(prompt = "Project ${project.name} Added Successfully")
+            getAdminProjectsUi()
         } else {
             display.writeError(errorMessage = "Project already exists.")
         }

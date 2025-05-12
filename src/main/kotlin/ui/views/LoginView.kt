@@ -12,9 +12,9 @@ class LoginView(
 ) {
     fun getLoggedUser(): User {
         while (true) {
-            display.write(prompt = "🔷 Welcome to PlanMate v1.0 🔷")
-            val usernameInput = inputReader.readString(prompt = "Enter Your Username ")
-            val passwordInput = inputReader.readString(prompt = "Enter Your Password ")
+            display.write(prompt = "🔐 Welcome to Plan Mate Login")
+            val usernameInput = inputReader.readString(prompt = "👤 Enter your name ")
+            val passwordInput = inputReader.readString(prompt = "🔒 Enter Your Password ")
 
             val userResult = authenticateUserLoginUseCase(
                 username = usernameInput,

@@ -11,6 +11,7 @@ import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.project.UpdateProjectUseCase
 import ui.io.Display
 import ui.io.InputReader
+import ui.util.printProjectDetails
 import java.util.*
 
 class UpdateProjectTitleUi(
@@ -20,7 +21,7 @@ class UpdateProjectTitleUi(
     private val updateProjectUseCase: UpdateProjectUseCase
 ) {
     operator fun invoke (currentProject: Project, currentUser: User) {
-        val newTitle = inputReader.readString("Enter new title (or type 's' to keep current): ")
+        val newTitle = inputReader.readString("Enter new title (or type 's' to keep current)")
 
         if (newTitle.lowercase() != "s") {
             val updatedProject = currentProject.copy(name = newTitle)
@@ -39,9 +40,10 @@ class UpdateProjectTitleUi(
                 )
             )
 
-            display.write("✅ Title updated successfully!")
+            display.write(prompt = "✅ Title updated successfully!" )
+            updatedProject.printProjectDetails()
         } else {
-            display.write("ℹ️ Title unchanged.")
+            display.write(prompt = "ℹ️ Title unchanged.")
         }
     }
 }

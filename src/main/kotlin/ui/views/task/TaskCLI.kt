@@ -19,7 +19,7 @@ class TaskCLI(
     private val getTaskUseCase: GetTaskUseCase,
 ) : TaskUIController {
     fun start(task: Task) {
-        viewTaskDetails(task.id)
+//        viewTaskDetails(task.id)
         display.displayMenu(
             listOf(
                 UiAction("Update Task") { editTask(task.id) },

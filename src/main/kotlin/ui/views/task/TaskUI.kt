@@ -14,14 +14,19 @@ class TaskUI(
     private val createTaskUi: CreateTaskUi
 ) {
     operator fun invoke(currentProject: Project, currentUser: User) {
-
         getAllTasksByProjectIdUi(currentProject)
 
         val dashboardActions = listOf(
-            UiAction(name = "📜 Select Task") { selectTaskUi(getTasksByProjectUseCase(currentProject.id)) },
-            UiAction(name = "➕ Create a New Task") { createTaskUi(currentProject,currentUser) }
+            UiAction(name = "📜 Select Task") {
+                selectTaskUi(getTasksByProjectUseCase(currentProject.id))
+                getAllTasksByProjectIdUi(currentProject)
+            },
+            UiAction(name = "➕ Create a New Task") { createTaskUi(currentProject, currentUser) }
         )
 
-        display.displayMenu(dashboardActions, menuTitle = "📁 Tasks Menu:")
+        display.displayMenu(
+            dashboardActions,
+            menuTitle = "📁 Tasks Menu:",
+        )
     }
 }

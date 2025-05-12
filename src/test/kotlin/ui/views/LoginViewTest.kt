@@ -8,6 +8,7 @@ import logic.model.UserRole
 import logic.usecase.auth.AuthenticateUserLoginUseCase
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import ui.io.Display
 import ui.io.InputReader
 import java.util.*
 import kotlin.test.assertEquals
@@ -17,12 +18,14 @@ class LoginViewTest {
     private lateinit var authenticateUserLoginUseCase: AuthenticateUserLoginUseCase
     private lateinit var inputReader: InputReader
     private lateinit var loginView: LoginView
+    private lateinit var display: Display
 
     @BeforeEach
     fun setup() {
         authenticateUserLoginUseCase = mockk(relaxed = true)
         inputReader = mockk(relaxed = true)
-        loginView = LoginView(authenticateUserLoginUseCase, inputReader)
+        display = mockk(relaxed = true)
+        loginView = LoginView(authenticateUserLoginUseCase, inputReader, display)
     }
 
     @Test

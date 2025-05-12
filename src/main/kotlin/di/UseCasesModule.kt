@@ -13,7 +13,7 @@ import org.koin.dsl.module
 
 val useCaseModule = module {
     // Project use cases
-    single { CreateProjectUseCase(get()) }
+    single { CreateProjectUseCase(get(), get()) }
     single { GetAdminProjectsUseCase(get()) }
     single { DeleteProjectUseCase(get()) }
     single { UpdateProjectUseCase(get()) }

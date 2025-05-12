@@ -26,8 +26,6 @@ class AssignMateToProjectUi (
         }
 
         if (assignMateUseCase(currentProject.id, mateId)) {
-            display.write(prompt = "👥 Mate assigned to project successfully!")
-
             saveLogUseCase(
                 History(
                     id = UUID.randomUUID(),
@@ -41,9 +39,11 @@ class AssignMateToProjectUi (
                 )
             )
             val updatedProject = currentProject.copy(
-                assignedMatesIds = currentProject.assignedMatesIds.toMutableList().apply { add(mateId) }
+                assignedMatesIds = currentProject.assignedMatesIds.apply { add(mateId) }
             )
             updateProjectUseCase(projectId = updatedProject.id, updatedProject)
+
+            display.write(prompt = "👥 Mate assigned to project successfully!")
 
         } else {
             display.writeError(errorMessage = " Failed to Assign Mate.")

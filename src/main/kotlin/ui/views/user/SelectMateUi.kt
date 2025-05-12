@@ -10,24 +10,22 @@ class SelectMateUi(
     private val display: Display
 ) {
 
-    operator fun invoke(mates: List<User>): User {
-        var selectedIndex = 0
+    operator fun invoke(mates: List<User>): User? {
         if (mates.isEmpty()) {
-            display.writeError(errorMessage = " No mates assigned to this project.")
-        } else {
-            display.write(prompt = "\n👥 Available Mates:")
-            val headers = listOf("ID", "Name")
-            val rows = mates.mapIndexed { index, mate ->
-                listOf((index + 1).toString(), mate.username)
-            }
-            printTable(headers, rows)
-
-           selectedIndex = inputReader.readInt(
-                prompt = "Enter the number of the mate to assign: ",
-                min = 1,
-                max = mates.size
-            )
+            display.writeError(errorMessage = "No mates assigned to this project.")
+            return null
         }
-        return mates[selectedIndex - 1]
+
+        display.write("\n👥 Available Mates:")
+        val headers = listOf("ID", "Name")
+        val rows = mates.mapIndexed { index, mate ->
+            listOf((index + 1).toString(), mate.username)
+        }
+        printTable(headers, rows)
+
+        val selected = inputReader.readInt("Enter the number of the mate (or 0 to skip)")
+        if (selected == 0) return null
+
+        return mates[selected - 1]
     }
 }

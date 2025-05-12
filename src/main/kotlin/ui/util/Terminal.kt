@@ -1,6 +1,7 @@
 package ui.util
 
 import logic.model.Project
+import logic.model.User
 
 enum class TerminalColor(private val code: String) {
     Red("\u001B[31m"),
@@ -30,76 +31,34 @@ fun List<Project>.printProjectTable() {
     printTable(headers, rows)
 }
 
-//fun TransactionReport.printColoredTable() {
-//    val headers = listOf(
-//        "Income",
-//        "Expense",
-//        "Balance"
-//    )
-//
-//    val data = listOf(
-//        income,
-//        expenses,
-//        getBalance()
-//    )
-//    printTable(headers, listOf(data))
-//    categorySummaries.printColoredTable()
-//}
+fun Project.printProjectDetails() {
+    val headers = listOf("Name", "ID", "Mates Count", "Created Date")
+    val rows = listOf(
+        name,
+        id.toString().take(8),
+        assignedMatesIds.size.toString(),
+        creationDate.toString()
+    )
+    printTable(headers, listOf(rows))
+}
 
-//fun Map<Category, CategorySummary>.printColoredTable() {
-//    val headers = listOf(
-//        "Category",
-//        "Amount",
-//        "Transactions Count"
-//    )
-//
-//    val data = map {
-//        listOf(
-//            it.key.name,
-//            it.value.amount,
-//            it.value.transactionsCount
-//        )
-//    }
-//    printTable(headers, data)
-//}
+fun List<User>.printMateTable() {
+    val headers = listOf("No", "Username")
+    val rows = this.mapIndexed { index, user ->
+        listOf(
+            (index + 1).toString(),
+            user.username,
+        )
+    }
+    printTable(headers, rows)
+}
 
 fun enableWindowsAnsi() {
     if (System.getProperty("os.name").contains("Windows"))
         System.setProperty("jansi.passthrough", "true")
 }
 
-//fun printTable(headers: List<String>, data: List<List<Any>>) {
-//    val colWidths = headers.mapIndexed { i, header ->
-//        maxOf(header.length, data.maxOfOrNull { row -> row[i].toString().length } ?: 0)
-//    }
-//
-//    val lineLength = (colWidths.sum() + colWidths.size * 3) - 1
-//    val footer = " " + "—".repeat(lineLength)
-//    println(footer)
-//
-//    fun printRow(items: List<Any>) {
-//        val color = when {
-//            TransactionType.EXPENSE in items -> TerminalColor.Red
-//            TransactionType.INCOME in items -> TerminalColor.Green
-//            else -> TerminalColor.entries.filter {
-//                it !in listOf(TerminalColor.Red, TerminalColor.Green)
-//            }.random()
-//        }
-//
-//        items.forEachIndexed { i, item ->
-//            print("| ${item.toString().padEnd(colWidths[i])} ".withStyle(color))
-//        }
-//        println("|")
-//    }
-//
-//    printRow(headers)
-//    println("|${colWidths.joinToString("|") { "-".repeat(it + 2) }}|")
-//    data.forEach { printRow(it) }
-//    println(footer)
-//}
-
-
-fun printTable(headers: List<String>, rows: List<List<Any>>, color: TerminalColor = TerminalColor.Yellow) {
+fun printTable(headers: List<String>, rows: List<List<Any>>, color: TerminalColor = TerminalColor.Reset) {
     val colWidths = headers.indices.map { i ->
         (listOf(headers[i]) + rows.mapNotNull { it.getOrNull(i)?.toString() }).maxOf { it.length }
     }
@@ -117,7 +76,7 @@ fun printTable(headers: List<String>, rows: List<List<Any>>, color: TerminalColo
     println(topBorder.withStyle(TerminalColor.Magenta))
 
     val headerRow = headers.mapIndexed { i, h -> " ${h.padEnd(colWidths[i])} " }
-    println("║" + headerRow.joinToString("║") + "║".withStyle(TerminalColor.Cyan))
+    println("║" + headerRow.joinToString("║") + "║".withStyle(TerminalColor.Reset))
 
     println(midBorder.withStyle(TerminalColor.Magenta))
 

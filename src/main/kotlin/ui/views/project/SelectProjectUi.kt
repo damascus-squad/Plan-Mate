@@ -13,13 +13,13 @@ class SelectProjectUi(
     operator fun invoke(projects: List<Project>): Project {
 
         val choice = consoleUserInput.readInt(
-            prompt = "Enter project number to select: ",
+            prompt = "Enter project number to select",
             min = 1,
             max = projects.size
         )
 
         val selectedProject = getProjectUseCase(projects[choice - 1].id)
-        display.write(prompt = "You selected: ${selectedProject.name} (ID: ${selectedProject.id})")
+        display.write(prompt = "You selected: ${selectedProject.name} Project")
         return selectedProject
     }
 }
