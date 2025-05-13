@@ -44,3 +44,6 @@ bin/
 # Ignore CSV test data
 *.csv
 !users.csv
+
+# Ignore .env file for credentials
+.env
