@@ -21,10 +21,10 @@ class UpdateTaskTitleUi(
     private val display: Display,
     private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task) {
+    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
         val newTitle = inputReader.readString(prompt = "Enter new title (or type 's' to keep current)")
 
-        if (newTitle.lowercase() != "s") {
+        return if (newTitle.lowercase() != "s") {
             val updatedTask = currentTask.copy(title = newTitle)
             updateTaskUseCase(updatedTask.id, updatedTask)
 
@@ -48,8 +48,11 @@ class UpdateTaskTitleUi(
                 assignee = assigneeUsername,
                 state = getTaskStateByIdUseCase(updatedTask.stateId).name
             )
+            updatedTask
+
         } else {
             display.write(prompt = "ℹ️ Title unchanged.")
+            currentTask
         }
     }
 }

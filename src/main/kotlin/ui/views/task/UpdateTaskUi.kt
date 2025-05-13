@@ -1,32 +1,35 @@
 package org.damascus.ui.views.task
 
 import logic.model.Project
-import logic.model.Task
 import logic.model.User
 import logic.model.UserRole
+import logic.usecase.task.GetTaskUseCase
 import ui.io.Display
 import ui.util.UiAction
+import java.util.UUID
 
 class UpdateTaskUi(
     private val display: Display,
     private val updateTaskAssigneeUi: UpdateTaskAssigneeUi,
     private val updateTaskTitleUi: UpdateTaskTitleUi,
     private val updateTaskDescriptionUi: UpdateTaskDescriptionUi,
-    private val updateTaskStatusUi: UpdateTaskStatusUi
+    private val updateTaskStatusUi: UpdateTaskStatusUi,
+    private val getTaskUseCase: GetTaskUseCase
 ) {
-    operator fun invoke(task: Task, user: User, project: Project) {
+    operator fun invoke(taskId: UUID, user: User, project: Project) {
+        var updatedTask = getTaskUseCase(taskId)
         val actions = mutableListOf(
             UiAction(
                 name = "Title",
-                action = { updateTaskTitleUi(project, user, task) }
+                action = { updatedTask = updateTaskTitleUi(project, user, updatedTask) }
             ),
             UiAction(
                 name = "Description",
-                action = { updateTaskDescriptionUi(project, user, task) }
+                action = { updatedTask = updateTaskDescriptionUi(project, user, updatedTask) }
             ),
             UiAction(
                 name = "Status",
-                action = { updateTaskStatusUi(project, user, task) }
+                action = { updatedTask = updateTaskStatusUi(project, user, updatedTask) }
             )
         )
 
@@ -34,12 +37,13 @@ class UpdateTaskUi(
             actions.add(
                 UiAction(
                     name = "Change Assignee",
-                    action = { updateTaskAssigneeUi(user, task, project) }
+                    action = { updatedTask = updateTaskAssigneeUi(user, updatedTask, project) }
                 )
             )
         }
 
         display.displayMenu(actions, menuTitle = "\nSelect the field you want to update:")
+
     }
 
 }

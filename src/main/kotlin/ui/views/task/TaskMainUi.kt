@@ -6,7 +6,7 @@ import logic.usecase.task.GetTasksByProjectUseCase
 import ui.io.Display
 import ui.util.UiAction
 
-class TaskUI(
+class TaskMainUi(
     private val getAllTasksByProjectIdUi: GetAllTasksByProjectIdUi,
     private val selectTaskUi: SelectTaskUi,
     private val getTasksByProjectUseCase: GetTasksByProjectUseCase,
@@ -23,7 +23,7 @@ class TaskUI(
                     name = "📜 Task Management",
                     action = {
                         val selectedTask = selectTaskUi(getTasksByProjectUseCase(currentProject.id))
-                        taskDashboardUi(currentUser, selectedTask, currentProject)
+                        taskDashboardUi(currentUser, selectedTask.id, currentProject)
                     },
                     refreshAction = { invoke(currentProject, currentUser) }
                 ),

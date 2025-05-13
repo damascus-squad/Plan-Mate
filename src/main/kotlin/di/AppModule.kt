@@ -110,14 +110,14 @@ val appModule = module {
     single { TaskLogUi(get(), get(), get(), get()) }
     single { GetAllTasksByProjectIdUi(get(), get(), get()) }
     single { UpdateProjectUi(get(), get(), get(), get(), get(), get()) }
-    single { TaskDashboardUi(get(), get(), get(), get(), get(), get()) }
+    single { TaskDashboardUi(get(), get(), get(), get(), get(), get(), get()) }
     single { LoginView(get(), get(), get()) }
     single { CreateMateUi(get()) }
     single { GetAllMatesUi(get(), get()) }
     single { MateManagementUi(get(), get(), get()) }
 
-    single { TaskUI(get(), get(), get(), get(), get(), get()) }
-    single { UpdateTaskUi(get(), get(), get(), get(), get()) }
+    single { TaskMainUi(get(), get(), get(), get(), get(), get()) }
+    single { UpdateTaskUi(get(), get(), get(), get(), get(), get()) }
     single { SelectTaskUi(get(), get(), get()) }
     single { UpdateTaskStatusUi(get(), get(), get(), get(), get(), get()) }
     single { UpdateTaskTitleUi(get(), get(), get(), get(), get(), get()) }

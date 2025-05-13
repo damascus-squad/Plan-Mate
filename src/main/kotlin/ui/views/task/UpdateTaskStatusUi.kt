@@ -22,25 +22,24 @@ class UpdateTaskStatusUi(
     private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase
 ) {
 
-    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task) {
+    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
         val availableTaskStates = currentProject.allowedStatesIds.map { getTaskStateByIdUseCase(it) }
 
-        // Print available states
         display.write(prompt = "Available task states:")
 
         availableTaskStates.forEachIndexed { index, state ->
-            display.write("${index + 1}. ${state.name}")
+            display.write(prompt = "${index + 1}. ${state.name}")
         }
 
         val selectedIndex = inputReader.readInt(
-            prompt = "Enter the number of the new status (1 to ${availableTaskStates.size}) or 0 to keep existing: ",
+            prompt = "Enter the number of the new status (1 to ${availableTaskStates.size}) or 0 to keep existing",
             min = 1,
             max = availableTaskStates.size
         )
 
         val newStatus = availableTaskStates[selectedIndex - 1]
         val updatedTask = currentTask.copy(stateId = newStatus.id)
-        updateTaskUseCase(updatedTask.id, updatedTask)
+        updateTaskUseCase(currentTask.id, updatedTask)
 
         saveLogUseCase(
             History(
@@ -62,6 +61,7 @@ class UpdateTaskStatusUi(
             assignee = assigneeUsername,
             state = newStatus.name
         )
-    }
 
+        return updatedTask
+    }
 }

@@ -1,14 +1,15 @@
 package org.damascus.ui.views.task
 
 import logic.model.Project
-import logic.model.Task
 import logic.model.User
 import logic.usecase.state.GetTaskStateByIdUseCase
+import logic.usecase.task.GetTaskUseCase
 import org.damascus.logic.usecase.auth.GetUserByIdUseCase
 import org.damascus.ui.views.auditLog.TaskLogUi
 import ui.io.Display
 import ui.util.UiAction
 import ui.util.printTaskDetails
+import java.util.UUID
 
 class TaskDashboardUi(
     private val updateTaskUi: UpdateTaskUi,
@@ -17,28 +18,32 @@ class TaskDashboardUi(
     private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase,
     private val taskLogUi: TaskLogUi,
     private val display: Display,
+    private val getTaskUseCase: GetTaskUseCase
 ) {
-    operator fun invoke(currentUser: User, currentTask: Task, currentProject: Project) {
+    operator fun invoke(currentUser: User, currentTaskId: UUID, currentProject: Project) {
+        val updatedTask = getTaskUseCase(currentTaskId)
 
-        val assigneeUsername = currentTask.assigneeId?.let { getUserByIdUseCase(it).username } ?: "Unassigned"
-        currentTask.printTaskDetails(
+        val assigneeUsername = updatedTask.assigneeId?.let { getUserByIdUseCase(it).username } ?: "Unassigned"
+        updatedTask.printTaskDetails(
             assignee = assigneeUsername,
-            state = getTaskStateByIdUseCase(currentTask.id).name
+            state = getTaskStateByIdUseCase(updatedTask.stateId).name
         )
 
         val taskActions = listOf(
             UiAction(
                 name = "✏️ update Task",
-                action = { updateTaskUi(currentTask, currentUser, currentProject) }
+                action = { updateTaskUi(updatedTask.id, currentUser, currentProject) },
+                refreshAction = { invoke(currentUser, updatedTask.id, currentProject) }
             ),
             UiAction(
                 name = "🗑️ Delete Task",
-                action = { deleteTaskUi(currentProject, currentTask, currentUser) },
+                action = { deleteTaskUi(currentProject, updatedTask, currentUser) },
                 exitAfterAction = true
             ),
             UiAction(
                 name = "📜 Show Task History",
-                action = { taskLogUi(currentTask.id) }
+                action = { taskLogUi(updatedTask.id) },
+                refreshAction = { invoke(currentUser, updatedTask.id, currentProject) }
             )
         )
         display.displayMenu(

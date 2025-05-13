@@ -21,12 +21,12 @@ class UpdateTaskDescriptionUi(
     private val display: Display,
     private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task) {
+    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
         val newDescription = inputReader.readString(prompt = "Enter new description (or type 's' to keep current)")
 
-        if (newDescription.lowercase() != "s") {
+        return if (newDescription.lowercase() != "s") {
             val updatedTask = currentTask.copy(description = newDescription)
-            updateTaskUseCase(updatedTask.id, updatedTask)
+            updateTaskUseCase(currentTask.id, updatedTask)
 
             saveLogUseCase(
                 History(
@@ -48,9 +48,11 @@ class UpdateTaskDescriptionUi(
                 assignee = assigneeUsername,
                 state = getTaskStateByIdUseCase(updatedTask.stateId).name
             )
+            updatedTask
 
         } else {
             display.write(prompt = "ℹ️ Description unchanged.")
+            currentTask
         }
     }
 }

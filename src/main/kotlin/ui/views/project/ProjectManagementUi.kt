@@ -3,7 +3,7 @@ package org.damascus.ui.views.project
 import logic.model.Project
 import logic.model.User
 import org.damascus.ui.views.auditLog.ProjectLogUi
-import org.damascus.ui.views.task.TaskUI
+import org.damascus.ui.views.task.TaskMainUi
 import ui.io.Display
 import ui.util.UiAction
 import ui.util.printProjectDetails
@@ -13,7 +13,7 @@ class ProjectManagementUi(
     private val updateProjectUi: UpdateProjectUi,
     private val deleteProjectUi: DeleteProjectUi,
     private val projectLogUi: ProjectLogUi,
-    private val taskUI: TaskUI,
+    private val taskMainUi: TaskMainUi,
 ) {
     operator fun invoke(currentProject: Project, currentUser: User) {
         currentProject.printProjectDetails()
@@ -44,7 +44,7 @@ class ProjectManagementUi(
 
             UiAction(
                 name = "📋 View Tasks Board",
-                action = { taskUI(currentProject, currentUser) },
+                action = { taskMainUi(currentProject, currentUser) },
                 refreshAction = { invoke(currentProject, currentUser) }
             )
         )

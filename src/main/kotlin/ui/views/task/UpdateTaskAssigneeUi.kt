@@ -21,26 +21,26 @@ class UpdateTaskAssigneeUi(
     private val selectMateUi: SelectMateUi,
     private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase
 ) {
-    operator fun invoke(admin: User, currentTask: Task, currentProject: Project) {
+    operator fun invoke(admin: User, currentTask: Task, currentProject: Project): Task {
         val mates = currentProject.assignedMatesIds.map { mateId ->
             getUserByIdUseCase(mateId)
         }
 
         if (mates.isEmpty()) {
-            display.writeError(errorMessage = "❌ No mates are allowed on this project.")
-            return
+            display.writeError(errorMessage = "No mates are allowed on this project.")
+            return currentTask
         }
 
         val selectedMate = selectMateUi(mates)
 
         if (selectedMate == null) {
             display.writeError(errorMessage = "Invalid selection.")
-            return
+            return currentTask
         }
 
         if (currentTask.assigneeId == selectedMate.id) {
             display.write(prompt = "ℹ️ Task is already assigned to ${selectedMate.username}. No changes made.")
-            return
+            return currentTask
         }
 
         val updatedTask = currentTask.copy(assigneeId = selectedMate.id)
@@ -65,5 +65,6 @@ class UpdateTaskAssigneeUi(
         )
 
         display.write("✅ Task assigned successfully to user '${selectedMate.username}'.")
+        return updatedTask
     }
 }
