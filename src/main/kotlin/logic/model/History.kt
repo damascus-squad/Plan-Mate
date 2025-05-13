@@ -9,8 +9,8 @@ data class History(
     val taskId: UUID,
     val actionType: ActionType,
     val userId: UUID,
-    val currentStateId: UUID,
-    val newStateId: UUID,
+    val currentState: String?,
+    val newState: String?,
     val actionDate: LocalDateTime,
 ) {
     companion object {

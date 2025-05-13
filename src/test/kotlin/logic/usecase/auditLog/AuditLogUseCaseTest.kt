@@ -25,9 +25,9 @@ class AuditLogUseCaseTest {
     private lateinit var getLogsByProjectId: GetLogsByProjectIdUseCase
     private lateinit var getLogsByTaskId: GetLogsByTaskIdUseCase
 
-    private val todoStateId = UUID.randomUUID()
-    private val inProgressStateId = UUID.randomUUID()
-    private val doneStateId = UUID.randomUUID()
+    private val todoState = "TODO"
+    private val inProgressState = "IN Progress"
+    private val doneState = "Done"
 
     @BeforeEach
     fun setup() {
@@ -51,8 +51,8 @@ class AuditLogUseCaseTest {
                 UUID.randomUUID(),
                 projectId,
                 fakeDate,
-                todoStateId,
-                inProgressStateId,
+                todoState,
+                inProgressState,
                 ActionType.TASK_STATE_CHANGED
             ),
             createFakeActionLog(
@@ -61,8 +61,8 @@ class AuditLogUseCaseTest {
                 UUID.randomUUID(),
                 projectId,
                 fakeDate,
-                todoStateId,
-                inProgressStateId,
+                todoState,
+                inProgressState,
                 ActionType.TASK_STATE_CHANGED
             )
         )
@@ -109,8 +109,8 @@ class AuditLogUseCaseTest {
             UUID.randomUUID(),
             UUID.randomUUID(),
             fakeDate,
-            todoStateId,
-            inProgressStateId,
+            todoState,
+            inProgressState,
             ActionType.TASK_STATE_CHANGED
         )
         // When
@@ -119,8 +119,8 @@ class AuditLogUseCaseTest {
         // Then
         verify(exactly = 1) {
             auditLogRepository.saveLog(match {
-                it.currentStateId == todoStateId &&
-                        it.newStateId == inProgressStateId &&
+                it.currentState == todoState &&
+                        it.newState == inProgressState &&
                         it.userId == userId
             })
         }
@@ -140,8 +140,8 @@ class AuditLogUseCaseTest {
                 UUID.randomUUID(),
                 projectId,
                 fakeDate,
-                todoStateId,
-                inProgressStateId,
+                todoState,
+                inProgressState,
                 ActionType.TASK_STATE_CHANGED
             )
         )
@@ -168,8 +168,8 @@ class AuditLogUseCaseTest {
                 taskId,
                 UUID.randomUUID(),
                 fakeDate,
-                inProgressStateId,
-                doneStateId,
+                inProgressState,
+                doneState,
                 ActionType.TASK_STATE_CHANGED
             )
         )
@@ -186,12 +186,11 @@ class AuditLogUseCaseTest {
     @EnumSource(
         value = ActionType::class,
         names = [
-            "TASK_STATE_CHANGED",
             "PROJECT_CREATED",
-            "PROJECT_MODIFIED",
+            "PROJECT_TITLE_MODIFIED",
+            "PROJECT_ASSIGNED_USER",
+            "PROJECT_UNASSIGNED_USER",
             "PROJECT_DELETED",
-            "TASK_CREATED",
-            "TASK_DELETED",
         ]
     )
     fun `should create ActionLog with action type when action type is valid`(actionType: ActionType) {
@@ -202,8 +201,8 @@ class AuditLogUseCaseTest {
         val log = createFakeActionLog(
             actionType = actionType,
             actionDate = actionDate,
-            currentStateId = todoStateId,
-            targetedStateId = inProgressStateId
+            currentState = "TODO",
+            newState = "IN PROGRESS"
         )
         // Then
         Assertions.assertEquals(actionType, log.actionType)
@@ -225,15 +224,15 @@ class AuditLogUseCaseTest {
         taskId: UUID = UUID.randomUUID(),
         projectId: UUID = UUID.randomUUID(),
         actionDate: LocalDateTime,
-        currentStateId: UUID,
-        targetedStateId: UUID,
+        currentState: String,
+        newState: String,
         actionType: ActionType = ActionType.TASK_STATE_CHANGED,
     ): History = History(
         id = id,
         taskId = taskId,
         projectId = projectId,
-        currentStateId = currentStateId,
-        newStateId = targetedStateId,
+        currentState = currentState,
+        newState = newState,
         actionDate = actionDate,
         actionType = actionType,
         userId = userId,

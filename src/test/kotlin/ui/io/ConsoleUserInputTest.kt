@@ -83,12 +83,12 @@ class ConsoleUserInputTest {
     }
 
     @ParameterizedTest
-    @CsvSource("y,true", "n,false")
+    @CsvSource("yes,true", "no,false")
     fun `should return boolean when valid input is provided`(input: String, expected: Boolean) {
         // Given
         provideInput("$input\n")
         // When
-        val result = ConsoleUserInput().readBoolean()
+        val result = ConsoleUserInput().readBoolean("Enter: ")
         // Then
         assertEquals(expected, result)
     }
@@ -96,10 +96,10 @@ class ConsoleUserInputTest {
     @Test
     fun `should retry when invalid boolean input then valid`() {
         // Given
-        provideInput("maybe\ny\n")
+        provideInput("maybe\nyes\n")
         // When
         val output = captureOutput {
-            val result = ConsoleUserInput().readBoolean()
+            val result = ConsoleUserInput().readBoolean("Enter: ")
             assertTrue(result)
         }
         // Then
@@ -153,7 +153,7 @@ class ConsoleUserInputTest {
         // When
         val output = captureOutput {
             val thread = Thread {
-                ConsoleUserInput().readBoolean()
+                ConsoleUserInput().readBoolean("❌ Invalid input. Please enter 'yes' or 'no'.")
             }
             thread.start()
             Thread.sleep(200)

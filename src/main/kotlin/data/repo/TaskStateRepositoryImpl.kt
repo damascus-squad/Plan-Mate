@@ -1,6 +1,5 @@
 package data.repo
 
-import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
 import logic.model.History.Companion.NO_TASK_STATE
 import logic.model.TaskState
@@ -19,13 +18,15 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
             ?: NO_TASK_STATE
     }
 
-    override fun create(taskState: TaskState): Boolean {
-        if (exist(taskState.name)) {
-            throw DuplicateStateException(taskState.name)
+    override fun create(stateName: String): TaskState {
+        if (exist(stateName)) {
+            val existingTaskState = getTaskStateByName(stateName)
+            incrementProjectReferences(existingTaskState)
+            return existingTaskState
         }
-        dataSource.write(taskState)
-
-        return true
+        val newTaskState = TaskState(UUID.randomUUID(), stateName, 1)
+        dataSource.write(newTaskState)
+        return newTaskState
     }
 
     override fun update(taskState: TaskState, updatedTaskState: TaskState): Boolean {
@@ -76,5 +77,9 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
 
     override fun exist(name: String): Boolean {
         return dataSource.read().any { it.name == name }
+    }
+
+    private fun getTaskStateByName(name: String): TaskState {
+        return dataSource.read().firstOrNull { it.name == name } ?: NO_TASK_STATE
     }
 }

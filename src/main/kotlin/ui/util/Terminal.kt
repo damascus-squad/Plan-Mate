@@ -1,141 +1,111 @@
-package ui.util
+    package ui.util
 
-enum class TerminalColor(val code: String) {
-    Red("\u001B[31m"),
-    Green("\u001B[32m"),
-    Yellow("\u001B[33m"),
-    Blue("\u001B[34m"),
-    Magenta("\u001B[35m"),
-    Cyan("\u001B[36m"),
-    Reset("\u001B[0m");
+    import kotlinx.datetime.LocalDateTime
+    import kotlinx.datetime.toJavaLocalDateTime
+    import logic.model.Project
+    import logic.model.Task
+    import logic.model.User
+    import java.time.format.DateTimeFormatter
 
-    fun wrap(text: String) = "$code$text${Reset.code}"
-}
+    enum class TerminalColor(private val code: String) {
+        Red("\u001B[31m"),
+        Green("\u001B[32m"),
+        Yellow("\u001B[33m"),
+        Blue("\u001B[34m"),
+        Magenta("\u001B[35m"),
+        Cyan("\u001B[36m"),
+        Reset("\u001B[0m");
 
-fun String.withStyle(color: TerminalColor) = color.wrap(this)
-//
-//fun List<Transaction>.printColoredTable() {
-//    val headers = listOf(
-//        "ID",
-//        "Amount",
-//        "Type",
-//        "Category",
-//        "Description",
-//        "Date"
-//    )
-//
-//    val data = map {
-//        listOf(
-//            it.id.toString().take(7),
-//            it.amount,
-//            it.transactionType,
-//            it.category.name,
-//            it.description ?: "-",
-//            it.date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a"))
-//        )
-//    }
-//
-//    printTable(headers, data)
-//}
-
-//fun TransactionReport.printColoredTable() {
-//    val headers = listOf(
-//        "Income",
-//        "Expense",
-//        "Balance"
-//    )
-//
-//    val data = listOf(
-//        income,
-//        expenses,
-//        getBalance()
-//    )
-//    printTable(headers, listOf(data))
-//    categorySummaries.printColoredTable()
-//}
-
-//fun Map<Category, CategorySummary>.printColoredTable() {
-//    val headers = listOf(
-//        "Category",
-//        "Amount",
-//        "Transactions Count"
-//    )
-//
-//    val data = map {
-//        listOf(
-//            it.key.name,
-//            it.value.amount,
-//            it.value.transactionsCount
-//        )
-//    }
-//    printTable(headers, data)
-//}
-
-fun enableWindowsAnsi() {
-    if (System.getProperty("os.name").contains("Windows"))
-        System.setProperty("jansi.passthrough", "true")
-}
-
-//fun printTable(headers: List<String>, data: List<List<Any>>) {
-//    val colWidths = headers.mapIndexed { i, header ->
-//        maxOf(header.length, data.maxOfOrNull { row -> row[i].toString().length } ?: 0)
-//    }
-//
-//    val lineLength = (colWidths.sum() + colWidths.size * 3) - 1
-//    val footer = " " + "—".repeat(lineLength)
-//    println(footer)
-//
-//    fun printRow(items: List<Any>) {
-//        val color = when {
-//            TransactionType.EXPENSE in items -> TerminalColor.Red
-//            TransactionType.INCOME in items -> TerminalColor.Green
-//            else -> TerminalColor.entries.filter {
-//                it !in listOf(TerminalColor.Red, TerminalColor.Green)
-//            }.random()
-//        }
-//
-//        items.forEachIndexed { i, item ->
-//            print("| ${item.toString().padEnd(colWidths[i])} ".withStyle(color))
-//        }
-//        println("|")
-//    }
-//
-//    printRow(headers)
-//    println("|${colWidths.joinToString("|") { "-".repeat(it + 2) }}|")
-//    data.forEach { printRow(it) }
-//    println(footer)
-//}
-
-
-fun printTable(headers: List<String>, rows: List<List<Any>>, color: TerminalColor = TerminalColor.Yellow) {
-    val colWidths = headers.indices.map { i ->
-        (listOf(headers[i]) + rows.mapNotNull { it.getOrNull(i)?.toString() }).maxOf { it.length }
+        fun wrap(text: String) = "$code$text${Reset.code}"
     }
 
-    fun drawLine(left: String, mid: String, right: String): String {
-        return left + colWidths.joinToString(mid) { "═".repeat(it + 2) } + right
-    }
+    fun String.withStyle(color: TerminalColor) = color.wrap(this)
 
-
-    val topBorder = drawLine("╔", "╦", "╗")
-    val midBorder = drawLine("╠", "╬", "╣")
-    val bottomBorder = drawLine("╚", "╩", "╝")
-
-
-    println(topBorder.withStyle(TerminalColor.Magenta))
-
-    val headerRow = headers.mapIndexed { i, h -> " ${h.padEnd(colWidths[i])} " }
-    println("║" + headerRow.joinToString("║") + "║".withStyle(TerminalColor.Cyan))
-
-    println(midBorder.withStyle(TerminalColor.Magenta))
-
-    rows.forEach { row ->
-        val dataRow = headers.indices.map { i ->
-            val cell = row.getOrNull(i)?.toString() ?: "-"
-            " ${cell.padEnd(colWidths[i])} "
+    fun List<Project>.printProjectTable() {
+        val headers = listOf("No", "Name", "Mates Count", "Created Date")
+        val rows = this.mapIndexed { index, project ->
+            listOf(
+                (index + 1).toString(),
+                project.name,
+                project.assignedMatesIds.size.toString(),
+                formatDateTime(project.creationDate)
+            )
         }
-        println("║" + dataRow.joinToString("║") + "║".withStyle(color))
+        printTable(headers, rows)
     }
 
-    println(bottomBorder.withStyle(TerminalColor.Magenta))
-}
+    fun Project.printProjectDetails() {
+        val headers = listOf("Name", "Mates Count", "Created Date")
+        val rows = listOf(
+            name,
+            assignedMatesIds.size.toString(),
+            formatDateTime(creationDate)
+        )
+        printTable(headers, listOf(rows))
+    }
+
+    fun List<User>.printMateTable() {
+        val headers = listOf("No", "Username")
+        val rows = this.mapIndexed { index, user ->
+            listOf(
+                (index + 1).toString(),
+                user.username,
+            )
+        }
+        printTable(headers, rows)
+    }
+
+    fun Task.printTaskDetails(assignee: String, state:String) {
+        val headers = listOf("Title", "Description", "Assigned to", "State","Created Date")
+        val rows = listOf(
+            title,
+            description,
+            assignee,
+            state,
+            formatDateTime(creationDate)
+        )
+        printTable(headers, listOf(rows))
+    }
+
+    fun enableWindowsAnsi() {
+        if (System.getProperty("os.name").contains("Windows"))
+            System.setProperty("jansi.passthrough", "true")
+    }
+
+    fun printTable(headers: List<String>, rows: List<List<Any>>, color: TerminalColor = TerminalColor.Reset) {
+        val colWidths = headers.indices.map { i ->
+            (listOf(headers[i]) + rows.mapNotNull { it.getOrNull(i)?.toString() }).maxOf { it.length }
+        }
+
+        fun drawLine(left: String, mid: String, right: String): String {
+            return left + colWidths.joinToString(mid) { "═".repeat(it + 2) } + right
+        }
+
+
+        val topBorder = drawLine("╔", "╦", "╗")
+        val midBorder = drawLine("╠", "╬", "╣")
+        val bottomBorder = drawLine("╚", "╩", "╝")
+
+
+        println(topBorder.withStyle(TerminalColor.Magenta))
+
+        val headerRow = headers.mapIndexed { i, h -> " ${h.padEnd(colWidths[i])} " }
+        println("║" + headerRow.joinToString("║") + "║".withStyle(TerminalColor.Reset))
+
+        println(midBorder.withStyle(TerminalColor.Magenta))
+
+        rows.forEach { row ->
+            val dataRow = headers.indices.map { i ->
+                val cell = row.getOrNull(i)?.toString() ?: "-"
+                " ${cell.padEnd(colWidths[i])} "
+            }
+            println("║" + dataRow.joinToString("║") + "║".withStyle(color))
+        }
+
+        println(bottomBorder.withStyle(TerminalColor.Magenta))
+    }
+
+    fun formatDateTime(dateTime: LocalDateTime, pattern: String = "yyyy-MM-dd HH:mm"): String {
+        val formatter = DateTimeFormatter.ofPattern(pattern)
+        return dateTime.toJavaLocalDateTime().format(formatter)
+    }

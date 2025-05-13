@@ -10,8 +10,10 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class CsvDataParserTest {
-    val listOfUUIDs = List(10) { UUID.randomUUID() }
-    val date1 = LocalDateTime.parse("2024-05-01T12:00:00")
+    private val listOfUUIDs = List(10) { UUID.randomUUID() }
+    private val currentState = "TODO"
+    private val newState = "IN Progress"
+    private val date1 = LocalDateTime.parse("2024-05-01T12:00:00")
 
     @Test
     fun `parseUser should return a valid mate when csv entry is a valid mate`() {
@@ -197,7 +199,7 @@ class CsvDataParserTest {
     fun `parseHistory should return a valid history when csv entry is a valid history`() {
         // Given
         val csvEntry =
-            "${listOfUUIDs[0]},${listOfUUIDs[1]},${listOfUUIDs[2]},5,${listOfUUIDs[3]},${listOfUUIDs[4]},${listOfUUIDs[5]},$date1"
+            "${listOfUUIDs[0]},${listOfUUIDs[1]},${listOfUUIDs[2]},${ActionType.TASK_STATE_CHANGED.ordinal},${listOfUUIDs[3]}, $currentState, $newState  ,$date1"
 
         val expectedHistory = History(
             id = listOfUUIDs[0],
@@ -205,8 +207,8 @@ class CsvDataParserTest {
             taskId = listOfUUIDs[2],
             actionType = ActionType.TASK_STATE_CHANGED,
             userId = listOfUUIDs[3],
-            currentStateId = listOfUUIDs[4],
-            newStateId = listOfUUIDs[5],
+            currentState = currentState,
+            newState = newState,
             actionDate = date1
         )
 

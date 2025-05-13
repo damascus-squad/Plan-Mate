@@ -4,12 +4,10 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import logic.exception.DuplicateStateException
 import logic.model.TaskState
 import logic.repo.TaskStateRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class CreateTaskStateUseCaseTest {
@@ -25,36 +23,19 @@ class CreateTaskStateUseCaseTest {
 
     @Test
     fun `should create new task state when it does not exist`() {
-        val newState = TaskState(UUID.randomUUID(), "To Do", 1)
+        val newStateName = "ToDo"
+        val fakeTaskState = TaskState(id = UUID.randomUUID(), newStateName, 1)
 
         //given
-        every { repository.exist(newState.name) } returns false
-        every { repository.create(newState) } returns true
+        every { repository.exist(newStateName) } returns false
+        every { repository.create(newStateName) } returns fakeTaskState
 
         //when
-        val result = createTaskStateUseCase(newState)
+        val result = createTaskStateUseCase(fakeTaskState)
 
         //then
-        assertThat(result).isTrue()
-        verify(exactly = 1) { repository.exist(newState.name) }
-        verify(exactly = 1) { repository.create(newState) }
-    }
-
-    @Test
-    fun `should throw DuplicateStateException when task state already exists`() {
-        val existingId = UUID.randomUUID()
-        val existingState = TaskState(existingId, "In Progress", 1)
-
-        // given
-        every { repository.exist(existingState.name) } returns true
-
-        // when && then
-        assertThrows<DuplicateStateException> {
-            createTaskStateUseCase(existingState)
-        }
-
-        verify(exactly = 1) { repository.exist(existingState.name) }
-        verify(exactly = 0) { repository.create(existingState) }
+        assertThat(result).isEqualTo(fakeTaskState)
+        verify(exactly = 1) { repository.create(newStateName) }
     }
 
 }

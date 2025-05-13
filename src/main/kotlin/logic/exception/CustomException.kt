@@ -27,3 +27,6 @@ class NoTasksFoundException(message: String) : Exception(message)
 class ProjectNotFoundException(projectId: UUID) : RuntimeException("Project with ID $projectId not found")
 
 class NoMatesAvailableException(): IllegalStateException("No mates available to select.")
+
+class UserNotExistException() : Exception("This User not found")
+

@@ -1,6 +1,5 @@
 package logic.usecase.state
 
-import logic.exception.StateNotFoundException
 import logic.model.TaskState
 import logic.repo.TaskStateRepository
 import java.util.*

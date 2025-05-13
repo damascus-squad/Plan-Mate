@@ -4,7 +4,6 @@ import com.google.common.truth.Truth.assertThat
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import logic.exception.DuplicateStateException
 import logic.exception.StateNotFoundException
 import logic.model.History.Companion.NO_TASK_STATE
 import logic.model.TaskState
@@ -75,26 +74,11 @@ class TaskStateRepositoryImplTest {
         every { dataSource.read() } returns fakeTaskStates
 
         //when
-        val result = stateRepositoryImpl.create(newTaskState)
+        stateRepositoryImpl.create(newTaskState.toString())
 
         //then
-        assertThat(result).isTrue()
         verify { dataSource.read() }
 
-    }
-
-    @Test
-    fun `create should throw DuplicateStateException when state already exists`() {
-        val existingState = fakeTaskStates[0]
-
-        // given
-        every { dataSource.read() } returns fakeTaskStates
-
-        // when && then
-        assertThrows<DuplicateStateException> {
-            stateRepositoryImpl.create(existingState)
-        }
-        verify { dataSource.read() }
     }
 
     @Test

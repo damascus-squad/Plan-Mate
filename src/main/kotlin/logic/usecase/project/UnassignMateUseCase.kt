@@ -19,7 +19,7 @@ class UnassignMateUseCase(
         val mates = project.assignedMatesIds.toMutableList()
         val alreadyAssigned = mateId in mates
 
-        if (alreadyAssigned) mates.remove(mateId)
+        if (alreadyAssigned) mates.remove(mateId) else return false
 
         val updatedProject = project.copy(assignedMatesIds = mates)
         return repository.update(projectId, updatedProject)
