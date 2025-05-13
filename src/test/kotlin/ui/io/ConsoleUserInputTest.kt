@@ -1,10 +1,5 @@
 package ui.io
 
-import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
-import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -168,7 +163,7 @@ class ConsoleUserInputTest {
         assertTrue(output.contains("❌ Invalid input"))
     }
 
-   private companion object {
+    private companion object {
         const val ERROR_INPUT_EMPTY = "❌ Input cannot be empty"
         const val ERROR_INVALID_INPUT = "❌ Invalid input"
         const val ERROR_INVALID_NUMBER = "❌ Invalid number"
