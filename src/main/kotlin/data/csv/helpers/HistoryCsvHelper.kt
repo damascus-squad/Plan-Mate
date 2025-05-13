@@ -34,8 +34,8 @@ object HistoryCsvHelper {
             history.taskId.toString(),
             history.actionType.ordinal.toString(),
             history.userId.toString(),
-            history.currentState.toString(),
-            history.newState.toString(),
+            history.currentState,
+            history.newState,
             history.actionDate.toString()
         ).joinToString(COMMA_SEPARATOR)
     }

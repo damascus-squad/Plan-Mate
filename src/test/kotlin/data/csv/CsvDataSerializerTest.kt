@@ -155,8 +155,8 @@ class CsvDataSerializerTest {
             taskId = listOfUUIDs[2],
             actionType = ActionType.TASK_STATE_CHANGED,
             userId = listOfUUIDs[3],
-            currentStateId = listOfUUIDs[4],
-            newStateId = listOfUUIDs[5],
+            currentState = "TODO",
+            newState = "IN PROGRESS",
             actionDate = date1
         )
 
@@ -170,8 +170,8 @@ class CsvDataSerializerTest {
             listOfUUIDs[2],
             ActionType.TASK_STATE_CHANGED.ordinal,
             listOfUUIDs[3],
-            listOfUUIDs[4],
-            listOfUUIDs[5],
+            "TODO",
+            "IN PROGRESS",
             "2024-05-01T12:00"
         ).joinToString(",")
 

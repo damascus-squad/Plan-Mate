@@ -1,38 +1,28 @@
-import io.mockk.Called
-import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import logic.exception.UnauthorizedActionException
 import logic.model.User
 import logic.model.UserRole
-import logic.usecase.auth.CreateMateUseCase
-import logic.usecase.project.CreateProjectUseCase
+import org.damascus.ui.views.admin.AdminDashboardUi
+import org.damascus.ui.views.project.AllProjectsUi
+import org.damascus.ui.views.user.MateManagementUi
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import ui.io.ConsoleDisplay
-import org.damascus.ui.views.admin.AdminDashboardUi
-import org.junit.jupiter.api.assertThrows
-import ui.io.InputReader
-import ui.views.project.ProjectView
 import java.util.*
 
 class AdminDashboardUiTest {
     private lateinit var consoleDisplay: ConsoleDisplay
-    private lateinit var projectView: ProjectView
-    private lateinit var consoleUserInput: InputReader
-    private lateinit var createProjectUseCase: CreateProjectUseCase
+    private lateinit var allProjectUi:AllProjectsUi
+    private lateinit var mateManagementUi: MateManagementUi
     private lateinit var adminDashboardUi: AdminDashboardUi
-    private lateinit var createMateUseCase: CreateMateUseCase
 
 
     @BeforeEach
     fun setup() {
         consoleDisplay = mockk(relaxed = true)
-        projectView = mockk(relaxed = true)
-        createMateUseCase = mockk(relaxed = true)
-        consoleUserInput = mockk(relaxed = true)
-        createProjectUseCase = mockk(relaxed = true)
-        adminDashboardUi = AdminDashboardUi(consoleDisplay,consoleUserInput, projectView, createMateUseCase,createProjectUseCase)
+        allProjectUi = mockk(relaxed = true)
+        mateManagementUi = mockk(relaxed = true)
+        adminDashboardUi = AdminDashboardUi(consoleDisplay,allProjectUi,mateManagementUi)
     }
 
     @Test
@@ -45,65 +35,10 @@ class AdminDashboardUiTest {
         )
 
         // When
-        adminDashboardUi.showDashboard(admin)
+        adminDashboardUi(admin)
 
         // Then
         verify(exactly = 1) { consoleDisplay.displayMenu(any(), any()) }
-    }
-
-    @Test
-    fun `showDashboard should reject a non admin user`() {
-        // Given
-        val notAdmin = User(
-            id = UUID.randomUUID(),
-            username = "adminUser",
-            userRole = UserRole.MATE
-        )
-
-        // when
-        adminDashboardUi.showDashboard(notAdmin)
-
-        // Then
-        verify { projectView wasNot Called }
-    }
-
-    @Test
-    fun `should throw UnauthorizedActionException when mate tries to create project`() {
-        // Given
-        val mate = createUser(UserRole.MATE, "Mate 1")
-
-        // When && Then
-        assertThrows<UnauthorizedActionException> {
-            adminDashboardUi.createProject(mate)
-        }
-    }
-
-    @Test
-    fun `should return true when project created successfully`() {
-        // Given
-        every { consoleUserInput.readString(any()) } returns "Test Project"
-        every { createProjectUseCase(any()) } returns true
-        val admin = createUser(UserRole.ADMIN, "admin")
-
-        // When
-        adminDashboardUi.createProject(admin)
-
-        // Then
-        verify { createProjectUseCase(match { it.name == "Test Project" }) }
-    }
-
-    @Test
-    fun `should return false when project already exists`() {
-        // Given
-        every { consoleUserInput.readString(any()) } returns "Test Project"
-        every { createProjectUseCase(any()) } returns false
-        val admin = createUser(UserRole.ADMIN, "admin")
-
-        // When
-        adminDashboardUi.createProject(admin)
-
-        // Then
-        verify { createProjectUseCase(any()) }
     }
 
     private fun createUser(userRole: UserRole, username: String): User {

@@ -1,21 +1,16 @@
 package ui.views.project
 
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.exception.ProjectsNotAvailableException
 import logic.model.Project
 import logic.model.User
 import logic.model.UserRole
 import logic.usecase.project.CreateProjectUseCase
-import logic.usecase.project.GetMateProjectsUseCase
 import logic.usecase.project.GetAdminProjectsUseCase
+import logic.usecase.project.GetMateProjectsUseCase
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import ui.io.ConsoleUserInput
 import java.util.*
 
@@ -25,7 +20,6 @@ class GetProjectsUiTest {
     private lateinit var getAdminProjectsUseCase: GetAdminProjectsUseCase
     private lateinit var getMateProjectsUseCase: GetMateProjectsUseCase
     private lateinit var sampleProject: Project
-    private lateinit var projectDashboardCli: ProjectDashboardController
 
     @BeforeEach
     fun setup() {
@@ -33,7 +27,6 @@ class GetProjectsUiTest {
         createProjectUseCase = mockk()
         getAdminProjectsUseCase = mockk()
         getMateProjectsUseCase = mockk()
-        projectDashboardCli = mockk()
 
         sampleProject = Project(
             id = UUID.randomUUID(),

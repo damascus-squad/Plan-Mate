@@ -93,8 +93,8 @@ class AuditLogsRepositoryImplTest {
 
     private val sampleLog = createFakeActionLog(
         actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-        currentStateId = UUID.randomUUID(),
-        targetedStateId = UUID.randomUUID()
+        currentStateId = "TODO",
+        targetedStateId = "IN PROGRESS"
     )
 
     private fun createFakeActionLog(
@@ -103,15 +103,15 @@ class AuditLogsRepositoryImplTest {
         taskId: UUID = UUID.randomUUID(),
         projectId: UUID = UUID.randomUUID(),
         actionDate: LocalDateTime,
-        currentStateId: UUID,
-        targetedStateId: UUID,
+        currentStateId: String,
+        targetedStateId: String,
         actionType: ActionType = ActionType.TASK_STATE_CHANGED,
     ): History = History(
         id = id,
         taskId = taskId,
         projectId = projectId,
-        currentStateId = currentStateId,
-        newStateId = targetedStateId,
+        currentState = currentStateId,
+        newState = targetedStateId,
         actionDate = actionDate,
         actionType = actionType,
         userId = userId,

@@ -7,6 +7,7 @@ import io.mockk.verify
 import kotlinx.datetime.LocalDateTime
 import logic.model.Project
 import logic.repo.ProjectRepository
+import logic.repo.TaskStateRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -14,11 +15,13 @@ import java.util.*
 class ProjectUseCasesTest {
 
     lateinit var repository: ProjectRepository
+    lateinit var taskStateRepo: TaskStateRepository
     lateinit var project: Project
 
     @BeforeEach
     fun setup() {
         repository = mockk(relaxed = true)
+        taskStateRepo = mockk(relaxed = true)
         project = makeProject(UUID.randomUUID())
     }
 
@@ -26,7 +29,7 @@ class ProjectUseCasesTest {
     fun `create use case should return false if project already exists`() {
         every { repository.exists(project.id) } returns true
 
-        val result = CreateProjectUseCase(repository).invoke(project)
+        val result = CreateProjectUseCase(repository, taskStateRepo).invoke(project)
 
         assertThat(result).isFalse()
     }
@@ -36,7 +39,7 @@ class ProjectUseCasesTest {
         every { repository.exists(project.id) } returns false
         every { repository.create(project) } returns true
 
-        val result = CreateProjectUseCase(repository).invoke(project)
+        val result = CreateProjectUseCase(repository, taskStateRepo).invoke(project)
 
         assertThat(result).isTrue()
         verify { repository.create(project) }

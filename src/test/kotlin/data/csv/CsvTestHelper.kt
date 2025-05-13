@@ -17,8 +17,8 @@ object CsvTestHelper {
         taskId: UUID = UUID.randomUUID(),
         actionType: ActionType = ActionType.TASK_STATE_CHANGED,
         userId: UUID = UUID.randomUUID(),
-        oldStateId: UUID = UUID.randomUUID(),
-        newStateId: UUID = UUID.randomUUID(),
+        oldStateId: String = "TODO",
+        newStateId: String = "IN PROGRESS",
         timestamp: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
     ): History {
         return History(
@@ -27,8 +27,8 @@ object CsvTestHelper {
             taskId = taskId,
             actionType = actionType,
             userId = userId,
-            currentStateId = oldStateId,
-            newStateId = newStateId,
+            currentState = oldStateId,
+            newState = newStateId,
             actionDate = timestamp,
         )
     }
