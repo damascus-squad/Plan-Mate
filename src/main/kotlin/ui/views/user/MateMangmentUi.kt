@@ -12,8 +12,8 @@ class MateManagementUi(
 
     operator fun invoke(admin: User) {
         val actions = listOf(
-            UiAction("👤 Create New Mate") { createMateUi(admin) },
-            UiAction("📋 View All Mates") { getAllMatesUi ()},
+            UiAction("👤 Create New Mate", { createMateUi(admin) }),
+            UiAction("📋 View All Mates", { getAllMatesUi ()}),
         )
 
         display.displayMenu(

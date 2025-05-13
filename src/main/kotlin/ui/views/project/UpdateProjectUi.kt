@@ -17,28 +17,33 @@ class UpdateProjectUi(
     private val selectMateUi: SelectMateUi,
 ) {
     operator fun invoke(currentUser: User, currentProject: Project) {
+        currentProject.printProjectDetails()
 
         display.displayMenu(
             uiActionList = listOf(
-                UiAction("Title") { updateProjectTitleUi(currentProject, currentUser) },
-                UiAction("Assign Mate") {
-                    val selectedMate = selectMateUi(getAllMatesUseCase())
-                    if (selectedMate != null) {
-                        assignMateToProjectUi(currentProject, selectedMate.id)
-                    } else {
-                        display.write(prompt = "❗ No mate selected for assignment.")
+                UiAction(
+                    name = "Title",
+                    action = { updateProjectTitleUi(currentProject, currentUser) }
+                ),
+
+                UiAction(
+                    name = "Assign Mate",
+                    action = {
+                        val selectedMate = selectMateUi(getAllMatesUseCase())
+                        if (selectedMate != null) assignMateToProjectUi(currentProject, selectedMate, currentUser)
+                        else display.write(prompt = "❗ No mate selected for assignment.")
                     }
-                },
-                UiAction("Remove Mate") {
-                    val selectedMate = selectMateUi(getAllMatesUseCase())
-                    if (selectedMate != null) {
-                        unAssignMateFromProjectUi(currentProject, selectedMate.id)
-                    } else {
-                        display.write(prompt = "❗ No mate selected for Remove.")
+                ),
+                UiAction(
+                    name = "Remove Mate",
+                    action = {
+                        val selectedMate = selectMateUi(getAllMatesUseCase())
+                        if (selectedMate != null) unAssignMateFromProjectUi(currentProject, selectedMate, currentUser)
+                        else display.write(prompt = "❗ No mate selected for Remove.")
                     }
-                },
+                ),
             ),
-            menuTitle = "\nSelect the field you want to update:"
+            menuTitle = "Select the field you want to update:"
         )
     }
 }

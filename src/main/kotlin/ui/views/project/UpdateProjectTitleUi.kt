@@ -32,10 +32,10 @@ class UpdateProjectTitleUi(
                     id = UUID.randomUUID(),
                     projectId = currentProject.id,
                     taskId = History.NO_UUID,
-                    actionType = ActionType.PROJECT_MODIFIED,
+                    actionType = ActionType.PROJECT_TITLE_MODIFIED,
                     userId = currentUser.id,
-                    currentStateId = History.NO_UUID,
-                    newStateId = History.NO_UUID,
+                    currentState = currentProject.name,
+                    newState = updatedProject.name,
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             )

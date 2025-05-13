@@ -18,14 +18,14 @@ class PlanMateConsoleUi(
         while (true) {
             display.displayMenu(
                 listOf(
-                    UiAction("Login"){
+                    UiAction("Login",{
                         val user = loginView.getLoggedUser()
                         if (user.userRole == UserRole.ADMIN) {
                             adminDashboardUi(admin = user)
                         }else{
                             mateDashboardUi(currentUser = user)
                         }
-                    }
+                    })
                 ),
                 menuTitle = MENU_TITLE ,
                 showBackOption = false,

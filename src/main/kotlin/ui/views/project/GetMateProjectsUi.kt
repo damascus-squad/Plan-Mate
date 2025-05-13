@@ -14,6 +14,6 @@ class GetMateProjectsUi(
         if (projects.isEmpty()) {
             display.writeError(errorMessage = "You Are not Assigned to any Project.")
         }
-        projects.printProjectTable()
+        else projects.printProjectTable()
     }
 }

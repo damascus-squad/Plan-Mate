@@ -18,10 +18,10 @@ class MateDashboardUi(
     operator fun invoke (currentUser: User) {
         getAllProjectsUi(currentUser)
         val dashboardActions = listOf(
-            UiAction("Select Project") { taskDashboardUi(
+            UiAction("Select Project", { taskDashboardUi(
                 currentProject = selectProjectUi(getAllProjectsUseCase(currentUser.id)),
                 currentUser = currentUser
-            ) },
+            ) }),
         )
 
         consoleDisplay.displayMenu(

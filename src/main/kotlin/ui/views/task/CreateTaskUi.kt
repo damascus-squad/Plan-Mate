@@ -6,6 +6,7 @@ import kotlinx.datetime.toLocalDateTime
 import logic.exception.TaskAlreadyExistsException
 import logic.model.*
 import logic.usecase.auditLog.SaveLogUseCase
+import logic.usecase.state.GetTaskStateByIdUseCase
 import logic.usecase.task.CreateTaskUseCase
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
 import org.damascus.ui.views.user.SelectMateUi
@@ -17,17 +18,17 @@ class CreateTaskUi(
     private val selectMateUi: SelectMateUi,
     private val createTaskUseCase: CreateTaskUseCase,
     private val getAllMatesUseCase: GetAllMatesUseCase,
-    private val saveLogUseCase: SaveLogUseCase
+    private val saveLogUseCase: SaveLogUseCase,
+    private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase
 ) {
     operator fun invoke (currentProject: Project, currentUser: User) {
         val title = inputReader.readString(prompt = "Enter task title")
         val description = inputReader.readString(prompt = "Enter task description")
         val availableMates = getAllMatesUseCase().filter { it.id in currentProject.assignedMatesIds }
+        val stateId = currentProject.allowedStatesIds.first()
         val assignee: User? = if (currentUser.userRole == UserRole.ADMIN) {
             selectMateUi(availableMates)
-        } else {
-            null
-        }
+        } else null
 
         val newTask = Task(
             id = UUID.randomUUID(),
@@ -35,7 +36,7 @@ class CreateTaskUi(
             description = description,
             projectId = currentProject.id,
             assigneeId = assignee?.id,
-            stateId = currentProject.allowedStatesIds.first(),
+            stateId = stateId,
             creationDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         )
 
@@ -49,8 +50,8 @@ class CreateTaskUi(
                     taskId = newTask.id,
                     actionType = ActionType.TASK_CREATED,
                     userId = currentUser.id,
-                    currentStateId = currentProject.allowedStatesIds.first(),
-                    newStateId = currentProject.allowedStatesIds.first(),
+                    currentState = null,
+                    newState = getTaskStateByIdUseCase(stateId).name,
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             )

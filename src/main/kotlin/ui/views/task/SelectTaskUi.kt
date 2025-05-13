@@ -19,7 +19,7 @@ class SelectTaskUi(
         )
 
         val selectedTask = getTaskUseCase(tasks[selection - 1].id)
-        display.write(prompt = "You selected: ${selectedTask.title} (ID: ${selectedTask.id})")
+        display.write(prompt = "You selected: ${selectedTask.title}")
         return selectedTask
     }
 }

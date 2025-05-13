@@ -27,12 +27,11 @@ import ui.io.ConsoleDisplay
 import ui.io.ConsoleUserInput
 import ui.io.Display
 import ui.io.InputReader
-import org.damascus.ui.views.projectDashboard.ProjectManagementUi
+import org.damascus.ui.views.project.ProjectManagementUi
 import org.damascus.ui.views.task.*
 import org.damascus.ui.views.user.*
 import ui.views.LoginView
 import ui.views.project.SelectProjectUi
-import ui.views.task.TaskCLI
 
 val appModule = module {
 
@@ -103,21 +102,27 @@ val appModule = module {
     single { SelectProjectUi(get(), get(), get()) }
     single { AllProjectsUi(get(), get(), get(), get(), get(), get()) }
     single { UnAssignMateFromProjectUi(get(), get(), get(), get()) }
-    single { CreateTaskUi(get(), get(),get(), get(),get()) }
-    single { TaskCLI(get(), get(), get(), get(), get(), get()) }
+    single { CreateTaskUi(get(), get(), get(), get(), get(), get()) }
     single { PlanMateConsoleUi(get(), get(), get(), get()) }
     single { CreateProjectUi(get(), get(), get(), get()) }
-    single { ProjectManagementUi(get(), get(), get(), get(), get(), get()) }
-    single { ProjectLogUi(get(), get(), get()) }
-    single { TaskLogUi(get(), get(), get()) }
-    single { GetAllTasksByProjectIdUi(get(),get()) }
-    single { DeleteTaskUi(get(), get()) }
-    single { UpdateProjectUi(get(), get(),get(), get(), get(), get()) }
-    single { SelectTaskUi(get(), get(), get()) }
-    single { TaskDashboardUi(get(), get(), get(), get()) }
+    single { ProjectManagementUi(get(), get(), get(), get(), get()) }
+    single { ProjectLogUi(get(), get(), get(), get()) }
+    single { TaskLogUi(get(), get(), get(), get()) }
+    single { GetAllTasksByProjectIdUi(get(), get(), get()) }
+    single { UpdateProjectUi(get(), get(), get(), get(), get(), get()) }
+    single { TaskDashboardUi(get(), get(), get(), get(), get(), get()) }
     single { LoginView(get(), get(), get()) }
-    single { TaskUI(get(), get(), get(), get(), get()) }
     single { CreateMateUi(get()) }
     single { GetAllMatesUi(get(), get()) }
     single { MateManagementUi(get(), get(), get()) }
+
+    single { TaskUI(get(), get(), get(), get(), get(), get()) }
+    single { UpdateTaskUi(get(), get(), get(), get(), get()) }
+    single { SelectTaskUi(get(), get(), get()) }
+    single { UpdateTaskStatusUi(get(), get(), get(), get(), get(), get()) }
+    single { UpdateTaskTitleUi(get(), get(), get(), get(), get(), get()) }
+    single { UpdateTaskDescriptionUi(get(), get(), get(), get(), get(), get()) }
+    single { UpdateTaskAssigneeUi(get(), get(), get(), get(), get(), get()) }
+    single { DeleteTaskUi(get(), get(), get(), get()) }
+
 }

@@ -11,22 +11,38 @@ class TaskUI(
     private val selectTaskUi: SelectTaskUi,
     private val getTasksByProjectUseCase: GetTasksByProjectUseCase,
     private val display: Display,
-    private val createTaskUi: CreateTaskUi
+    private val createTaskUi: CreateTaskUi,
+    private val taskDashboardUi: TaskDashboardUi
 ) {
     operator fun invoke(currentProject: Project, currentUser: User) {
-        getAllTasksByProjectIdUi(currentProject)
+        val hasTasks = getAllTasksByProjectIdUi(currentProject)
 
-        val dashboardActions = listOf(
-            UiAction(name = "📜 Select Task") {
-                selectTaskUi(getTasksByProjectUseCase(currentProject.id))
-                getAllTasksByProjectIdUi(currentProject)
-            },
-            UiAction(name = "➕ Create a New Task") { createTaskUi(currentProject, currentUser) }
-        )
+        val dashboardActions = if (hasTasks) {
+            listOf(
+                UiAction(
+                    name = "📜 Task Management",
+                    action = {
+                        val selectedTask = selectTaskUi(getTasksByProjectUseCase(currentProject.id))
+                        taskDashboardUi(currentUser, selectedTask, currentProject)
+                    },
+                    refreshAction = { invoke(currentProject, currentUser) }
+                ),
+                createTaskUiAction(currentProject, currentUser) { invoke(currentProject, currentUser) }
+            )
+        } else listOf(createTaskUiAction(currentProject, currentUser) { invoke(currentProject, currentUser) })
+
 
         display.displayMenu(
-            dashboardActions,
-            menuTitle = "📁 Tasks Menu:",
+            uiActionList = dashboardActions,
+            menuTitle = "📁 Tasks Menu:"
+        )
+    }
+
+    private fun createTaskUiAction(currentProject: Project, currentUser: User, refreshAction: () -> Unit): UiAction {
+        return UiAction(
+            name = "➕ Create a New Task",
+            action = { createTaskUi(currentProject, currentUser) },
+            refreshAction = { refreshAction() }
         )
     }
 }

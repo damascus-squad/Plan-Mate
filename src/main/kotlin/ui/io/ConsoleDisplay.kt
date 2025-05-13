@@ -11,7 +11,7 @@ class ConsoleDisplay(
     override fun displayMenu(
         uiActionList: List<UiAction>,
         menuTitle: String,
-        showBackOption: Boolean
+        showBackOption: Boolean,
     ){
         while (true) {
             // Fancy banner with borders
@@ -53,7 +53,12 @@ class ConsoleDisplay(
                 println("\n✨ You selected: ${uiActionList[input - 1].name}".withStyle(TerminalColor.Cyan))
 
                 // Execute the selected action
-                uiActionList[input - 1].action()
+                val selectedAction = uiActionList[input - 1]
+                selectedAction.action()
+                selectedAction.refreshAction()
+
+                if (uiActionList[input - 1].exitAfterAction) return
+
 
             } catch (e: Exception) {
                 println("⚠️ ${e.message}".withStyle(TerminalColor.Red))

@@ -3,6 +3,7 @@
     import kotlinx.datetime.LocalDateTime
     import kotlinx.datetime.toJavaLocalDateTime
     import logic.model.Project
+    import logic.model.Task
     import logic.model.User
     import java.time.format.DateTimeFormatter
 
@@ -52,6 +53,18 @@
             )
         }
         printTable(headers, rows)
+    }
+
+    fun Task.printTaskDetails(assignee: String, state:String) {
+        val headers = listOf("Title", "Description", "Assigned to", "State","Created Date")
+        val rows = listOf(
+            title,
+            description,
+            assignee,
+            state,
+            formatDateTime(creationDate)
+        )
+        printTable(headers, listOf(rows))
     }
 
     fun enableWindowsAnsi() {

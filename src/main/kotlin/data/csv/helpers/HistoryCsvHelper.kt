@@ -21,8 +21,8 @@ object HistoryCsvHelper {
             taskId = UUID.fromString(tokens[2].trim()),
             actionType = ActionType.entries[tokens[3].trim().toInt()],
             userId = UUID.fromString(tokens[4].trim()),
-            currentStateId = UUID.fromString(tokens[5].trim()),
-            newStateId = UUID.fromString(tokens[6].trim()),
+            currentState = tokens[5].trim(),
+            newState = tokens[6].trim(),
             actionDate = LocalDateTime.parse(tokens[7].trim())
         )
     }
@@ -34,8 +34,8 @@ object HistoryCsvHelper {
             history.taskId.toString(),
             history.actionType.ordinal.toString(),
             history.userId.toString(),
-            history.currentStateId.toString(),
-            history.newStateId.toString(),
+            history.currentState.toString(),
+            history.newState.toString(),
             history.actionDate.toString()
         ).joinToString(COMMA_SEPARATOR)
     }

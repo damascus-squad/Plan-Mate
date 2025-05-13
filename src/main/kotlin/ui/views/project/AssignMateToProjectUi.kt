@@ -6,10 +6,12 @@ import kotlinx.datetime.toLocalDateTime
 import logic.model.ActionType
 import logic.model.History
 import logic.model.Project
+import logic.model.User
 import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.project.AssignMateUseCase
 import logic.usecase.project.UpdateProjectUseCase
 import ui.io.Display
+import ui.util.printProjectDetails
 import java.util.*
 
 class AssignMateToProjectUi (
@@ -18,32 +20,34 @@ class AssignMateToProjectUi (
     private val updateProjectUseCase: UpdateProjectUseCase,
     private val display: Display
 ){
-    operator fun invoke (currentProject: Project, mateId: UUID) {
+    operator fun invoke (currentProject: Project, mate: User, admin: User) {
 
-        if (currentProject.assignedMatesIds.contains(mateId)){
+        if (currentProject.assignedMatesIds.contains(mate.id)){
             display.writeError(errorMessage = " This Mate is Already Assigned Before.")
             return
         }
 
-        if (assignMateUseCase(currentProject.id, mateId)) {
+        if (assignMateUseCase(currentProject.id, mate.id)) {
+            val updatedProject = currentProject.copy(
+                assignedMatesIds = currentProject.assignedMatesIds.apply { add(mate.id) }
+            )
+            updateProjectUseCase(projectId = updatedProject.id, updatedProject)
+
             saveLogUseCase(
                 History(
                     id = UUID.randomUUID(),
                     projectId = currentProject.id,
                     taskId = UUID.randomUUID(),
-                    actionType = ActionType.PROJECT_MODIFIED,
-                    userId = mateId,
-                    currentStateId = History.NO_UUID,
-                    newStateId = History.NO_UUID,
+                    actionType = ActionType.PROJECT_ASSIGNED_USER,
+                    userId = admin.id,
+                    currentState = null,
+                    newState = mate.username,
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             )
-            val updatedProject = currentProject.copy(
-                assignedMatesIds = currentProject.assignedMatesIds.apply { add(mateId) }
-            )
-            updateProjectUseCase(projectId = updatedProject.id, updatedProject)
 
             display.write(prompt = "👥 Mate assigned to project successfully!")
+            updatedProject.printProjectDetails()
 
         } else {
             display.writeError(errorMessage = " Failed to Assign Mate.")

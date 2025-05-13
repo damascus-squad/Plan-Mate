@@ -23,7 +23,8 @@ class ConsoleUserInput : InputReader {
             val input = readlnOrNull()?.trim()?.toIntOrNull() ?: throw InputException("Wrong input: ")
 
             if ((min != null && input < min) || (max != null && input > max)) {
-                println("❌ Invalid input. Try again.\n".withStyle(TerminalColor.Red))
+                println("❌ Invalid input. Please Enter number form $min to $max.\n".withStyle(TerminalColor.Red))
+                print("👉 $prompt: ".withStyle(TerminalColor.Yellow))
             } else return input
         }
     }
@@ -34,7 +35,10 @@ class ConsoleUserInput : InputReader {
             when (readlnOrNull()?.trim()?.lowercase()) {
                 "yes" -> return true
                 "no" -> return false
-                else -> println("❌ Invalid input. Please enter 'yes' or 'no'.".withStyle(TerminalColor.Red))
+                else -> {
+                    println("❌ Invalid input. Please enter 'yes' or 'no'.".withStyle(TerminalColor.Red))
+                    print("👉 $prompt: ".withStyle(TerminalColor.Yellow))
+                }
             }
         }
     }

@@ -8,11 +8,15 @@ class GetAdminProjectsUi(
     private val display: Display,
     private val getAdminProjectsUseCase: GetAdminProjectsUseCase,
 ) {
-    operator fun invoke() {
+    operator fun invoke(): Boolean {
         val projects = getAdminProjectsUseCase()
         if (projects.isEmpty()) {
-            display.writeError(errorMessage = "No projects available.")
+            display.writeError(errorMessage = "No projects available. Please Create Project first..")
+            return false
         }
-        projects.printProjectTable()
+        else {
+            projects.printProjectTable()
+            return true
+        }
     }
 }

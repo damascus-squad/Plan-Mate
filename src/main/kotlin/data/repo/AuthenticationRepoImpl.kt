@@ -1,10 +1,7 @@
 package data.repo
 
 import data.dto.UserDTO
-import logic.exception.InvalidCredentialsException
-import logic.exception.UnauthorizedActionException
-import logic.exception.UserAlreadyExistException
-import logic.exception.UserNotFoundException
+import logic.exception.*
 import logic.model.User
 import logic.model.UserRole
 import logic.repo.AuthenticationRepository
@@ -44,10 +41,14 @@ class AuthenticationRepoImpl(
         return newMate.toUser()
     }
 
+    override fun getMateById(userId: UUID): User {
+        return usersDataSource.read()
+            .find { it.id == userId }?.toUser() ?: throw UserNotExistException()
+    }
+
     override fun getAllMates(): List<User>{
         return usersDataSource.read()
-            .filter { it.userRole == UserRole.MATE }
-            .map { it.toUser() }
+            .filter { it.userRole == UserRole.MATE }.map { it.toUser() }
     }
 
     private fun getUserByUsername(username: String): UserDTO? {
