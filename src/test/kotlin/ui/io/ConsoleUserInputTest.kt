@@ -88,7 +88,7 @@ class ConsoleUserInputTest {
         // Given
         provideInput("$input\n")
         // When
-        val result = ConsoleUserInput().readBoolean()
+        val result = ConsoleUserInput().readBoolean("Enter: ")
         // Then
         assertEquals(expected, result)
     }
@@ -99,7 +99,7 @@ class ConsoleUserInputTest {
         provideInput("maybe\nyes\n")
         // When
         val output = captureOutput {
-            val result = ConsoleUserInput().readBoolean(any())
+            val result = ConsoleUserInput().readBoolean("Enter: ")
             assertTrue(result)
         }
         // Then
