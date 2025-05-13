@@ -1,5 +1,10 @@
 package ui.io
 
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -42,23 +47,23 @@ class ConsoleUserInputTest {
             assertEquals("world", result)
         }
         // Then
-        assertTrue(output.contains("❌ Input cannot be empty"))
+        assertTrue(output.contains(ERROR_INPUT_EMPTY))
     }
 
     @ParameterizedTest
     @CsvSource(
         "'5\n', 1, 10, true, 5, ''",
-        "'0\n5\n', 1, 10, false, 5, '❌ Invalid input'",
-        "'100\n8\n', 1, 10, false, 8, '❌ Invalid input'",
-        "'20\n5\n', null, 10, false, 5, '❌ Invalid input'",
-        "'0\n5\n', 1, null, false, 5, '❌ Invalid input'",
+        "'0\n5\n', 1, 10, false, 5,$ERROR_INVALID_INPUT",
+        "'100\n8\n', 1, 10, false, 8, $ERROR_INVALID_INPUT",
+        "'20\n5\n', null, 10, false, 5, $ERROR_INVALID_INPUT",
+        "'0\n5\n', 1, null, false, 5,$ERROR_INVALID_INPUT",
         "'5\n', null, null, true, 5, ''"
     )
     fun `should validate int input when given various ranges`(
         input: String,
         minRaw: String?,
         maxRaw: String?,
-        isValid: Boolean,
+        isValidInput: Boolean,
         expected: Int,
         expectedMsg: String
     ) {
@@ -69,7 +74,7 @@ class ConsoleUserInputTest {
             val result = ConsoleUserInput().readInt("Enter number:", min, max)
             assertEquals(expected, result)
         }
-        if (!isValid) assertTrue(output.contains(expectedMsg))
+        if (!isValidInput) assertTrue(output.contains(expectedMsg))
     }
 
     @Test
@@ -103,26 +108,30 @@ class ConsoleUserInputTest {
             assertTrue(result)
         }
         // Then
-        assertTrue(output.contains("❌ Invalid input"))
+        assertTrue(output.contains(ERROR_INVALID_INPUT))
     }
 
     @ParameterizedTest
     @CsvSource(
-        "'3.14\n',3.14",
-        "'abc\n2.71\n',2.71"
+        "'3.14\n',3.14,false",
+        "'abc\n2.71\n',2.71,true"
     )
-    fun `should return double when input is valid or retries once`(input: String, expected: Double) {
+    fun `should return double when input is valid or retries once`(
+        input: String,
+        expected: Double,
+        expectError: Boolean
+    ) {
         // Given
         provideInput(input)
+
         // When
         val output = captureOutput {
             val result = ConsoleUserInput().readDouble("Enter:")
             assertEquals(expected, result, 0.0001)
         }
+
         // Then
-        if (input.contains("abc")) {
-            assertTrue(output.contains("❌ Invalid number"))
-        }
+        assertEquals(expectError, output.contains(ERROR_INVALID_NUMBER))
     }
 
     @Test
@@ -158,4 +167,11 @@ class ConsoleUserInputTest {
         // Then
         assertTrue(output.contains("❌ Invalid input"))
     }
+
+   private companion object {
+        const val ERROR_INPUT_EMPTY = "❌ Input cannot be empty"
+        const val ERROR_INVALID_INPUT = "❌ Invalid input"
+        const val ERROR_INVALID_NUMBER = "❌ Invalid number"
+    }
+
 }
