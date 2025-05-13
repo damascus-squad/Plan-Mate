@@ -18,16 +18,16 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
             ?: NO_TASK_STATE
     }
 
-    override fun create(taskStateName: String): Boolean {
-        dataSource.write(
-            TaskState(
-                id = UUID.randomUUID(),
-                name = taskStateName,
-                projectReferencesCount = 1
-            )
-        )
+    override fun create(taskStateName: String): TaskState {
+        if (exist(taskStateName)) {
+            val existingTaskState = getTaskStateByName(taskStateName)
+            incrementProjectReferences(existingTaskState)
+            return existingTaskState
+        }
 
-        return true
+        val newTaskState = TaskState(UUID.randomUUID(), taskStateName, 1)
+        dataSource.write(newTaskState)
+        return newTaskState
     }
 
     override fun update(taskState: TaskState, updatedTaskState: TaskState): Boolean {
@@ -73,5 +73,9 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
 
     override fun exist(name: String): Boolean {
         return dataSource.read().any { it.name == name }
+    }
+
+    private fun getTaskStateByName(name: String): TaskState {
+        return dataSource.read().firstOrNull { it.name == name } ?: NO_TASK_STATE
     }
 }
