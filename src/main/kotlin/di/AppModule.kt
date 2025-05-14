@@ -31,7 +31,6 @@ import ui.views.LoginView
 import ui.views.project.ProjectView
 import ui.views.project.ProjectViewCli
 import ui.views.task.TaskCLI
-
 val appModule = module {
 
     single<DataSource<UserDTO>>(qualifier = named("userDataSource")) {

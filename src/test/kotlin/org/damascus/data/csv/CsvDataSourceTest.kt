@@ -1,0 +1,137 @@
+package org.damascus.data.csv
+
+import com.google.common.truth.Truth.assertThat
+import org.damascus.data.csv.CsvTestHelper.HISTORY_FILE_PATH
+import org.damascus.data.csv.CsvTestHelper.createHistory
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.History
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import java.io.File
+
+class CsvDataSourceTest {
+
+    private lateinit var csvDataSource: CsvDataSource<History>
+    private val file = File(HISTORY_FILE_PATH)
+
+    @BeforeEach
+    fun setUp() {
+        file.delete()
+        csvDataSource = CsvTestHelper.getHistoryCsvHandler()
+    }
+
+    @AfterEach
+    fun cleanUp() {
+        file.delete()
+    }
+
+    @Test
+    fun `write should add correct number rows when taking a list`() {
+        // Given
+        val h1 = createHistory()
+        val h2 = createHistory()
+
+        // When
+        csvDataSource.write(listOf(h1, h2))
+        val result = csvDataSource.read()
+
+        // Then
+        assertEquals(2, result.size)
+    }
+
+    @Test
+    fun `write should add a row when taking exactly one valid entry`() {
+        // Given
+        val h1 = createHistory()
+
+        // When
+        csvDataSource.write(h1)
+        val result = csvDataSource.read()
+
+        // Then
+        assertEquals(1, result.size)
+    }
+
+    @Test
+    fun `read should return empty list if csv file only contains header`() {
+        // Given
+        file.writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
+
+        // When
+        val result = csvDataSource.read()
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `read should return empty list if csv file only contains blank lines`() {
+        // Given
+        file.writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n\n\n\n\n")
+
+        // When
+        val result = csvDataSource.read()
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `read should skip invalid lines when parsing`() {
+        // Given
+        file.writeText(
+            "id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\ninvalid_line\n"
+        )
+
+        // When
+        val result = csvDataSource.read()
+
+        // Then
+        assertTrue(result.isEmpty())
+    }
+
+    @Test
+    fun `read should create new file when file does not exist`() {
+        // Given
+        file.delete()
+
+        // When && Then
+        csvDataSource.read()
+
+        assertTrue(file.exists())
+    }
+
+    @Test
+    fun `update should modify entry when it already exists`() {
+        // Given
+        val h1 = createHistory()
+        val h2 = createHistory()
+        csvDataSource.write(listOf(h1, h2))
+
+        // When
+        val updated = h2.copy(actionType = ActionType.TASK_STATE_CHANGED)
+        csvDataSource.update(h2.id, updated)
+        val result = csvDataSource.read()
+
+        // Then
+        assertEquals(ActionType.TASK_STATE_CHANGED, result.find { it.id == h2.id }?.actionType)
+    }
+
+    @Test
+    fun `delete should remove entry when id exists`() {
+        // Given
+        val h1 = createHistory()
+        val h2 = createHistory()
+        csvDataSource.write(listOf(h1, h2))
+
+        // When
+        csvDataSource.delete(h1.id)
+        val result = csvDataSource.read()
+
+        // Then
+        assertThat(result).containsExactly(h2)
+    }
+}
