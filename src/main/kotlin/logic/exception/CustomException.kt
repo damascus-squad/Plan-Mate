@@ -6,7 +6,7 @@ class TaskAlreadyExistsException(taskId: UUID) : Exception("Task with ID $taskId
 
 class TaskNotFoundException(taskId: UUID) : Exception("Task with ID $taskId not found.")
 
-class UserNotFoundException(username: String) : Exception("User '$username' not found")
+class UserNotFoundException() : Exception()
 
 class InvalidCredentialsException : Exception("Invalid username or password ")
 
@@ -27,6 +27,3 @@ class NoTasksFoundException(message: String) : Exception(message)
 class ProjectNotFoundException(projectId: UUID) : RuntimeException("Project with ID $projectId not found")
 
 class NoMatesAvailableException(): IllegalStateException("No mates available to select.")
-
-class UserNotExistException() : Exception("This User not found")
-
