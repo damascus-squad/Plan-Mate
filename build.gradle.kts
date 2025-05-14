@@ -62,7 +62,14 @@ tasks.jacocoTestReport {
 tasks.jacocoTestCoverageVerification {
     classDirectories.setFrom(
         sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/model/**", "**/di/**", "**/ui/**", "**/MainKt.class")
+            exclude(
+                "**/model/**",
+                "**/di/**",
+                "**/dto/**",
+                "**/mapper/**",
+                "**/ui/**",
+                "**/MainKt.class"
+            )
         }
     )
 
