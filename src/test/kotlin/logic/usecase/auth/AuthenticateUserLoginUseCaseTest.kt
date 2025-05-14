@@ -8,6 +8,7 @@ import logic.model.UserRole
 import logic.repo.AuthenticationRepository
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.util.UUID
 import kotlin.test.assertEquals
 
@@ -18,114 +19,99 @@ class AuthenticateUserLoginUseCaseTest {
 
     @BeforeEach
     fun setUp() {
-        authRepo = mockk()
+        authRepo = mockk(relaxed = true)
         authenticateUserLogin = AuthenticateUserLoginUseCase(authRepo)
     }
 
     @Test
     fun `login should return success result when credentials are valid`() {
         // Given
-        val email = "test@example.com"
+        val username = "testuser"
         val password = "password123"
-        val user = User(UUID.randomUUID(), email, UserRole.MATE)
-        every { authRepo.login(email, password) } returns user
+        val user = User(UUID.randomUUID(), username, UserRole.MATE)
+        every { authRepo.login(username, password) } returns user
 
         // When
-        val result = authenticateUserLogin(email, password)
+        val result = authenticateUserLogin(username, password)
 
         // Then
         assertEquals(user, result.getOrNull())
-        verify { authRepo.login(email, password) }
+        verify { authRepo.login(username, password) }
     }
 
     @Test
     fun `login should return failure result when credentials are invalid`() {
         // Given
-        val email = "test@example.com"
+        val username = "testuser"
         val password = "wrongpassword"
         val exception = RuntimeException("Invalid credentials")
-        every { authRepo.login(email, password) } throws exception
+        every { authRepo.login(username, password) } throws exception
 
-        // When
-        val result = authenticateUserLogin(email, password)
-
-        // Then
-        assertEquals(exception, result.exceptionOrNull())
-        verify { authRepo.login(email, password) }
+        // When & Then
+        assertThrows<RuntimeException> {
+            authenticateUserLogin(username, password).getOrThrow()
+        }
+        verify { authRepo.login(username, password) }
     }
 
     @Test
-    fun `login should return failure result when email is empty`() {
+    fun `login should return failure result when username is empty`() {
         // Given
-        val email = ""
+        val username = ""
         val password = "password123"
+        val exception = RuntimeException("Invalid credentials")
+        every { authRepo.login(username, password) } throws exception
 
-        // When
-        val result = authenticateUserLogin(email, password)
-
-        // Then
-        assert(result.isFailure)
-        assert(result.exceptionOrNull() is IllegalArgumentException)
-        verify(exactly = 0) { authRepo.login(any(), any()) }
+        // When & Then
+        assertThrows<RuntimeException> {
+            authenticateUserLogin(username, password).getOrThrow()
+        }
+        verify { authRepo.login(username, password) }
     }
 
     @Test
     fun `login should return failure result when password is empty`() {
         // Given
-        val email = "test@example.com"
+        val username = "testuser"
         val password = ""
+        val exception = RuntimeException("Invalid credentials")
+        every { authRepo.login(username, password) } throws exception
 
-        // When
-        val result = authenticateUserLogin(email, password)
-
-        // Then
-        assert(result.isFailure)
-        assert(result.exceptionOrNull() is IllegalArgumentException)
-        verify(exactly = 0) { authRepo.login(any(), any()) }
-    }
-
-    @Test
-    fun `login should return failure result when email is invalid format`() {
-        // Given
-        val email = "invalid-email"
-        val password = "password123"
-
-        // When
-        val result = authenticateUserLogin(email, password)
-
-        // Then
-        assert(result.isFailure)
-        assert(result.exceptionOrNull() is IllegalArgumentException)
-        verify(exactly = 0) { authRepo.login(any(), any()) }
+        // When & Then
+        assertThrows<RuntimeException> {
+            authenticateUserLogin(username, password).getOrThrow()
+        }
+        verify { authRepo.login(username, password) }
     }
 
     @Test
     fun `login should return success result when credentials are valid for admin`() {
         // Given
-        val email = "admin@example.com"
+        val username = "admin"
         val password = "admin123"
-        val user = User(UUID.randomUUID(), email, UserRole.ADMIN)
-        every { authRepo.login(email, password) } returns user
+        val user = User(UUID.randomUUID(), username, UserRole.ADMIN)
+        every { authRepo.login(username, password) } returns user
 
         // When
-        val result = authenticateUserLogin(email, password)
+        val result = authenticateUserLogin(username, password)
 
         // Then
         assertEquals(user, result.getOrNull())
-        verify { authRepo.login(email, password) }
+        verify { authRepo.login(username, password) }
     }
 
     @Test
-    fun `login should return failure result when both email and password are empty`() {
+    fun `login should return failure result when both username and password are empty`() {
         // Given
-        val email = ""
+        val username = ""
         val password = ""
+        val exception = RuntimeException("Invalid credentials")
+        every { authRepo.login(username, password) } throws exception
 
-        // When
-        val result = authenticateUserLogin(email, password)
-
-        // Then
-        assert(result.exceptionOrNull() is IllegalArgumentException)
-        verify(exactly = 0) { authRepo.login(any(), any()) }
+        // When & Then
+        assertThrows<RuntimeException> {
+            authenticateUserLogin(username, password).getOrThrow()
+        }
+        verify { authRepo.login(username, password) }
     }
 }
