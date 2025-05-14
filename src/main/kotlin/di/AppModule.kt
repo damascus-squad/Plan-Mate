@@ -20,6 +20,8 @@ import org.damascus.ui.views.admin.AdminDashboardUi
 import org.damascus.ui.views.auditLog.ProjectLogUi
 import org.damascus.ui.views.auditLog.TaskLogUi
 import org.damascus.ui.views.project.*
+import org.damascus.ui.views.task.*
+import org.damascus.ui.views.user.*
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import ui.PlanMateConsoleUi
@@ -27,9 +29,6 @@ import ui.io.ConsoleDisplay
 import ui.io.ConsoleUserInput
 import ui.io.Display
 import ui.io.InputReader
-import org.damascus.ui.views.project.ProjectManagementUi
-import org.damascus.ui.views.task.*
-import org.damascus.ui.views.user.*
 import ui.views.LoginView
 import ui.views.project.SelectProjectUi
 
