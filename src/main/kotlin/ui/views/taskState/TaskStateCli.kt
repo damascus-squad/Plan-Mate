@@ -36,7 +36,6 @@ class TaskStateCLI(
 
     override fun showAllStates() {
         val states = taskStateRepository.getAllStates()
-
         if (states.isEmpty()) {
             println("❗ No states found.".withStyle(TerminalColor.Red))
             return

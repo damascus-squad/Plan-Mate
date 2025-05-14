@@ -5,6 +5,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import logic.exception.*
 import logic.model.*
+import logic.repo.TaskStateRepository
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
 import logic.usecase.auditLog.SaveLogUseCase
 import logic.usecase.project.GetProjectUseCase
@@ -40,14 +41,9 @@ class ProjectDashboardCli(
     private val removeMate: UnassignMateUseCase,
     private val getAllMatesUseCase: GetAllMatesUseCase,
     private val getLogsByProjectIdUseCase: GetLogsByProjectIdUseCase,
-    private val taskStateCLI: TaskStateCLI
+    private val taskStateCLI: TaskStateCLI,
+    private val taskStateRepository: TaskStateRepository
     ) : ProjectDashboardController {
-
-    private val dummyStates = mutableListOf(
-        TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"),"TODO",1),
-        TaskState(UUID.fromString("22222222-2222-2222-2222-222222222222"), "In Progress", 1),
-        TaskState(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Done", 1),
-    )
 
     override fun start(projectId: UUID, currentUser: User) {
 
@@ -58,7 +54,7 @@ class ProjectDashboardCli(
             UiAction("Remove Mate") { unassignMateFromProject(projectId, selectMateFromList()) },
             UiAction("Show History") { showHistory(projectId, currentUser) },
             UiAction("Create Task") { createTask(projectId, currentUser) },
-            UiAction("Display Tasks Board") { viewProjectSwimlaneView(dummyStates, projectId) },
+            UiAction("Display Tasks Board") { viewProjectSwimlaneView(getCurrentStates(), projectId) },
             UiAction("Manage Task State"){ taskStateCLI.start() }
         )
 
@@ -74,7 +70,11 @@ class ProjectDashboardCli(
         }
 
         display.displayMenu(actions, menuTitle = "Project Dashboard")
-        viewProjectSwimlaneView(dummyStates, projectId)
+        viewProjectSwimlaneView(getCurrentStates(), projectId)
+    }
+
+    private fun getCurrentStates(): List<TaskState> {
+        return taskStateRepository.getAllStates()
     }
 
     override fun deleteProject(projectId: UUID) {
@@ -217,12 +217,12 @@ class ProjectDashboardCli(
 
 
         println("Available task states:")
-        dummyStates.forEachIndexed { index, state ->
+        getCurrentStates().forEachIndexed { index, state ->
             println("${index + 1}. ${state.name}")
         }
 
-        val selectedStateIndex = inputReader.readInt("Select task state (1-${dummyStates.size}): ", 1, dummyStates.size)
-        val stateId = dummyStates[selectedStateIndex - 1].id
+        val selectedStateIndex = inputReader.readInt("Select task state (1-${getCurrentStates().size}): ", 1, getCurrentStates().size)
+        val stateId = getCurrentStates()[selectedStateIndex - 1].id
 
         val newTask = Task(
             id = UUID.randomUUID(),
@@ -237,7 +237,7 @@ class ProjectDashboardCli(
         try {
             createTaskUseCase(newTask)
             println("✅ Task '${newTask.title}' created successfully!")
-            viewProjectSwimlaneView(dummyStates, projectId)
+            viewProjectSwimlaneView(getCurrentStates(), projectId)
             saveLogUseCase(
                 History(
                     id = UUID.randomUUID(),
