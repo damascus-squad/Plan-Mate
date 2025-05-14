@@ -6,32 +6,26 @@ import logic.repo.TaskStateRepository
 import java.util.*
 
 class ManageTaskStateUseCase(
-    private val taskStateRepository: TaskStateRepository
+    private val taskStateRepo: TaskStateRepository
 ) {
-    fun createTaskState(taskStateName: String): Boolean {
-        return taskStateRepository.create(taskStateName)
-    }
-
-    fun getTaskState(id: UUID): TaskState {
-        return taskStateRepository.getTaskStateById(id)
-    }
-
-    fun getAllTaskStates(): List<TaskState> {
-        return taskStateRepository.getAllStates()
-    }
+    fun createTaskState(taskStateName: String) = taskStateRepo.create(taskStateName)
+    fun getTaskState(id: UUID) = taskStateRepo.getTaskStateById(id)
+    fun getAllTaskStates() = taskStateRepo.getAllStates()
 
     fun updateTaskState(taskState: TaskState, updatedTaskState: TaskState): Boolean {
-        if (!taskStateRepository.exist(updatedTaskState.name)) {
-            throw StateNotFoundException()
+        if (taskStateRepo.exists(updatedTaskState.name)) {
+            return taskStateRepo.update(taskState, updatedTaskState)
         }
-        return taskStateRepository.update(taskState, updatedTaskState)
+
+        throw StateNotFoundException()
     }
 
     fun deleteTaskState(taskState: TaskState): Boolean {
-        if (!taskStateRepository.exist(taskState.name)) {
-            throw StateNotFoundException()
+        if (taskStateRepo.exists(taskState.name)) {
+            return taskStateRepo.delete(taskState)
         }
-        return taskStateRepository.delete(taskState)
+
+        throw StateNotFoundException()
     }
 }
 

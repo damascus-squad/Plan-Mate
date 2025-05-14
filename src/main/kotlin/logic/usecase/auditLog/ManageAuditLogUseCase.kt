@@ -8,9 +8,7 @@ import java.util.*
 class ManageAuditLogUseCase(
     private val auditLogsRepository: AuditLogsRepository
 ) {
-    fun saveLog(history: History) {
-        auditLogsRepository.saveLog(history)
-    }
+    fun saveLog(history: History) = auditLogsRepository.saveLog(history)
 
     fun getTaskLogs(taskId: UUID): List<History> {
         return auditLogsRepository.getLogsByTaskId(taskId)
