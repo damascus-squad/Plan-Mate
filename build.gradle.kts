@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.1.20"
-    id("jacoco")
+    id("org.jetbrains.kotlinx.kover") version "0.6.1"
+
 }
 
 group = "org.damascus"
@@ -29,48 +30,41 @@ tasks.test {
     testLogging {
         showStandardStreams = true
     }
-    finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.jacocoTestReport {
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-    dependsOn(tasks.test)
-}
+kover {
+    htmlReport {
+        onCheck.set(true)
 
-tasks.jacocoTestCoverageVerification {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/model/**", "**/di/**", "**/ui/**", "**/MainKt.class")
-        }
-    )
-
-    violationRules {
-        rule {
-            limit {
-                counter = "LINE"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
+        verify {
+            rule {
+                isEnabled = true
+                name = "Line Coverage of Tests must be more than 80%"
+                bound {
+                    minValue = 80
+                    counter = kotlinx.kover.api.CounterType.LINE
+                }
             }
-            limit {
-                counter = "BRANCH"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
+            rule {
+                isEnabled = true
+                name = "Branch Coverage of Tests must be more than 80%"
+                bound {
+                    minValue = 80
+                    counter = kotlinx.kover.api.CounterType.BRANCH
+                }
             }
-            limit {
-                counter = "METHOD"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
+            rule {
+                isEnabled = true
+                name = "Instruction Coverage of Tests must be more than 80%"
+                bound {
+                    minValue = 80
+                    counter = kotlinx.kover.api.CounterType.INSTRUCTION
+                }
             }
         }
     }
 }
 
-jacoco {
-    toolVersion = "0.8.13"
-}
 
 kotlin {
     jvmToolchain(17)
