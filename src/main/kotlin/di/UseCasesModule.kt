@@ -1,59 +1,34 @@
 package di
 
-import logic.usecase.auditLog.GetLogsByProjectIdUseCase
-import logic.usecase.auditLog.GetLogsByTaskIdUseCase
-import logic.usecase.auditLog.SaveLogUseCase
+import logic.usecase.auditLog.ManageAuditLogUseCase
 import logic.usecase.auth.AuthenticateUserLoginUseCase
 import logic.usecase.auth.CreateMateUseCase
-import logic.usecase.project.*
-import logic.usecase.state.*
-import logic.usecase.task.*
-import org.damascus.logic.usecase.auth.GetAllMatesUseCase
-import org.damascus.logic.usecase.auth.GetUserByIdUseCase
-import org.damascus.logic.usecase.project.UnassignMateUseCase
+import logic.usecase.project.GetProjectStateUseCase
+import org.damascus.logic.usecase.auth.ManageMateUseCase
 import org.damascus.logic.usecase.project.ManageMateAssignmentUseCase
+import org.damascus.logic.usecase.project.ManageProjectUseCase
+import org.damascus.logic.usecase.state.ManageTaskStateUseCase
+import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.koin.dsl.module
 
 val useCaseModule = module {
     // Project use cases
-    single { CreateProjectUseCase(get(), get()) }
-    single { GetAdminProjectsUseCase(get()) }
-    single { DeleteProjectUseCase(get()) }
-    single { UpdateProjectUseCase(get()) }
-    single { GetMateProjectsUseCase(get()) }
-    single { GetProjectUseCase(get()) }
+    single { ManageProjectUseCase(get(), get()) }
     single { ManageMateAssignmentUseCase(get()) }
     single { GetProjectStateUseCase(get(), get()) }
 
     // Authentication use cases
     single { CreateMateUseCase(get()) }
     single { AuthenticateUserLoginUseCase(get()) }
-    single { GetAllMatesUseCase(get())}
-    single { AssignMateUseCase(get()) }
-    single { UnassignMateUseCase(get()) }
-    single { GetUserByIdUseCase(get()) }
-    single { GetUserByIdUseCase(get()) }
+    single { ManageMateUseCase(get()) }
 
     // Task State use cases
-    single { CheckTaskStateExistsUseCase(get()) }
-    single { CreateTaskStateUseCase(get()) }
-    single { DeleteTaskStateUseCase(get()) }
-    single { GetAllTaskStatesUseCase(get()) }
-    single { GetTaskStateByIdUseCase(get()) }
-    single { IncrementTaskStateReferencesUseCase(get()) }
-    single { UpdateTaskStateUseCase(get()) }
+    single { ManageTaskStateUseCase(get()) }
 
     // Task use cases
-    single { CreateTaskUseCase(get()) }
-    single { UpdateTaskUseCase(get()) }
-    single { DeleteTaskUseCase(get()) }
-    single { GetTaskUseCase(get()) }
-    single { GetTasksByProjectUseCase(get()) }
-    single { GetTaskStateByIdUseCase(get()) }
+    single { ManageTaskUseCase(get()) }
 
     // audit Log Use cases
-    single { SaveLogUseCase(get()) }
-    single { GetLogsByProjectIdUseCase(get()) }
-    single { GetLogsByTaskIdUseCase(get()) }
+    single { ManageAuditLogUseCase(get()) }
 
 }
