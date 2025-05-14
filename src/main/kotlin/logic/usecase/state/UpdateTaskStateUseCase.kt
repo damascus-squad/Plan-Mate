@@ -15,15 +15,3 @@ class UpdateTaskStateUseCase(
         return repository.update(taskState, updatedTaskState)
     }
 }
-// old version
-
-//class UpdateTaskStateUseCase(
-//    private val repository: TaskStateRepository
-//) {
-//    operator fun invoke(taskState: TaskState, updatedTaskState: TaskState): Boolean {
-//        if (!repository.exist(updatedTaskState.name)) {
-//            throw StateNotFoundException()
-//        }
-//        return repository.update(taskState, updatedTaskState)
-//    }
-//}
