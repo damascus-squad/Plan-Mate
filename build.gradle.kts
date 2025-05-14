@@ -33,6 +33,11 @@ tasks.test {
 }
 
 kover {
+    filters {
+        classes {
+            excludes += listOf("*di.*", "*ui.*","*model.*", "*MainKt*")
+        }
+    }
     htmlReport {
         onCheck.set(true)
 
