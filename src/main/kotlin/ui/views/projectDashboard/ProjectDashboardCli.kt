@@ -3,10 +3,7 @@ package org.damascus.ui.views.projectDashboard
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.exception.NoMatesAvailableException
-import logic.exception.ProjectNotFoundException
-import logic.exception.TaskAlreadyExistsException
-import logic.exception.TaskNotFoundException
+import logic.exception.*
 import logic.model.*
 import logic.usecase.auditLog.GetLogsByProjectIdUseCase
 import logic.usecase.auditLog.SaveLogUseCase
@@ -20,13 +17,13 @@ import logic.usecase.task.DeleteTaskUseCase
 import logic.usecase.task.GetTasksByProjectUseCase
 import org.damascus.logic.usecase.auth.GetAllMatesUseCase
 import org.damascus.logic.usecase.project.UnassignMateUseCase
+import org.damascus.ui.views.taskState.TaskStateCLI
 import ui.io.Display
 import ui.io.InputReader
 import ui.util.UiAction
 import ui.util.printTable
 import java.util.*
 import kotlin.system.exitProcess
-
 
 class ProjectDashboardCli(
     private val display: Display,
@@ -43,9 +40,10 @@ class ProjectDashboardCli(
     private val removeMate: UnassignMateUseCase,
     private val getAllMatesUseCase: GetAllMatesUseCase,
     private val getLogsByProjectIdUseCase: GetLogsByProjectIdUseCase,
-) : ProjectDashboardController {
+    private val taskStateCLI: TaskStateCLI
+    ) : ProjectDashboardController {
 
-    private val dummyStates = listOf(
+    private val dummyStates = mutableListOf(
         TaskState(UUID.fromString("11111111-1111-1111-1111-111111111111"),"TODO",1),
         TaskState(UUID.fromString("22222222-2222-2222-2222-222222222222"), "In Progress", 1),
         TaskState(UUID.fromString("33333333-3333-3333-3333-333333333333"), "Done", 1),
@@ -60,12 +58,14 @@ class ProjectDashboardCli(
             UiAction("Remove Mate") { unassignMateFromProject(projectId, selectMateFromList()) },
             UiAction("Show History") { showHistory(projectId, currentUser) },
             UiAction("Create Task") { createTask(projectId, currentUser) },
-            UiAction("Display Tasks Board") { viewProjectSwimlaneView(dummyStates, projectId) }
+            UiAction("Display Tasks Board") { viewProjectSwimlaneView(dummyStates, projectId) },
+            UiAction("Manage Task State"){ taskStateCLI.start() }
         )
 
         val mateActions = listOf(
             UiAction("Show History") { },
-            UiAction("Create Task") { createTask(projectId, currentUser) }
+            UiAction("Create Task") { createTask(projectId, currentUser) },
+            UiAction("Manage Task State"){ taskStateCLI.start() }
         )
 
         val actions = when (currentUser.userRole) {

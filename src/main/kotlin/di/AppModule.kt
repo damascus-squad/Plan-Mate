@@ -26,7 +26,7 @@ import ui.io.Display
 import ui.io.InputReader
 import org.damascus.ui.views.projectDashboard.ProjectDashboardCli
 import org.damascus.ui.views.projectDashboard.ProjectDashboardController
-import org.koin.core.scope.get
+import org.damascus.ui.views.taskState.TaskStateCLI
 import ui.views.LoginView
 import ui.views.project.ProjectView
 import ui.views.project.ProjectViewCli
@@ -97,6 +97,7 @@ val appModule = module {
     single { TaskCLI(get(), get(), get(), get(), get(), get()) }
     single { PlanMateConsoleUi(get(), get(), get()) }
     single<ProjectDashboardController> {
-        ProjectDashboardCli(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
+        ProjectDashboardCli(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get())
     }
+    single { TaskStateCLI(get(), get(), get(), get(), get()) }
 }
