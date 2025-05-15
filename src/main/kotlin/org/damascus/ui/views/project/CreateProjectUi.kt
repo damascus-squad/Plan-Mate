@@ -11,8 +11,10 @@ import org.damascus.logic.usecase.auditLog.ManageAuditLogUseCase
 import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class CreateProjectUi(
     private val inputReader: InputReader,
     private val display: Display,
@@ -36,7 +38,7 @@ class CreateProjectUi(
                 History(
                     id = UUID.randomUUID(),
                     projectId = project.id,
-                    taskId = History.Companion.NO_UUID,
+                    taskId = History.NO_UUID,
                     actionType = ActionType.PROJECT_CREATED,
                     userId = admin.id,
                     currentState = null,

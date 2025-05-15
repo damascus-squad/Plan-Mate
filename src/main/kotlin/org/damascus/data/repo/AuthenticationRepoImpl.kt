@@ -10,11 +10,15 @@ import org.damascus.logic.model.UserRole
 import org.damascus.logic.repo.AuthenticationRepository
 import org.damascus.logic.repo.DataSource
 import org.damascus.logic.service.HashingService
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class AuthenticationRepoImpl(
-    private val hashingService: HashingService,
-    private val usersDataSource: DataSource<UserDTO>
+    @Named("userDataSource")
+    private val usersDataSource: DataSource<UserDTO>,
+    private val hashingService: HashingService
 ) : AuthenticationRepository {
 
     override fun login(username: String, password: String): User {

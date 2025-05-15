@@ -3,9 +3,10 @@ package org.damascus.logic.usecase.project
 import org.damascus.logic.model.Project
 import org.damascus.logic.repo.ProjectRepository
 import org.damascus.logic.repo.TaskStateRepository
+import org.koin.core.annotation.Single
 import java.util.*
 
-
+@Single
 class ManageProjectUseCase(
     private val projectRepo: ProjectRepository,
     private val taskStateRepo: TaskStateRepository

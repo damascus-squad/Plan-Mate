@@ -5,9 +5,15 @@ import org.damascus.logic.model.TaskState
 import org.damascus.logic.repo.DataSource
 import org.damascus.logic.repo.TaskStateRepository
 import org.damascus.logic.model.History
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.*
 
-class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : TaskStateRepository {
+@Single
+class TaskStateRepositoryImpl(
+    @Named("taskStateDataSource")
+    private val dataSource: DataSource<TaskState>
+) : TaskStateRepository {
 
     override fun getAllStates(): List<TaskState> {
         return dataSource.read()
@@ -15,7 +21,7 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
 
     override fun getTaskStateById(id: UUID): TaskState {
         return dataSource.read().firstOrNull { it.id == id }
-            ?: History.Companion.NO_TASK_STATE
+            ?: History.NO_TASK_STATE
     }
 
     override fun create(taskStateName: String): TaskState {
@@ -76,6 +82,6 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
     }
 
     private fun getTaskStateByName(name: String): TaskState {
-        return dataSource.read().firstOrNull { it.name == name } ?: History.Companion.NO_TASK_STATE
+        return dataSource.read().firstOrNull { it.name == name } ?: History.NO_TASK_STATE
     }
 }
