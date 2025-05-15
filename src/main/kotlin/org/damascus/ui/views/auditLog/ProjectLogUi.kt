@@ -15,7 +15,7 @@ class ProjectLogUi (
     private val manageAuditLogUseCase: ManageAuditLogUseCase,
     private val manageMateUseCase: ManageMateUseCase
 ){
-    operator fun invoke(projectId: UUID) {
+    operator suspend fun invoke(projectId: UUID) {
         val projectName = manageProjectUseCase.getProject(projectId).name
         try {
             val logs = manageAuditLogUseCase.getProjectLogs(projectId)

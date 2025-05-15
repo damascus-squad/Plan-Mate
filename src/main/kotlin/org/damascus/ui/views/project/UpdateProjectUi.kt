@@ -16,7 +16,7 @@ class UpdateProjectUi(
     private val manageMateUseCase: ManageMateUseCase,
     private val selectMateUi: SelectMateUi,
 ) {
-    operator fun invoke(currentUser: User, currentProject: Project) {
+    operator suspend fun invoke(currentUser: User, currentProject: Project) {
         currentProject.printProjectDetails()
 
         display.displayMenu(

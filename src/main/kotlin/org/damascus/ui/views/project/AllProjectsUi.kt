@@ -13,7 +13,7 @@ class AllProjectsUi(
     private val selectProjectUi: SelectProjectUi,
     private val manageProjectUseCase: ManageProjectUseCase
 ) {
-    operator fun invoke(currentUser: User) {
+    operator suspend fun invoke(currentUser: User) {
         val hasProjects = getAdminProjectsUi()
 
         val dashboardActions =
@@ -37,7 +37,7 @@ class AllProjectsUi(
         )
     }
 
-    private fun createProjectUiAction(createProjectUi: CreateProjectUi, currentUser: User): UiAction {
+    private suspend fun createProjectUiAction(createProjectUi: CreateProjectUi, currentUser: User): UiAction {
         return UiAction(
             name = "➕ Create a New Project",
             action = { createProjectUi(currentUser) },

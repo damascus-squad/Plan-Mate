@@ -10,7 +10,7 @@ class SelectProjectUi(
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,
 ) {
-    operator fun invoke(projects: List<Project>): Project {
+    operator suspend fun invoke(projects: List<Project>): Project {
 
         val choice = consoleUserInput.readInt(
             prompt = "Enter project number to select",

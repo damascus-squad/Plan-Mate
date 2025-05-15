@@ -19,7 +19,7 @@ class CreateProjectUi(
     private val manageProjectUseCase: ManageProjectUseCase,
     private val manageAuditLogUseCase: ManageAuditLogUseCase
 ) {
-    operator fun invoke(admin: User) {
+    operator suspend fun invoke(admin: User) {
         val name = inputReader.readString(prompt = "Enter project name")
         val project = Project(
             id = UUID.randomUUID(),

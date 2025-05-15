@@ -10,7 +10,7 @@ class SelectTaskUi(
     private val inputReader: InputReader,
     private val manageTaskUseCase: ManageTaskUseCase,
 ) {
-    operator fun invoke(tasks: List<Task>): Task {
+    operator suspend fun invoke(tasks: List<Task>): Task {
 
         val selection = inputReader.readInt(
             prompt = "Enter task number to take action on",

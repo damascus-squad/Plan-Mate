@@ -25,7 +25,7 @@ class UpdateTaskDescriptionUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
+    operator suspend fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
         val newDescription = inputReader.readString(prompt = "Enter new description (or type 's' to keep current)")
 
         return if (newDescription.lowercase() != "s") {

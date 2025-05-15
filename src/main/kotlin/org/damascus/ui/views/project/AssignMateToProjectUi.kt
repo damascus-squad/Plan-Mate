@@ -20,7 +20,7 @@ class AssignMateToProjectUi(
     private val manageProjectUseCase: ManageProjectUseCase,
     private val display: Display
 ) {
-    operator fun invoke(currentProject: Project, mate: User, admin: User) {
+    operator suspend fun invoke(currentProject: Project, mate: User, admin: User) {
 
         if (currentProject.assignedMatesIds.contains(mate.id)) {
             display.writeError(errorMessage = " This Mate is Already Assigned Before.")

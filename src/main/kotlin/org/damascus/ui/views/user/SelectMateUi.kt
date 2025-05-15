@@ -10,7 +10,7 @@ class SelectMateUi(
     private val display: Display
 ) {
 
-    operator fun invoke(mates: List<User>): User? {
+    operator suspend fun invoke(mates: List<User>): User? {
         if (mates.isEmpty()) {
             display.writeError(errorMessage = "No mates assigned to this project.")
             return null

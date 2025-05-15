@@ -11,7 +11,7 @@ class GetAllTasksByProjectIdUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(currentProject: Project): Boolean {
+    operator suspend fun invoke(currentProject: Project): Boolean {
         val projectTasks = manageTaskUseCase.getProjectTasks(currentProject.id)
 
         if (projectTasks.isEmpty()) {

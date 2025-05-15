@@ -8,7 +8,7 @@ import kotlin.system.exitProcess
 class ConsoleDisplay(
     private val inputReader: InputReader
 ) : Display {
-    override fun displayMenu(
+    override suspend fun displayMenu(
         uiActionList: List<UiAction>,
         menuTitle: String,
         showBackOption: Boolean,

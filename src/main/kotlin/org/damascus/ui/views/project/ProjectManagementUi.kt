@@ -15,7 +15,7 @@ class ProjectManagementUi(
     private val projectLogUi: ProjectLogUi,
     private val taskMainUi: TaskMainUi,
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User) {
+    operator suspend fun invoke(currentProject: Project, currentUser: User) {
         currentProject.printProjectDetails()
 
         val adminActions = listOf(

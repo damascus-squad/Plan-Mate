@@ -9,7 +9,7 @@ class GetMateProjectsUi(
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,
 ) {
-    operator fun invoke(currentMate: User) {
+    operator suspend fun invoke(currentMate: User) {
         val projects = manageProjectUseCase.getMateProjects(currentMate.id)
         if (projects.isEmpty()) {
             display.writeError(errorMessage = "You Are not Assigned to any Project.")

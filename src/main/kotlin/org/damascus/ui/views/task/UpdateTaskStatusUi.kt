@@ -26,7 +26,7 @@ class UpdateTaskStatusUi(
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
 
-    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
+    operator suspend fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
         val availableTaskStates = currentProject.allowedStatesIds.map { manageTaskStateUseCase.getTaskState(it) }
 
         display.write(prompt = "Available task states:")

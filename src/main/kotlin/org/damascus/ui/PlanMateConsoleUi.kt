@@ -14,7 +14,7 @@ class PlanMateConsoleUi(
     private val display: Display
 ) {
 
-    fun start() {
+    suspend fun start() {
         while (true) {
             display.displayMenu(
                 listOf(

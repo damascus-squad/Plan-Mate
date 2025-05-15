@@ -20,7 +20,7 @@ class DeleteProjectUi(
     private val manageProjectUseCase: ManageProjectUseCase,
     private val manageAuditLogUseCase: ManageAuditLogUseCase
 ) {
-    operator fun invoke(admin: User, currentProject: Project) {
+    operator suspend fun invoke(admin: User, currentProject: Project) {
         try {
             val confirm = inputReader.readBoolean(prompt = "Are you sure you want to delete this Project? (yes/no)")
             if (confirm) {

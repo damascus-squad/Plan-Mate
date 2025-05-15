@@ -15,7 +15,7 @@ class TaskLogUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageMateUseCase: ManageMateUseCase
 ) {
-    operator fun invoke(taskId: UUID) {
+    operator suspend fun invoke(taskId: UUID) {
         val taskName = manageTaskUseCase.getTask(taskId).title
         try {
             val logs = manageAuditLogUseCase.getTaskLogs(taskId)

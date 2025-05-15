@@ -14,7 +14,7 @@ class TaskMainUi(
     private val getAllTasksByProjectIdUi: GetAllTasksByProjectIdUi,
     private val manageTaskUseCase: ManageTaskUseCase
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User) {
+    operator suspend fun invoke(currentProject: Project, currentUser: User) {
         val hasTasks = getAllTasksByProjectIdUi(currentProject)
 
         val dashboardActions = if (hasTasks) {
@@ -38,7 +38,11 @@ class TaskMainUi(
         )
     }
 
-    private fun createTaskUiAction(currentProject: Project, currentUser: User, refreshAction: () -> Unit): UiAction {
+    private suspend fun createTaskUiAction(
+        currentProject: Project,
+        currentUser: User,
+        refreshAction: suspend () -> Unit
+    ): UiAction {
         return UiAction(
             name = "➕ Create a New Task",
             action = { createTaskUi(currentProject, currentUser) },

@@ -10,7 +10,7 @@ class LoginView(
     private val inputReader: InputReader,
     private val display: Display
 ) {
-    fun getLoggedUser(): User {
+    suspend fun getLoggedUser(): User {
         while (true) {
             display.write(prompt = "🔐 Welcome to Plan Mate Login")
             val usernameInput = inputReader.readString(prompt = "👤 Enter your name ")

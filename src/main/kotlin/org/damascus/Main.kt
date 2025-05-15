@@ -7,7 +7,7 @@ import org.damascus.ui.PlanMateConsoleUi
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.getKoin
 
-fun main() {
+suspend fun main() {
     startKoin {
         modules(appModule, repositoryModule, useCaseModule)
     }

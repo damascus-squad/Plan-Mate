@@ -10,7 +10,7 @@ class MateManagementUi(
     private val getAllMatesUi: GetAllMatesUi
 ) {
 
-    operator fun invoke(admin: User) {
+    operator suspend fun invoke(admin: User) {
         val actions = listOf(
             UiAction("👤 Create New Mate", { createMateUi(admin) }),
             UiAction("📋 View All Mates", { getAllMatesUi() }),
