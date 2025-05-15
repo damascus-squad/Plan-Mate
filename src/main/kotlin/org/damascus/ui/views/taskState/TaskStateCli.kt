@@ -1,4 +1,4 @@
-package ui.views.taskState
+package org.damascus.ui.views.taskState
 
 import org.damascus.logic.exception.DuplicateStateException
 import org.damascus.logic.exception.StateNotFoundException

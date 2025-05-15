@@ -54,7 +54,7 @@ import org.damascus.ui.views.user.GetAllMatesUi
 import org.damascus.ui.views.user.MateDashboardUi
 import org.damascus.ui.views.user.MateManagementUi
 import org.damascus.ui.views.user.SelectMateUi
-import ui.views.taskState.TaskStateCli
+import org.damascus.ui.views.taskState.TaskStateCli
 
 val appModule = module {
 

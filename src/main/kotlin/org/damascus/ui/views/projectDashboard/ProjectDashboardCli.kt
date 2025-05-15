@@ -1,4 +1,4 @@
-package ui.views.projectDashboard
+package org.damascus.ui.views.projectDashboard
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -17,7 +17,7 @@ import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.printTable
-import ui.views.taskState.TaskStateCli
+import org.damascus.ui.views.taskState.TaskStateCli
 import java.util.*
 import kotlin.system.exitProcess
 
