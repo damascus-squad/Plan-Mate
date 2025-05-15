@@ -1,40 +1,36 @@
-package org.damascus.ui.views.taskState
+package ui.views.taskState
 
-import logic.exception.DuplicateStateException
-import logic.exception.StateNotFoundException
-import logic.model.TaskState
-import logic.repo.TaskStateRepository
-import logic.usecase.state.CreateTaskStateUseCase
-import logic.usecase.state.UpdateTaskStateUseCase
-import ui.io.Display
-import ui.io.InputReader
-import ui.util.TerminalColor
-import ui.util.UiAction
-import ui.util.printTable
-import ui.util.withStyle
-import java.util.*
+import org.damascus.logic.exception.DuplicateStateException
+import org.damascus.logic.exception.StateNotFoundException
+import org.damascus.logic.repo.TaskStateRepository
+import org.damascus.logic.usecase.state.ManageTaskStateUseCase
+import org.damascus.ui.io.Display
+import org.damascus.ui.io.InputReader
+import org.damascus.ui.util.TerminalColor
+import org.damascus.ui.util.UiAction
+import org.damascus.ui.util.printTable
+import org.damascus.ui.util.withStyle
 
-class TaskStateCLI(
+class TaskStateCli(
     private val display: Display,
     private val inputReader: InputReader,
     private val taskStateRepository: TaskStateRepository,
-    private val updateTaskStateUseCase: UpdateTaskStateUseCase,
-    private val createTaskStateUseCase: CreateTaskStateUseCase
-) : TaskStateController {
+    private val manageTaskState: ManageTaskStateUseCase
+) {
 
     fun start() {
         display.displayMenu(
             listOf(
-                UiAction("Show All States") { showAllStates() },
-                UiAction("Create New State") { createState() },
-                UiAction("Delete State") { deleteState() },
-                UiAction("Update State") { updateState() },
+                UiAction("Show All States", { showAllStates() }),
+                UiAction("Create New State", { createState() }),
+                UiAction("Delete State", { deleteState() }),
+                UiAction("Update State", { updateState() }),
             ),
             menuTitle = "\n⚙️ Task State Management"
         )
     }
 
-    override fun showAllStates() {
+    private fun showAllStates() {
         val states = taskStateRepository.getAllStates()
         if (states.isEmpty()) {
             println("❗ No states found.".withStyle(TerminalColor.Red))
@@ -53,21 +49,19 @@ class TaskStateCLI(
         printTable(headers, rows, TerminalColor.Green)
     }
 
-
-
-    override fun createState() {
-        val name = inputReader.readString("Enter name for new state: ")
-        val taskState = TaskState(name = name, id = UUID.randomUUID(), projectReferencesCount = 1)
+    private fun createState() {
+        val taskStateName = inputReader.readString("Enter name for new state: ")
 
         try {
-            createTaskStateUseCase(taskState)
+            manageTaskState.createTaskState(taskStateName)
             println("✅ Task state created successfully.")
         } catch (e: DuplicateStateException) {
-            println("❌ Error: State with name \"$name\" already exists.")
+            println("❌ Error: State with name \"$taskStateName\" already exists.")
         }
 
     }
-    override fun deleteState() {
+
+    private fun deleteState() {
         val states = taskStateRepository.getAllStates()
         if (states.isEmpty()) {
             println("⚠️ No states to delete.")
@@ -102,7 +96,8 @@ class TaskStateCLI(
             println("❌ Error during deletion: ${e.message}")
         }
     }
-    override fun updateState() {
+
+    private fun updateState() {
         val states = taskStateRepository.getAllStates()
         if (states.isEmpty()) {
             println("⚠️ No states to update.")
@@ -121,7 +116,7 @@ class TaskStateCLI(
         val updated = selectedState.copy(name = newName.ifBlank { selectedState.name })
 
         try {
-            updateTaskStateUseCase(selectedState, updated)
+            manageTaskState.updateTaskState(selectedState, updated)
             println("✅ State updated successfully.")
         } catch (e: DuplicateStateException) {
             println("❌ Error: A state with that name already exists.")
