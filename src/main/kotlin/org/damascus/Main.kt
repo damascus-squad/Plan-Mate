@@ -1,17 +1,20 @@
 package org.damascus
 
-import org.damascus.di.appModule
-import org.damascus.di.repositoryModule
-import org.damascus.di.useCaseModule
+import org.damascus.di.KoinAppModule
+import org.damascus.di.dataSourceModule
 import org.damascus.ui.PlanMateConsoleUi
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
-import org.koin.java.KoinJavaComponent.getKoin
+import org.koin.ksp.generated.module
 
 fun main() {
     startKoin {
-        modules(appModule, repositoryModule, useCaseModule)
+        modules(
+            KoinAppModule().module,
+            dataSourceModule
+        )
     }
 
-    val ui: PlanMateConsoleUi = getKoin().get()
+    val ui: PlanMateConsoleUi = GlobalContext.get().get<PlanMateConsoleUi>()
     ui.start()
 }
