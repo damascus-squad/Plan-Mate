@@ -1,67 +1,54 @@
-package org.damascus.ui.views.projectDashboard
+package ui.views.projectDashboard
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import logic.exception.*
-import logic.model.*
-import logic.repo.TaskStateRepository
-import logic.usecase.auditLog.GetLogsByProjectIdUseCase
-import logic.usecase.auditLog.SaveLogUseCase
-import logic.usecase.project.GetProjectUseCase
-import logic.usecase.project.AssignMateUseCase
-import logic.usecase.project.DeleteProjectUseCase
-import logic.usecase.project.UpdateProjectUseCase
-import logic.usecase.state.GetTaskStateByIdUseCase
-import logic.usecase.task.CreateTaskUseCase
-import logic.usecase.task.DeleteTaskUseCase
-import logic.usecase.task.GetTasksByProjectUseCase
-import org.damascus.logic.usecase.auth.GetAllMatesUseCase
-import org.damascus.logic.usecase.project.UnassignMateUseCase
-import org.damascus.ui.views.taskState.TaskStateCLI
-import ui.io.Display
-import ui.io.InputReader
-import ui.util.UiAction
-import ui.util.printTable
+import org.damascus.logic.exception.*
+import org.damascus.logic.model.*
+import org.damascus.logic.repo.TaskStateRepository
+import org.damascus.logic.usecase.auditLog.ManageAuditLogUseCase
+import org.damascus.logic.usecase.auth.ManageMateUseCase
+import org.damascus.logic.usecase.project.GetProjectStateUseCase
+import org.damascus.logic.usecase.project.ManageMateAssignmentUseCase
+import org.damascus.logic.usecase.project.ManageProjectUseCase
+import org.damascus.logic.usecase.state.ManageTaskStateUseCase
+import org.damascus.logic.usecase.task.ManageTaskUseCase
+import org.damascus.ui.io.Display
+import org.damascus.ui.io.InputReader
+import org.damascus.ui.util.UiAction
+import org.damascus.ui.util.printTable
+import ui.views.taskState.TaskStateCli
 import java.util.*
 import kotlin.system.exitProcess
 
 class ProjectDashboardCli(
     private val display: Display,
     private val inputReader: InputReader,
-    private val getProjectUseCase: GetProjectUseCase,
-    private val deleteTaskUseCase: DeleteTaskUseCase,
-    private val deleteProjectUseCase: DeleteProjectUseCase,
-    private val updateProjectUseCase: UpdateProjectUseCase,
-    private val createTaskUseCase: CreateTaskUseCase,
-    private val getTaskStateByIdUseCase: GetTaskStateByIdUseCase,
-    private val getTasksByProjectUseCase: GetTasksByProjectUseCase,
-    private val saveLogUseCase: SaveLogUseCase,
-    private val assignMateUseCase: AssignMateUseCase,
-    private val removeMate: UnassignMateUseCase,
-    private val getAllMatesUseCase: GetAllMatesUseCase,
-    private val getLogsByProjectIdUseCase: GetLogsByProjectIdUseCase,
-    private val taskStateCLI: TaskStateCLI,
-    private val taskStateRepository: TaskStateRepository
-    ) : ProjectDashboardController {
+    private val manageTask: ManageTaskUseCase,
+    private val manageProject: ManageProjectUseCase,
+    private val manageAuditLog: ManageAuditLogUseCase,
+    private val manageMateAssignment: ManageMateAssignmentUseCase,
+    private val manageMate: ManageMateUseCase,
+    private val taskStateCLI: TaskStateCli,
+    private val taskStateRepo: TaskStateRepository
+) {
 
-    override fun start(projectId: UUID, currentUser: User) {
-
+    fun start(projectId: UUID, currentUser: User) {
         val adminActions = listOf(
-            UiAction("Edit Project") { editProject(projectId, currentUser) },
-            UiAction("Delete Project") { deleteProject(projectId) },
-            UiAction("Assign Mate") { assignMateToProject(projectId, selectMateFromList()) },
-            UiAction("Remove Mate") { unassignMateFromProject(projectId, selectMateFromList()) },
-            UiAction("Show History") { showHistory(projectId, currentUser) },
-            UiAction("Create Task") { createTask(projectId, currentUser) },
-            UiAction("Display Tasks Board") { viewProjectSwimlaneView(getCurrentStates(), projectId) },
-            UiAction("Manage Task State"){ taskStateCLI.start() }
+            UiAction("Edit Project", { editProject(projectId, currentUser) }),
+            UiAction("Delete Project", { deleteProject(projectId) }),
+            UiAction("Assign Mate", { assignMateToProject(projectId, selectMateFromList()) }),
+            UiAction("Remove Mate", { unassignMateFromProject(projectId, selectMateFromList()) }),
+            UiAction("Show History", { showHistory(projectId, currentUser) }),
+            UiAction("Create Task", { createTask(projectId, currentUser) }),
+            UiAction("Display Tasks Board", { viewProjectSwimlaneView(getCurrentStates(), projectId) }),
+            UiAction("Manage Task State", { taskStateCLI.start() })
         )
 
         val mateActions = listOf(
-            UiAction("Show History") { },
-            UiAction("Create Task") { createTask(projectId, currentUser) },
-            UiAction("Manage Task State"){ taskStateCLI.start() }
+            UiAction("Show History", { showHistory(projectId, currentUser) }),
+            UiAction("Create Task", { createTask(projectId, currentUser) }),
+            UiAction("Manage Task State", { taskStateCLI.start() })
         )
 
         val actions = when (currentUser.userRole) {
@@ -74,14 +61,14 @@ class ProjectDashboardCli(
     }
 
     private fun getCurrentStates(): List<TaskState> {
-        return taskStateRepository.getAllStates()
+        return taskStateRepo.getAllStates()
     }
 
-    override fun deleteProject(projectId: UUID) {
+    private fun deleteProject(projectId: UUID) {
         try {
             val confirm = inputReader.readString("Are you sure you want to delete project $projectId? (yes/no): ")
             if (confirm.equals("yes", ignoreCase = true)) {
-                deleteProjectUseCase(projectId)
+                manageProject.deleteProject(projectId)
                 println("🗑️ Project $projectId deleted successfully!")
             } else {
                 println("❌ Project deletion canceled.")
@@ -92,17 +79,17 @@ class ProjectDashboardCli(
     }
 
     private fun showHistory(projectId: UUID, user: User) {
-        val projectLogs = getLogsByProjectIdUseCase(projectId)
-
-        if (projectLogs.isEmpty()) {
+        val projectLogs = try {
+            manageAuditLog.getProjectLogs(projectId)
+        } catch (e: NoLogException) {
             println("ℹ️ No history found for this project.")
             return
         }
 
-        val tasks = getTasksByProjectUseCase(projectId)
+        val tasks = manageTask.getProjectTasks(projectId)
         val taskMap = tasks.associateBy { it.id }
 
-        val project = getProjectUseCase(projectId)
+        val project = manageProject.getProject(projectId)
 
         projectLogs.forEach { log ->
             val actionDate = log.actionDate.toString()
@@ -118,27 +105,50 @@ class ProjectDashboardCli(
                 }
 
                 ActionType.TASK_STATE_CHANGED -> {
+                    // Redundant, the same as TASK_TITLE_MODIFIED
                     val taskTitle = taskMap[log.taskId]?.title ?: "Unknown Task"
-                    val fromState = getTaskStateByIdUseCase(log.currentStateId).name
-                    val toState = getTaskStateByIdUseCase(log.newStateId).name
+                    val fromState = log.currentState ?: "Unknown"
+                    val toState = log.newState ?: "Unknown"
                     """moved the task "$taskTitle" from "$fromState" to "$toState""""
                 }
 
                 ActionType.PROJECT_CREATED -> """created the project "${project.name}""""
 
-                ActionType.PROJECT_MODIFIED -> {
+                ActionType.PROJECT_TITLE_MODIFIED -> {
                     """modified the project "${project.name}""""
                 }
 
                 ActionType.PROJECT_DELETED -> """deleted the project "${project.name}""""
-            }
 
+                ActionType.TASK_DESCRIPTION_MODIFIED -> {
+                    "modified the task description ${project.name}"
+                }
+
+                ActionType.TASK_ASSIGNED_USER_MODIFIED -> {
+                    "changed task assignment"
+                }
+
+                ActionType.PROJECT_ASSIGNED_USER -> {
+                    ""
+                }
+
+                ActionType.PROJECT_UNASSIGNED_USER -> {
+                    ""
+                }
+
+                ActionType.TASK_TITLE_MODIFIED -> {
+                    val taskTitle = taskMap[log.taskId]?.title ?: "Unknown Task"
+                    val fromState = log.currentState ?: "Unknown"
+                    val toState = log.newState ?: "Unknown"
+                    """moved the task "$taskTitle" from "$fromState" to "$toState""""
+                }
+            }
             println("🕒 [$actionDate] ${user.username} $actionDescription")
         }
     }
 
     private fun viewProjectSwimlaneView(allowedStates: List<TaskState>, projectId: UUID) {
-        val projectTasks = getTasksByProjectUseCase(projectId)
+        val projectTasks = manageTask.getProjectTasks(projectId)
 
         val groupedTasks = allowedStates.map { state ->
             state.name to projectTasks.filter { it.stateId == state.id }
@@ -156,28 +166,28 @@ class ProjectDashboardCli(
         printTable(headers, tableRows)
     }
 
-    override fun editProject(projectId: UUID, currentUser: User) {
-        val updatedProject = getProjectUseCase(projectId)
+    private fun editProject(projectId: UUID, currentUser: User) {
+        val updatedProject = manageProject.getProject(projectId)
 
         display.displayMenu(
             listOf(
-                UiAction("Title") { updateField("Title", updatedProject, currentUser = currentUser) },
-                UiAction("Assign Mate") { updateField("Assign Mate", updatedProject, currentUser = currentUser) },
-                UiAction("Remove Mate") { updateField("Remove Mate", updatedProject, currentUser = currentUser) },
+                UiAction("Title", { updateField("Title", updatedProject, currentUser = currentUser) }),
+                UiAction("Assign Mate", { updateField("Assign Mate", updatedProject, currentUser = currentUser) }),
+                UiAction("Remove Mate", { updateField("Remove Mate", updatedProject, currentUser = currentUser) }),
             ),
             menuTitle = "\nSelect the field you want to update:"
         )
 
-        updateProjectUseCase(projectId, updatedProject)
+        manageProject.updateProject(projectId, updatedProject)
 
         println("✅ Task updated successfully!")
     }
 
-    override fun deleteTask(taskId: UUID) {
+    private fun deleteTask(taskId: UUID) {
         try {
             val confirm = inputReader.readString("Are you sure you want to delete task $taskId? (yes/no): ")
             if (confirm.equals("yes", ignoreCase = true)) {
-                deleteTaskUseCase(taskId)
+                manageTask.deleteTask(taskId)
                 println("🗑️ Task $taskId deleted successfully!")
             } else {
                 println("❌ Task deletion canceled.")
@@ -187,13 +197,13 @@ class ProjectDashboardCli(
         }
     }
 
-    override fun createTask(projectId: UUID, currentUser: User) {
+    private fun createTask(projectId: UUID, currentUser: User) {
         val title = inputReader.readString("Enter task title: ")
         val description = inputReader.readString("Enter task description: ")
-        val project = getProjectUseCase(projectId)
+        val project = manageProject.getProject(projectId)
         val assigneeInput: String
         var assigneeId: UUID? = null
-        val mates = getAllMatesUseCase().filter { it.id in project.assignedMatesIds }
+        val mates = manageMate.getAllMates().filter { it.id in project.assignedMatesIds }
 
         if (mates.isEmpty()) {
             println("⚠️ No mates assigned to this project.")
@@ -221,7 +231,8 @@ class ProjectDashboardCli(
             println("${index + 1}. ${state.name}")
         }
 
-        val selectedStateIndex = inputReader.readInt("Select task state (1-${getCurrentStates().size}): ", 1, getCurrentStates().size)
+        val selectedStateIndex =
+            inputReader.readInt("Select task state (1-${getCurrentStates().size}): ", 1, getCurrentStates().size)
         val stateId = getCurrentStates()[selectedStateIndex - 1].id
 
         val newTask = Task(
@@ -235,18 +246,18 @@ class ProjectDashboardCli(
         )
 
         try {
-            createTaskUseCase(newTask)
+            manageTask.createTask(newTask)
             println("✅ Task '${newTask.title}' created successfully!")
             viewProjectSwimlaneView(getCurrentStates(), projectId)
-            saveLogUseCase(
+            manageAuditLog.saveLog(
                 History(
                     id = UUID.randomUUID(),
                     projectId = projectId,
                     taskId = newTask.id,
                     actionType = ActionType.TASK_CREATED,
                     userId = currentUser.id,
-                    currentStateId = stateId,
-                    newStateId = newTask.stateId,
+                    currentState = getCurrentStates().toString(),
+                    newState = newTask.title,
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             )
@@ -255,18 +266,18 @@ class ProjectDashboardCli(
         }
     }
 
-    override fun assignMateToProject(projectId: UUID, mateId: UUID) {
-        if (assignMateUseCase(projectId, mateId)) {
+    private fun assignMateToProject(projectId: UUID, mateId: UUID) {
+        if (manageMateAssignment.assign(projectId, mateId)) {
             println("👥 Mate assigned to project successfully!")
-            saveLogUseCase(
+            manageAuditLog.saveLog(
                 History(
                     id = UUID.randomUUID(),
                     projectId = projectId,
                     taskId = UUID.randomUUID(),
-                    actionType = ActionType.PROJECT_MODIFIED,
+                    actionType = ActionType.PROJECT_ASSIGNED_USER,
                     userId = mateId,
-                    currentStateId = History.NO_UUID,
-                    newStateId = History.NO_UUID,
+                    currentState = History.NO_TASK_STATE.toString(),
+                    newState = History.NO_UUID.toString(),
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             )
@@ -275,18 +286,18 @@ class ProjectDashboardCli(
         }
     }
 
-    override fun unassignMateFromProject(projectId: UUID, mateId: UUID) {
-        if (removeMate(projectId, mateId)) {
+    private fun unassignMateFromProject(projectId: UUID, mateId: UUID) {
+        if (manageMateAssignment.unAssign(projectId, mateId)) {
             println("👤 Mate unassigned from project successfully!")
-            saveLogUseCase(
+            manageAuditLog.saveLog(
                 History(
                     id = UUID.randomUUID(),
                     projectId = projectId,
                     taskId = UUID.randomUUID(),
-                    actionType = ActionType.PROJECT_MODIFIED,
+                    actionType = ActionType.PROJECT_UNASSIGNED_USER,
                     userId = mateId,
-                    currentStateId = History.NO_UUID,
-                    newStateId = History.NO_UUID,
+                    currentState = History.NO_TASK_STATE.toString(),
+                    newState = History.NO_UUID.toString(),
                     actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             )
@@ -302,15 +313,15 @@ class ProjectDashboardCli(
                 val newTitle = inputReader.readString("Enter new title (or type 's' to keep current): ")
 
                 if (newTitle.lowercase() != "s") {
-                    saveLogUseCase(
+                    manageAuditLog.saveLog(
                         History(
                             id = UUID.randomUUID(),
                             projectId = updatedProject.id,
                             taskId = History.NO_UUID,
-                            actionType = ActionType.PROJECT_MODIFIED,
+                            actionType = ActionType.PROJECT_TITLE_MODIFIED,
                             userId = currentUser.id,
-                            currentStateId = History.NO_UUID,
-                            newStateId = History.NO_UUID,
+                            currentState = History.NO_TASK_STATE.toString(),
+                            newState = History.NO_UUID.toString(),
                             actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                         )
                     )
@@ -328,15 +339,15 @@ class ProjectDashboardCli(
 
             "Remove Mate" -> {
                 val removedMate = selectMateFromList()
-                saveLogUseCase(
+                manageAuditLog.saveLog(
                     History(
                         id = UUID.randomUUID(),
                         projectId = updatedProject.id,
                         taskId = History.NO_UUID,
-                        actionType = ActionType.PROJECT_MODIFIED,
+                        actionType = ActionType.PROJECT_UNASSIGNED_USER,
                         userId = currentUser.id,
-                        currentStateId = History.NO_UUID,
-                        newStateId = History.NO_UUID,
+                        currentState = History.NO_TASK_STATE.toString(),
+                        newState = History.NO_UUID.toString(),
                         actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                     )
                 )
@@ -349,7 +360,7 @@ class ProjectDashboardCli(
 
     private fun selectMateFromList(): UUID {
         val availableMates = try {
-            getAllMatesUseCase()
+            manageMate.getAllMates()
         } catch (e: NoMatesAvailableException) {
             println("❌ ${e.message}")
             exitProcess(1)
