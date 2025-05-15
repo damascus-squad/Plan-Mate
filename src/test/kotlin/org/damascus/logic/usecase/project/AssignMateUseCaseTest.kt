@@ -1,9 +1,10 @@
 package org.damascus.logic.usecase.project
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.damascus.logic.model.Project
 import org.damascus.logic.repo.ProjectRepository
@@ -23,9 +24,9 @@ class AssignMateUseCaseTest {
     }
 
     @Test
-    fun `should return false when assigning mate to non-existing project`() {
+    fun `should return false when assigning mate to non-existing project`() = runTest {
         // Given
-        every { repository.get(any()) } throws Exception()
+        coEvery { repository.get(any()) } throws Exception()
 
         // When
         val result = useCase.assign(UUID.randomUUID(), UUID.randomUUID())
@@ -35,11 +36,11 @@ class AssignMateUseCaseTest {
     }
 
     @Test
-    fun `should return false when assigning mate already assigned`() {
+    fun `should return false when assigning mate already assigned`() = runTest {
         // Given
         val mateId = UUID.randomUUID()
         val project = makeProject().apply { assignedMatesIds.add(mateId) }
-        every { repository.get(project.id) } returns project
+        coEvery { repository.get(project.id) } returns project
 
         // When
         val result = useCase.assign(project.id, mateId)
@@ -49,25 +50,25 @@ class AssignMateUseCaseTest {
     }
 
     @Test
-    fun `should return true when assigning mate not yet assigned`() {
+    fun `should return true when assigning mate not yet assigned`() = runTest {
         // Given
         val mateId = UUID.randomUUID()
         val project = makeProject()
-        every { repository.get(project.id) } returns project
-        every { repository.update(any(), any()) } returns true
+        coEvery { repository.get(project.id) } returns project
+        coEvery { repository.update(any(), any()) } returns true
 
         // When
         val result = useCase.assign(project.id, mateId)
 
         // Then
         assertThat(result).isTrue()
-        verify { repository.update(project.id, match { mateId in it.assignedMatesIds }) }
+        coVerify { repository.update(project.id, match { mateId in it.assignedMatesIds }) }
     }
 
     @Test
-    fun `should return false when unassigning mate from non-existing project`() {
+    fun `should return false when unassigning mate from non-existing project`() = runTest {
         // Given
-        every { repository.get(any()) } throws Exception()
+        coEvery { repository.get(any()) } throws Exception()
 
         // When
         val result = useCase.assign(UUID.randomUUID(), UUID.randomUUID())
@@ -77,11 +78,11 @@ class AssignMateUseCaseTest {
     }
 
     @Test
-    fun `should return false when unassigning mate not in list`() {
+    fun `should return false when unassigning mate not in list`() = runTest {
         // Given
         val project = makeProject()
         val mateId = UUID.randomUUID()
-        every { repository.get(project.id) } returns project
+        coEvery { repository.get(project.id) } returns project
 
         // When
         val result = useCase.assign(project.id, mateId)

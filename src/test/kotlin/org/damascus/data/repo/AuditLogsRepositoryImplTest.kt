@@ -1,9 +1,10 @@
 package org.damascus.data.repo
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -26,7 +27,7 @@ class AuditLogsRepositoryImplTest {
     }
 
     @Test
-    fun `saveLog should write the log to dataSource`() {
+    fun `saveLog should write the log to dataSource`() = runTest {
         // Given
         val log = sampleLog
 
@@ -34,15 +35,15 @@ class AuditLogsRepositoryImplTest {
         repository.saveLog(log)
 
         // Then
-        verify(exactly = 1) { dataSource.write(log) }
+        coVerify  { dataSource.write(log) }
     }
 
     @Test
-    fun `getLogByProjectId should return logs matching projectId`() {
+    fun `getLogByProjectId should return logs matching projectId`() = runTest {
         // Given
         val log = sampleLog
         val otherLog = sampleLog.copy(projectId = UUID.randomUUID())
-        every { dataSource.read() } returns listOf(log, otherLog)
+        coEvery { dataSource.read() } returns listOf(log, otherLog)
 
         // When
         val result = repository.getLogsByProjectId(log.projectId)
@@ -52,10 +53,10 @@ class AuditLogsRepositoryImplTest {
     }
 
     @Test
-    fun `getLogByProjectId should return empty list if no match found`() {
+    fun `getLogByProjectId should return empty list if no match found`() = runTest {
         // Given
         val log = sampleLog.copy(projectId = UUID.randomUUID())
-        every { dataSource.read() } returns listOf(log)
+        coEvery { dataSource.read() } returns listOf(log)
 
         // When
         val result = repository.getLogsByProjectId(UUID.randomUUID())
@@ -65,11 +66,11 @@ class AuditLogsRepositoryImplTest {
     }
 
     @Test
-    fun `getLogByTaskId should return logs matching taskId`() {
+    fun `getLogByTaskId should return logs matching taskId`() = runTest {
         // Given
         val log = sampleLog
         val otherLog = sampleLog.copy(taskId = UUID.randomUUID())
-        every { dataSource.read() } returns listOf(log, otherLog)
+        coEvery { dataSource.read() } returns listOf(log, otherLog)
 
         // When
         val result = repository.getLogsByTaskId(log.taskId)
@@ -79,10 +80,10 @@ class AuditLogsRepositoryImplTest {
     }
 
     @Test
-    fun `getLogByTaskId should return empty list if no match found`() {
+    fun `getLogByTaskId should return empty list if no match found`() = runTest {
         // Given
         val log = sampleLog.copy(taskId = UUID.randomUUID())
-        every { dataSource.read() } returns listOf(log)
+        coEvery { dataSource.read() } returns listOf(log)
 
         // When
         val result = repository.getLogsByTaskId(UUID.randomUUID())
