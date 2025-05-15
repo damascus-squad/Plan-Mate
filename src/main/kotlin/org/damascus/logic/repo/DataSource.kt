@@ -8,4 +8,5 @@ interface DataSource<T> {
     fun write(entriesList: List<T>)
     fun update(id: UUID, updatedData: T)
     fun delete(id: UUID)
+    //
 }
