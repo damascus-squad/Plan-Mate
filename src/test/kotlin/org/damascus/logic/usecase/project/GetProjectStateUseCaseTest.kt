@@ -1,8 +1,9 @@
 package org.damascus.logic.usecase.project
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.damascus.logic.exception.NoTasksFoundException
 import org.damascus.logic.model.Project
@@ -36,9 +37,9 @@ class GetProjectStateUseCaseTest {
     }
 
     @Test
-    fun `should throw NoTasksFoundException when project has no tasks`() {
+    fun `should throw NoTasksFoundException when project has no tasks`()= runTest {
         // Given
-        every { taskRepository.getByProject(any()) } returns emptyList()
+        coEvery { taskRepository.getByProject(any()) } returns emptyList()
 
         // When && Then
         assertThrows<NoTasksFoundException> {
@@ -47,11 +48,11 @@ class GetProjectStateUseCaseTest {
     }
 
     @Test
-    fun `should return valid ProjectState when project has tasks`() {
+    fun `should return valid ProjectState when project has tasks`()= runTest {
         // Given
         val project = getProject()
-        every { taskRepository.getByProject(project.id) } returns getListOfProjectTasks(project.id)
-        every { taskStateRepository.getAllStates() } returns taskStatesList
+        coEvery { taskRepository.getByProject(project.id) } returns getListOfProjectTasks(project.id)
+        coEvery { taskStateRepository.getAllStates() } returns taskStatesList
 
         // When
         val resultProjectState = getProjectStateUseCase(project.id)

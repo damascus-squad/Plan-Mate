@@ -1,8 +1,9 @@
 package org.damascus.logic.usecase.auditLog
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -34,13 +35,13 @@ class ManageAuditLogUseCaseTest {
     }
 
     @Test
-    fun `should return action log when history is not empty`() {
+    fun `should return action log when history is not empty`() = runTest {
         // Given
         val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
         val fakeDate = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault())
         val projectId = UUID.randomUUID()
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns listOf(
+        coEvery { auditLogRepository.getLogsByProjectId(projectId) } returns listOf(
             createFakeActionLog(
                 id,
                 userId,
@@ -70,10 +71,10 @@ class ManageAuditLogUseCaseTest {
     }
 
     @Test
-    fun `should throw NoHistoryException when no log are found for the given project id`() {
+    fun `should throw NoHistoryException when no log are found for the given project id`() = runTest {
         // Given
         val projectId = UUID.randomUUID()
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
+        coEvery { auditLogRepository.getLogsByProjectId(projectId) } returns emptyList()
 
         // When & Then
         assertThrows<NoLogException> {
@@ -82,10 +83,10 @@ class ManageAuditLogUseCaseTest {
     }
 
     @Test
-    fun `should throw NoHistoryException when no log are found for the given task id`() {
+    fun `should throw NoHistoryException when no log are found for the given task id`() = runTest {
         // Given
         val taskId = UUID.randomUUID()
-        every { auditLogRepository.getLogsByTaskId(taskId) } returns emptyList()
+        coEvery { auditLogRepository.getLogsByTaskId(taskId) } returns emptyList()
 
         // When & Then
         assertThrows<NoLogException> {
@@ -94,7 +95,7 @@ class ManageAuditLogUseCaseTest {
     }
 
     @Test
-    fun `should save action log when the action is valid`() {
+    fun `should save action log when the action is valid`() = runTest {
         // Given
         val id = UUID.randomUUID()
         val userId = UUID.randomUUID()
@@ -113,7 +114,7 @@ class ManageAuditLogUseCaseTest {
         manageAuditLogUseCase.saveLog(userAction)
 
         // Then
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             auditLogRepository.saveLog(match {
                 it.currentState == todoState &&
                         it.newState == inProgressState &&
@@ -123,7 +124,7 @@ class ManageAuditLogUseCaseTest {
     }
 
     @Test
-    fun `should return action log when given projectId`() {
+    fun `should return action log when given projectId`() = runTest {
         // Given
         val id = UUID.randomUUID()
         val projectId = UUID.randomUUID()
@@ -141,7 +142,7 @@ class ManageAuditLogUseCaseTest {
                 ActionType.TASK_STATE_CHANGED
             )
         )
-        every { auditLogRepository.getLogsByProjectId(projectId) } returns log
+        coEvery { auditLogRepository.getLogsByProjectId(projectId) } returns log
 
         // When
         val result = manageAuditLogUseCase.getProjectLogs(projectId)
@@ -151,7 +152,7 @@ class ManageAuditLogUseCaseTest {
     }
 
     @Test
-    fun `should return action log when given taskId`() {
+    fun `should return action log when given taskId`() = runTest {
         // Given
         val id = UUID.randomUUID()
         val taskId = UUID.randomUUID()
@@ -169,7 +170,7 @@ class ManageAuditLogUseCaseTest {
                 ActionType.TASK_STATE_CHANGED
             )
         )
-        every { auditLogRepository.getLogsByTaskId(taskId) } returns log
+        coEvery { auditLogRepository.getLogsByTaskId(taskId) } returns log
 
         // When
         val result = manageAuditLogUseCase.getTaskLogs(taskId)

@@ -9,6 +9,7 @@ import java.util.*
 class ManageMateUseCase(
     private val authRepo: AuthenticationRepository
 ) {
-    fun getMate(userId: UUID) = authRepo.getMateById(userId) ?: throw UserNotFoundException()
-    fun getAllMates(): List<User> = authRepo.getAllMates().also { if (it.isEmpty()) throw NoMatesAvailableException() }
+    suspend fun getMate(userId: UUID) = authRepo.getMateById(userId) ?: throw UserNotFoundException()
+    suspend fun getAllMates(): List<User> =
+        authRepo.getAllMates().also { if (it.isEmpty()) throw NoMatesAvailableException() }
 }

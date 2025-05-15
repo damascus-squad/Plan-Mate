@@ -1,9 +1,10 @@
 package org.damascus.data.repo
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
 import org.damascus.logic.exception.ProjectNotFoundException
 import org.damascus.logic.model.Project
@@ -25,38 +26,38 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `create function should return false when create an existing project`() {
+    fun `create function should return false when create an existing project`() = runTest {
         // Given
         val project = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf(project)
+        coEvery { dataSource.read() } returns listOf(project)
 
         // When
         val result = repo.create(project)
 
         // Then
         assertThat(result).isFalse()
-        verify(exactly = 0) { dataSource.write(any<Project>()) }
+        coVerify(exactly = 0) { dataSource.write(any<Project>()) }
     }
 
     @Test
-    fun `create function should return true when create a new project`() {
+    fun `create function should return true when create a new project`() = runTest {
         // Given
         val newProject = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf()
+        coEvery { dataSource.read() } returns listOf()
 
         // When
         val result = repo.create(newProject)
 
         // Then
         assertThat(result).isTrue()
-        verify { dataSource.write(newProject) }
+        coVerify { dataSource.write(newProject) }
     }
 
     @Test
-    fun `update function should return false when update a non existing project`() {
+    fun `update function should return false when update a non existing project`() = runTest {
         // Given
         val project = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf()
+        coEvery { dataSource.read() } returns listOf()
 
         // When
         val result = repo.update(project.id, project)
@@ -66,12 +67,12 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `update function should return true when project is updated successfully`() {
+    fun `update function should return true when project is updated successfully`() = runTest {
         // Given
         val project1 = makeProject(UUID.randomUUID())
         val project2 = makeProject(UUID.randomUUID())
         val updatedProject = makeProject(project1.id)
-        every { dataSource.read() } returns listOf(project1, project2)
+        coEvery { dataSource.read() } returns listOf(project1, project2)
 
         // When
         val result = repo.update(project1.id, updatedProject)
@@ -81,10 +82,10 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `delete function should return false when delete a non existing project`() {
+    fun `delete function should return false when delete a non existing project`() = runTest {
         // Given
         val project = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf()
+        coEvery { dataSource.read() } returns listOf()
 
         // When
         val result = repo.delete(project.id)
@@ -94,10 +95,10 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `delete function should return true when delete an existing project`() {
+    fun `delete function should return true when delete an existing project`() = runTest {
         // Given
         val project = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf(project)
+        coEvery { dataSource.read() } returns listOf(project)
 
         // When
         val result = repo.delete(project.id)
@@ -107,10 +108,10 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `exists function should return false when project not exist`() {
+    fun `exists function should return false when project not exist`() = runTest {
         // Given
         val project = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf()
+        coEvery { dataSource.read() } returns listOf()
 
         // When
         val result = repo.exists(project.id)
@@ -120,10 +121,10 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `exists function should return true when project exist`() {
+    fun `exists function should return true when project exist`() = runTest {
         // Given
         val project = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf(project)
+        coEvery { dataSource.read() } returns listOf(project)
 
         // When
         val result = repo.exists(project.id)
@@ -133,10 +134,10 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `get function should return project when project exist`() {
+    fun `get function should return project when project exist`() = runTest {
         // Given
         val project = makeProject(UUID.randomUUID())
-        every { dataSource.read() } returns listOf(project)
+        coEvery { dataSource.read() } returns listOf(project)
 
         // When
         val result = repo.get(project.id)
@@ -146,10 +147,10 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `get should throw ProjectNotFoundException when project does not exist`() {
+    fun `get should throw ProjectNotFoundException when project does not exist`() = runTest {
         // Given
         val nonExistentId = UUID.randomUUID()
-        every { dataSource.read() } returns listOf()
+        coEvery { dataSource.read() } returns listOf()
 
         // When & Then
         assertThrows<ProjectNotFoundException> {
@@ -158,9 +159,9 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `getAll function should return empty list when no projects exist`() {
+    fun `getAll function should return empty list when no projects exist`() = runTest {
         // Given
-        every { dataSource.read() } returns listOf()
+        coEvery { dataSource.read() } returns listOf()
 
         // When
         val result = repo.getAll()
@@ -170,12 +171,12 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `getAll function should return list of projects when projects exist`() {
+    fun `getAll function should return list of projects when projects exist`() = runTest {
         // Given
         val project1 = makeProject(UUID.randomUUID())
         val project2 = makeProject(UUID.randomUUID())
         val twoProjects = listOf(project1, project2)
-        every { dataSource.read() } returns twoProjects
+        coEvery { dataSource.read() } returns twoProjects
 
         // When
         val result = repo.getAll()
@@ -185,25 +186,26 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `getAllProjectsByMateId function should return empty list when no projects are assigned to the mate`() {
-        // Given
-        val mateId = UUID.randomUUID()
-        every { dataSource.read() } returns listOf()
+    fun `getAllProjectsByMateId function should return empty list when no projects are assigned to the mate`() =
+        runTest {
+            // Given
+            val mateId = UUID.randomUUID()
+            coEvery { dataSource.read() } returns listOf()
 
-        // When
-        val result = repo.getAllProjectsByMateId(mateId)
+            // When
+            val result = repo.getAllProjectsByMateId(mateId)
 
-        // Then
-        assertThat(result).isEmpty()
-    }
+            // Then
+            assertThat(result).isEmpty()
+        }
 
     @Test
-    fun `getAllProjectsByMateId function should return a list of projects assigned to the mate`() {
+    fun `getAllProjectsByMateId function should return a list of projects assigned to the mate`() = runTest {
         // Given
         val mateId = UUID.randomUUID()
         val project1 = makeProject(UUID.randomUUID()).apply { assignedMatesIds.add(mateId) }
         val project2 = makeProject(UUID.randomUUID()).apply { assignedMatesIds.add(mateId) }
-        every { dataSource.read() } returns listOf(project1, project2)
+        coEvery { dataSource.read() } returns listOf(project1, project2)
 
         // When
         val result = repo.getAllProjectsByMateId(mateId)
@@ -213,12 +215,12 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `getAllProjectsByMateId function should return empty list when no project contains the mate`() {
+    fun `getAllProjectsByMateId function should return empty list when no project contains the mate`() = runTest {
         // Given
         val mateId = UUID.randomUUID()
         val project1 = makeProject(UUID.randomUUID()) // Mate is not assigned
         val project2 = makeProject(UUID.randomUUID()) // Mate is not assigned
-        every { dataSource.read() } returns listOf(project1, project2)
+        coEvery { dataSource.read() } returns listOf(project1, project2)
 
         // When
         val result = repo.getAllProjectsByMateId(mateId)
@@ -228,17 +230,17 @@ class ProjectRepositoryImplTest {
     }
 
     @Test
-    fun `getAllProjectsByMateId should read from dataSource`() {
+    fun `getAllProjectsByMateId should read from dataSource`() = runTest {
         // Given
         val mateId = UUID.randomUUID()
         val project = makeProject(UUID.randomUUID()).apply { assignedMatesIds.add(mateId) }
-        every { dataSource.read() } returns listOf(project)
+        coEvery { dataSource.read() } returns listOf(project)
 
         // When
         repo.getAllProjectsByMateId(mateId)
 
         // Then
-        verify { dataSource.read() }
+        coVerify { dataSource.read() }
     }
 
     private fun makeProject(id: UUID): Project {
