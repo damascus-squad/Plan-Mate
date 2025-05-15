@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "2.1.20"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
     id("com.google.devtools.ksp") version "2.1.20-1.0.32"
-    id("jacoco")
 }
 
 group = "org.damascus"
@@ -38,48 +38,42 @@ tasks.test {
     testLogging {
         showStandardStreams = true
     }
-    finalizedBy(tasks.jacocoTestReport)
 }
 
-tasks.jacocoTestReport {
+kover {
     reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-    dependsOn(tasks.test)
-}
-
-tasks.jacocoTestCoverageVerification {
-    classDirectories.setFrom(
-        sourceSets.main.get().output.asFileTree.matching {
-            exclude("**/model/**", "**/di/**", "**/ui/**", "**/MainKt.class")
+        filters {
+            excludes {
+                classes("*di.*", "*ui.*", "*model.*")
+                annotatedBy("*KoverIgnore")
+            }
         }
-    )
 
-    violationRules {
-        rule {
-            limit {
-                counter = "LINE"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
+        verify {
+            rule {
+                bound {
+                    coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.INSTRUCTION
+                    minValue = 80
+                }
             }
-            limit {
-                counter = "BRANCH"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
+
+            rule {
+                bound {
+                    coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.BRANCH
+                    minValue = 80
+                }
             }
-            limit {
-                counter = "METHOD"
-                value = "COVEREDRATIO"
-                minimum = "0.8".toBigDecimal()
+
+            rule {
+                bound {
+                    coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.LINE
+                    minValue = 80
+                }
             }
         }
     }
 }
 
-jacoco {
-    toolVersion = "0.8.13"
-}
 
 kotlin {
     jvmToolchain(17)
