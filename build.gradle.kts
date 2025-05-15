@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "2.1.20"
-    id("org.jetbrains.kotlinx.kover") version "0.6.1"
+    id("org.jetbrains.kotlinx.kover") version "0.9.1"
 
 }
 
@@ -33,37 +33,33 @@ tasks.test {
 }
 
 kover {
-    filters {
-        classes {
-            excludes += listOf("*di.*", "*ui.*","*model.*", "*MainKt*")
+    reports {
+        filters {
+            excludes {
+                classes("*di.*", "*ui.*", "*model.*")
+                annotatedBy("*KoverIgnore")
+            }
         }
-    }
-    htmlReport {
-        onCheck.set(true)
 
         verify {
             rule {
-                isEnabled = true
-                name = "Line Coverage of Tests must be more than 80%"
                 bound {
+                    coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.INSTRUCTION
                     minValue = 80
-                    counter = kotlinx.kover.api.CounterType.LINE
                 }
             }
+
             rule {
-                isEnabled = true
-                name = "Branch Coverage of Tests must be more than 80%"
                 bound {
+                    coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.BRANCH
                     minValue = 80
-                    counter = kotlinx.kover.api.CounterType.BRANCH
                 }
             }
+
             rule {
-                isEnabled = true
-                name = "Instruction Coverage of Tests must be more than 80%"
                 bound {
+                    coverageUnits = kotlinx.kover.gradle.plugin.dsl.CoverageUnit.LINE
                     minValue = 80
-                    counter = kotlinx.kover.api.CounterType.INSTRUCTION
                 }
             }
         }
