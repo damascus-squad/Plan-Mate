@@ -6,7 +6,7 @@ import org.damascus.logic.repo.AuthenticationRepository
 class AuthenticateUserLoginUseCase(
     private val authRepo: AuthenticationRepository
 ) {
-    operator fun invoke(username: String, password: String): Result<User> {
+    suspend operator fun invoke(username: String, password: String): Result<User> {
         return runCatching { authRepo.login(username, password) }
     }
 }

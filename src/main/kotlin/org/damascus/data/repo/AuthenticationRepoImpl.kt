@@ -17,7 +17,7 @@ class AuthenticationRepoImpl(
     private val usersDataSource: DataSource<UserDTO>
 ) : AuthenticationRepository {
 
-    override fun login(username: String, password: String): User {
+    override suspend fun login(username: String, password: String): User {
         val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException()
         val searchedUserPassword = searchedUser.hashedPassword
 
@@ -28,7 +28,7 @@ class AuthenticationRepoImpl(
         return searchedUser.toUser()
     }
 
-    override fun createMate(requester: User, newUsername: String, rawPassword: String): User {
+    override suspend fun createMate(requester: User, newUsername: String, rawPassword: String): User {
         if (requester.userRole == UserRole.MATE) {
             throw UnauthorizedActionException("create a mate")
         }
@@ -44,17 +44,17 @@ class AuthenticationRepoImpl(
         return newMate.toUser()
     }
 
-    override fun getMateById(userId: UUID): User {
+    override suspend fun getMateById(userId: UUID): User {
         return usersDataSource.read()
             .find { it.id == userId }?.toUser() ?: throw UserNotFoundException()
     }
 
-    override fun getAllMates(): List<User>{
+    override suspend fun getAllMates(): List<User> {
         return usersDataSource.read()
             .filter { it.userRole == UserRole.MATE }.map { it.toUser() }
     }
 
-    private fun getUserByUsername(username: String): UserDTO? {
+    private suspend fun getUserByUsername(username: String): UserDTO? {
         return usersDataSource.read().find { it.username == username }
     }
 }

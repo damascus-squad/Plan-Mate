@@ -1,8 +1,10 @@
 package org.damascus.data.repo
 
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.damascus.data.dto.UserDTO
 import org.damascus.logic.exception.InvalidCredentialsException
 import org.damascus.logic.exception.UnauthorizedActionException
@@ -36,14 +38,14 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `login should return user when credentials are valid`() {
+    fun `login should return user when credentials are valid`() = runTest {
         // Given
         val username = "abdo"
         val rawPassword = "pass123"
         val hashedPassword = "hashed-pass"
         val storedUser = UserDTO(id = UUID.randomUUID(), hashedPassword, username, UserRole.MATE)
 
-        every { usersDataSource.read() } returns listOf(storedUser)
+        coEvery { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(rawPassword, hashedPassword) } returns true
 
         // When
@@ -54,11 +56,11 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `login should throw UserNotFoundException when user does not exist`() {
+    fun `login should throw UserNotFoundException when user does not exist`() = runTest {
         // Given
         val username = "unknown"
         val password = "somepass"
-        every { usersDataSource.read() } returns emptyList()
+        coEvery { usersDataSource.read() } returns emptyList()
 
         // When, Then
         assertFailsWith<UserNotFoundException> {
@@ -67,14 +69,14 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `login should throw InvalidPasswordException when password is incorrect`() {
+    fun `login should throw InvalidPasswordException when password is incorrect`() = runTest {
         // Given
         val username = "ahmed"
         val correctHashed = "hashed-pass"
         val wrongInput = "wrong-pass"
         val storedUser = UserDTO(id = UUID.randomUUID(), correctHashed, username, UserRole.MATE)
 
-        every { usersDataSource.read() } returns listOf(storedUser)
+        coEvery { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(wrongInput, correctHashed) } returns false
 
         // When , Then
@@ -85,11 +87,11 @@ class AuthenticationRepositoryImplTest {
 
     @ParameterizedTest
     @MethodSource("existingUsersLists")
-    fun `createMate should fail if user already exists`(matesList: List<UserDTO>) {
+    fun `createMate should fail if user already exists`(matesList: List<UserDTO>) = runTest {
         // Given
         val admin = User(UUID.randomUUID(), "hashed123", UserRole.ADMIN)
         val existingUsername = "mate17"
-        every { usersDataSource.read() } returns matesList
+        coEvery { usersDataSource.read() } returns matesList
 
         // When , Then
         assertFailsWith<UserAlreadyExistException> {
@@ -98,14 +100,14 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `createMate should hash password and return correct Mate`() {
+    fun `createMate should hash password and return correct Mate`() = runTest {
         // Given
         val admin = User(UUID.randomUUID(), "admin1", UserRole.ADMIN)
         val username = "newMate"
         val rawPassword = "password"
 
-        every { usersDataSource.read() } returns emptyList()
-        every { usersDataSource.write(any<UserDTO>()) } returns Unit
+        coEvery { usersDataSource.read() } returns emptyList()
+        coEvery { usersDataSource.write(any<UserDTO>()) } returns Unit
 
         // When
         val mate = authRepo.createMate(admin, username, rawPassword)
@@ -116,7 +118,7 @@ class AuthenticationRepositoryImplTest {
     }
 
     @Test
-    fun `createMate should fail when mate is the creator`() {
+    fun `createMate should fail when mate is the creator`() = runTest {
         val mate = User(id = UUID.randomUUID(), "mate1", UserRole.MATE)
         val username = "newMate"
         val rawPassword = "123"
