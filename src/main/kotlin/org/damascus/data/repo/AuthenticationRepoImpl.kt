@@ -16,10 +16,10 @@ import java.util.*
 
 @Single
 class AuthenticationRepoImpl(
+    private val hashingService: HashingService,
     @Named("userDataSource")
-    private val usersDataSource: DataSource<UserDTO>,
-    private val hashingService: HashingService
-) : AuthenticationRepository {
+    private val usersDataSource: DataSource<UserDTO>
+    ) : AuthenticationRepository {
 
     override fun login(username: String, password: String): User {
         val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException()
