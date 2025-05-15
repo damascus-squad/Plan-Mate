@@ -14,11 +14,11 @@ import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.getKoin
 
  fun main() {
-     val scope = CoroutineScope(Dispatchers.Default)
+     val appScope = CoroutineScope(Dispatchers.Default)
      startKoin {
         modules(appModule, repositoryModule, useCaseModule)
     }
-     scope.launch {
+     appScope.launch {
          val loadingJob = launch {
              showEmojiLoading("Starting PlanMate")
          }
