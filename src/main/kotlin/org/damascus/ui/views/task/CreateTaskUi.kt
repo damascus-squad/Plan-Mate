@@ -16,8 +16,10 @@ import org.damascus.logic.model.User
 import org.damascus.logic.model.UserRole
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.user.SelectMateUi
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class CreateTaskUi(
     private val inputReader: InputReader,
     private val selectMateUi: SelectMateUi,

@@ -9,8 +9,10 @@ import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.printTaskDetails
 import org.damascus.ui.views.auditLog.TaskLogUi
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class TaskDashboardUi(
     private val display: Display,
     private val updateTaskUi: UpdateTaskUi,

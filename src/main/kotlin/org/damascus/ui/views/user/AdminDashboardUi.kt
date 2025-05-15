@@ -4,7 +4,9 @@ import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.project.AllProjectsUi
+import org.koin.core.annotation.Single
 
+@Single
 class AdminDashboardUi(
     private val consoleDisplay: Display,
     private val allProjectsUi: AllProjectsUi,

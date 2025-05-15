@@ -1,8 +1,10 @@
 package org.damascus.logic.usecase.project
 
 import org.damascus.logic.repo.ProjectRepository
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class ManageMateAssignmentUseCase(
     private val repository: ProjectRepository
 ) {

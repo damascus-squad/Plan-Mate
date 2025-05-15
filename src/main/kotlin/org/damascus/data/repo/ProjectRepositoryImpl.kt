@@ -4,9 +4,15 @@ import org.damascus.logic.exception.ProjectNotFoundException
 import org.damascus.logic.model.Project
 import org.damascus.logic.repo.DataSource
 import org.damascus.logic.repo.ProjectRepository
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.*
 
-class ProjectRepositoryImpl(private val dataSource: DataSource<Project>) : ProjectRepository {
+@Single
+class ProjectRepositoryImpl(
+    @Named("projectDataSource")
+    private val dataSource: DataSource<Project>
+) : ProjectRepository {
 
     override fun create(project: Project): Boolean {
         if (dataSource.read().any { it.id == project.id }) return false
