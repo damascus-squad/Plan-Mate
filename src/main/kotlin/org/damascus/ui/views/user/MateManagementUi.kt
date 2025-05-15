@@ -3,7 +3,9 @@ package org.damascus.ui.views.user
 import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
+import org.koin.core.annotation.Single
 
+@Single
 class MateManagementUi(
     private val display: Display,
     private val createMateUi: CreateMateUi,

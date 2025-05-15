@@ -5,9 +5,13 @@ import org.damascus.logic.exception.TaskNotFoundException
 import org.damascus.logic.model.Task
 import org.damascus.logic.repo.DataSource
 import org.damascus.logic.repo.TaskRepository
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class TaskRepositoryImpl(
+    @Named("taskDataSource")
     private val taskDataSource: DataSource<Task>
 ) : TaskRepository {
 

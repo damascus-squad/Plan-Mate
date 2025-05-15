@@ -4,7 +4,9 @@ import org.damascus.logic.model.User
 import org.damascus.logic.usecase.auth.AuthenticateUserLoginUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 
+@Single
 class LoginView(
     private val authenticateUserLoginUseCase: AuthenticateUserLoginUseCase,
     private val inputReader: InputReader,

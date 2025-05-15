@@ -7,7 +7,9 @@ import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.printProjectDetails
 import org.damascus.ui.views.auditLog.ProjectLogUi
 import org.damascus.ui.views.task.TaskMainUi
+import org.koin.core.annotation.Single
 
+@Single
 class ProjectManagementUi(
     private val display: Display,
     private val updateProjectUi: UpdateProjectUi,
