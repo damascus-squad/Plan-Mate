@@ -54,6 +54,7 @@ import org.damascus.ui.views.user.GetAllMatesUi
 import org.damascus.ui.views.user.MateDashboardUi
 import org.damascus.ui.views.user.MateManagementUi
 import org.damascus.ui.views.user.SelectMateUi
+import ui.views.taskState.TaskStateCli
 
 val appModule = module {
 
@@ -146,5 +147,6 @@ val appModule = module {
     single { UpdateTaskDescriptionUi(get(), get(), get(), get(), get(), get()) }
     single { UpdateTaskAssigneeUi(get(), get(), get(), get(), get(), get()) }
     single { DeleteTaskUi(get(), get(), get(), get()) }
+    single { TaskStateCli(get(), get(), get(), get()) }
 
 }
