@@ -13,7 +13,7 @@ class TaskStateDashboard(
     private val getAllTaskStateUi: GetAllTaskStateUi
 ) {
 
-    fun start() {
+    operator fun invoke() {
         display.displayMenu(
             listOf(
                 UiAction("Show All States", { getAllTaskStateUi() }),

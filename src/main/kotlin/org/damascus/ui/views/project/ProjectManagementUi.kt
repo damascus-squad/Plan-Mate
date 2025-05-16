@@ -53,7 +53,7 @@ class ProjectManagementUi(
             ),
             UiAction(
                 name = "🧮 Manage Task State",
-                action = { taskStateDashboard.start() },
+                action = { taskStateDashboard() },
                 exitAfterAction = true
             )
         )
