@@ -24,7 +24,6 @@ class DeleteTaskStateUi(
         val selectedState = states[index - 1]
 
         println("You selected: ${selectedState.name}")
-        println("It is currently used in ${selectedState.projectReferencesCount} project(s).")
 
         val confirm = inputReader.readString("Are you sure you want to delete or reduce references? (yes/no): ")
         if (!confirm.equals("yes", ignoreCase = true)) {
