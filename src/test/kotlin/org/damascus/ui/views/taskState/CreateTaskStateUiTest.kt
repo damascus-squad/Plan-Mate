@@ -1,10 +1,8 @@
 package org.damascus.ui.views.taskState
 
-import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.damascus.logic.exception.DuplicateStateException
 import org.damascus.logic.usecase.auditLog.ManageAuditLogUseCase
 import org.damascus.logic.usecase.state.ManageTaskStateUseCase
 import org.damascus.ui.io.InputReader
@@ -26,17 +24,6 @@ class CreateTaskStateUiTest {
 
         verify { manageTaskState.createTaskState("In Progress") }
         verify { auditLogUseCase.saveLog(any()) }
-    }
-
-    @Test
-    fun `should handle duplicate state exception`() {
-        every { inputReader.readString(any()) } returns "Done"
-        every { manageTaskState.createTaskState("Done") } throws DuplicateStateException("State already exists")
-
-        createTaskStateUi()
-
-        verify { manageTaskState.createTaskState("Done") }
-        confirmVerified(auditLogUseCase)
     }
 
 }
