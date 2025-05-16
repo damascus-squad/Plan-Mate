@@ -18,64 +18,68 @@ class UpdateTaskStateUiTest {
     private val taskStateRepo = mockk<TaskStateRepository>()
     private val manageTaskState = mockk<ManageTaskStateUseCase>(relaxed = true)
 
-    private val updateTaskStateUi = UpdateTaskStateUi(inputReader, taskStateRepo, manageTaskState)
+    private val updateUi = UpdateTaskStateUi(inputReader, taskStateRepo, manageTaskState)
 
     @Test
-    fun `should update state with new name`() {
-        val oldState = TaskState(UUID.randomUUID(), "Old", 0)
-        val newName = "New"
+    fun `should not proceed when no states exist`() {
+        every { taskStateRepo.getAllStates() } returns emptyList()
 
-        every { taskStateRepo.getAllStates() } returns listOf(oldState)
+        updateUi()
+        // Just ensure it does not crash — would be nice to capture output if needed
+    }
+
+    @Test
+    fun `should update state successfully`() {
+        val state = TaskState(UUID.randomUUID(), "OldName", 0)
+        val newName = "NewName"
+
+        every { taskStateRepo.getAllStates() } returns listOf(state)
         every { inputReader.readInt(any(), any(), any()) } returns 1
         every { inputReader.readString(any()) } returns newName
 
-        updateTaskStateUi()
+        updateUi()
 
-        verify { manageTaskState.updateTaskState(oldState, oldState.copy(name = newName)) }
+        verify { manageTaskState.updateTaskState(state, state.copy(name = newName)) }
     }
 
     @Test
-    fun `should skip update when name is blank`() {
-        val state = TaskState(UUID.randomUUID(), "Current", 0)
+    fun `should retry input until name is not blank`() {
+        val state = TaskState(UUID.randomUUID(), "Initial", 0)
 
         every { taskStateRepo.getAllStates() } returns listOf(state)
         every { inputReader.readInt(any(), any(), any()) } returns 1
-        every { inputReader.readString(any()) } returns ""
+        every { inputReader.readString(any()) } returnsMany listOf(" ", "\t", "ValidName")
 
-        updateTaskStateUi()
+        updateUi()
 
-        verify { manageTaskState.updateTaskState(state, state.copy(name = "Current")) }
+        verify { manageTaskState.updateTaskState(state, state.copy(name = "ValidName")) }
     }
 
     @Test
-    fun `should show warning when no states exist`() {
-        every { taskStateRepo.getAllStates() } returns emptyList()
-
-        updateTaskStateUi()
-    }
-    @Test
-    fun `should handle when state is duplicated `() {
+    fun `should handle DuplicateStateException`() {
         val state = TaskState(UUID.randomUUID(), "Old", 0)
+
         every { taskStateRepo.getAllStates() } returns listOf(state)
         every { inputReader.readInt(any(), any(), any()) } returns 1
-        every { inputReader.readString(any()) } returns "Duplicate"
-        every {
-            manageTaskState.updateTaskState(any(), any())
-        } throws DuplicateStateException("Exists")
+        every { inputReader.readString(any()) } returns "DupName"
+        every { manageTaskState.updateTaskState(any(), any()) } throws DuplicateStateException("Exists")
 
-        updateTaskStateUi()
+        updateUi()
+
+        verify { manageTaskState.updateTaskState(state, state.copy(name = "DupName")) }
     }
+
     @Test
-    fun `should handle when state not found`() {
-        val state = TaskState(UUID.randomUUID(), "ToUpdate", 0)
+    fun `should handle StateNotFoundException`() {
+        val state = TaskState(UUID.randomUUID(), "StateX", 0)
+
         every { taskStateRepo.getAllStates() } returns listOf(state)
         every { inputReader.readInt(any(), any(), any()) } returns 1
         every { inputReader.readString(any()) } returns "Updated"
-        every {
-            manageTaskState.updateTaskState(any(), any())
-        } throws StateNotFoundException()
+        every { manageTaskState.updateTaskState(any(), any()) } throws StateNotFoundException()
 
-        updateTaskStateUi()
+        updateUi()
+
+        verify { manageTaskState.updateTaskState(state, state.copy(name = "Updated")) }
     }
-
 }

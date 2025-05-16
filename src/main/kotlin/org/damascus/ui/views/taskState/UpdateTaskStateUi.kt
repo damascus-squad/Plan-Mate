@@ -26,9 +26,16 @@ class UpdateTaskStateUi(
 
         val index = inputReader.readInt("Select the state to update (1-${states.size}): ", 1, states.size)
         val selectedState = states[index - 1]
+        var newName: String
 
-        val newName = inputReader.readString("Enter new name (leave blank to keep current): ")
-        val updated = selectedState.copy(name = newName.ifBlank { selectedState.name })
+        do {
+            newName = inputReader.readString("Enter new name (cannot be blank): ").trim()
+            if (newName.isBlank()) {
+                println("⚠️ Name cannot be blank. Please try again.")
+            }
+        } while (newName.isBlank())
+
+        val updated = selectedState.copy(name = newName)
 
         try {
             manageTaskState.updateTaskState(selectedState, updated)
