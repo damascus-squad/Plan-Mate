@@ -4,7 +4,9 @@ import org.damascus.logic.model.Project
 import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 
+@Single
 class SelectProjectUi(
     private val consoleUserInput: InputReader,
     private val display: Display,

@@ -2,8 +2,10 @@ package org.damascus.logic.usecase.task
 
 import org.damascus.logic.model.Task
 import org.damascus.logic.repo.TaskRepository
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class ManageTaskUseCase(
     private val taskRepo: TaskRepository
 ) {

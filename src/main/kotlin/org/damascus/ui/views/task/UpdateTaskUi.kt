@@ -6,8 +6,10 @@ import org.damascus.logic.model.UserRole
 import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UpdateTaskUi(
     private val display: Display,
     private val updateTaskAssigneeUi: UpdateTaskAssigneeUi,

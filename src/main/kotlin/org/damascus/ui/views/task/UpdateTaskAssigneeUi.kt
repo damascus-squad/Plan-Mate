@@ -15,8 +15,10 @@ import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.printTaskDetails
 import org.damascus.ui.views.user.SelectMateUi
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UpdateTaskAssigneeUi(
     private val display: Display,
     private val selectMateUi: SelectMateUi,

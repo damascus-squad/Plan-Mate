@@ -5,7 +5,9 @@ import org.damascus.logic.model.User
 import org.damascus.logic.usecase.auth.ManageMateUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.printMateTable
+import org.koin.core.annotation.Single
 
+@Single
 class GetAllMatesUi(
     private val display: Display,
     private val manageMateUseCase: ManageMateUseCase
