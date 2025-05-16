@@ -16,7 +16,18 @@ class LoginView(
         while (true) {
             display.write(prompt = "🔐 Welcome to Plan Mate Login")
             val usernameInput = inputReader.readString(prompt = "👤 Enter your name ")
+
+            if (usernameInput.isBlank()) {
+                println("\nUsername cannot be empty, please try again.\n")
+                continue
+            }
+
             val passwordInput = inputReader.readString(prompt = "🔒 Enter Your Password ")
+
+            if (passwordInput.isBlank()) {
+                println("\nPassword cannot be empty, please try again.\n")
+                continue
+            }
 
             val userResult = authenticateUserLoginUseCase(
                 username = usernameInput,
