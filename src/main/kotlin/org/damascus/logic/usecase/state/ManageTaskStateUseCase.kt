@@ -1,6 +1,5 @@
 package org.damascus.logic.usecase.state
 
-import org.damascus.logic.exception.DuplicateStateException
 import org.damascus.logic.exception.StateNotFoundException
 import org.damascus.logic.model.TaskState
 import org.damascus.logic.repo.TaskStateRepository
@@ -16,10 +15,11 @@ class ManageTaskStateUseCase(
     fun getAllTaskStates() = taskStateRepo.getAllStates()
 
     fun updateTaskState(taskState: TaskState, updatedTaskState: TaskState): Boolean {
-        if (taskState.name != updatedTaskState.name && taskStateRepo.exists(updatedTaskState.name)) {
-            throw DuplicateStateException(updatedTaskState.name)
+        if (taskStateRepo.exists(updatedTaskState.name)) {
+            return taskStateRepo.update(taskState, updatedTaskState)
         }
-        return taskStateRepo.update(taskState, updatedTaskState)
+
+        throw StateNotFoundException()
     }
 
     fun deleteTaskState(taskState: TaskState): Boolean {
