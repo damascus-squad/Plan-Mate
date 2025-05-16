@@ -12,7 +12,13 @@ import org.bson.codecs.pojo.PojoCodecProvider
 import java.util.*
 
 object MongoConnector {
-    private val connectionString = getConnectionString()
+    private fun getConnectionString(): String {
+        val dotenv = Dotenv.load()
+        val mongoUsername = dotenv["MONGO_USERNAME"] ?: throw CredentialsNotFound("MONGO_USERNAME not found in .env")
+        val mongoPassword = dotenv["MONGO_PASSWORD"] ?: throw CredentialsNotFound("MONGO_PASSWORD not found in .env")
+
+        return "mongodb+srv://$mongoUsername:$mongoPassword@cluster0.cshlend.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    }
 
     private val pojoCodecProvider = PojoCodecProvider.builder()
         .automatic(true)
@@ -25,14 +31,16 @@ object MongoConnector {
         CodecRegistries.fromProviders(pojoCodecProvider)
     )
 
-    private val clientSettings = MongoClientSettings.builder()
+    fun getClientSettings(
+        connectionString: String = getConnectionString()
+    ): MongoClientSettings = MongoClientSettings.builder()
         .applyConnectionString(ConnectionString(connectionString))
         .uuidRepresentation(UuidRepresentation.STANDARD)
         .codecRegistry(codecRegistry)
         .build()
 
     private val client by lazy {
-        MongoClient.create(clientSettings)
+        MongoClient.create(getClientSettings())
     }
 
     fun getDatabase(databaseName: String): MongoDatabase {
@@ -45,13 +53,5 @@ object MongoConnector {
         } catch (e: Exception) {
             throw e
         }
-    }
-
-    private fun getConnectionString(): String {
-        val dotenv = Dotenv.load()
-        val mongoUsername = dotenv["MONGO_USERNAME"] ?: throw CredentialsNotFound("MONGO_USERNAME not found in .env")
-        val mongoPassword = dotenv["MONGO_PASSWORD"] ?: throw CredentialsNotFound("MONGO_PASSWORD not found in .env")
-
-        return "mongodb+srv://$mongoUsername:$mongoPassword@cluster0.cshlend.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     }
 }
