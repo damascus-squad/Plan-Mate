@@ -3,7 +3,6 @@ package org.damascus.ui.views.taskState
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import org.damascus.logic.exception.DuplicateStateException
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History
 import org.damascus.logic.usecase.auditLog.ManageAuditLogUseCase
@@ -20,24 +19,20 @@ class CreateTaskStateUi(
 ) {
     operator fun invoke() {
         val taskStateName = inputReader.readString("Enter name for new state: ")
-        try {
-            manageTaskState.createTaskState(taskStateName)
-            println("✅ Task state created successfully.")
+        manageTaskState.createTaskState(taskStateName)
+        println("✅ Task state created successfully.")
 
-            manageAuditLogUseCase.saveLog(
-                History(
-                    id = UUID.randomUUID(),
-                    projectId = History.NO_UUID,
-                    taskId = History.NO_UUID,
-                    actionType = ActionType.TASK_STATE_CHANGED,
-                    userId = UUID.randomUUID(),
-                    currentState = null,
-                    newState = taskStateName,
-                    actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-                )
+        manageAuditLogUseCase.saveLog(
+            History(
+                id = UUID.randomUUID(),
+                projectId = History.NO_UUID,
+                taskId = History.NO_UUID,
+                actionType = ActionType.TASK_STATE_CHANGED,
+                userId = UUID.randomUUID(),
+                currentState = null,
+                newState = taskStateName,
+                actionDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             )
-        } catch (e: DuplicateStateException) {
-            println("❌ Error: State with name \"$taskStateName\" already exists.")
-        }
+        )
     }
 }
