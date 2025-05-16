@@ -32,7 +32,7 @@ class MongoDataSource<T : MongoDocument>(
         }
 
         if (result.isEmpty())
-            throw NoSuchDocumentException("No matching items were found in the database.")
+            throw CollectionIsEmptyException()
 
         return result
     }
