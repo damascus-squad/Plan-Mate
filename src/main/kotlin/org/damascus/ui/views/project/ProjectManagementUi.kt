@@ -7,6 +7,7 @@ import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.printProjectDetails
 import org.damascus.ui.views.auditLog.ProjectLogUi
 import org.damascus.ui.views.task.TaskMainUi
+import org.damascus.ui.views.taskState.TaskStateDashboard
 
 class ProjectManagementUi(
     private val display: Display,
@@ -14,6 +15,7 @@ class ProjectManagementUi(
     private val deleteProjectUi: DeleteProjectUi,
     private val projectLogUi: ProjectLogUi,
     private val taskMainUi: TaskMainUi,
+    private val taskStateDashboard: TaskStateDashboard
 ) {
     operator fun invoke(currentProject: Project, currentUser: User) {
         currentProject.printProjectDetails()
@@ -46,6 +48,11 @@ class ProjectManagementUi(
                 name = "📋 View Tasks Board",
                 action = { taskMainUi(currentProject, currentUser) },
                 refreshAction = { invoke(currentProject, currentUser) }
+            ),
+            UiAction(
+                name = "🧮 Manage Task State",
+                action = { taskStateDashboard.start() },
+                exitAfterAction = true
             )
         )
 

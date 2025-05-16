@@ -54,7 +54,7 @@ import org.damascus.ui.views.user.GetAllMatesUi
 import org.damascus.ui.views.user.MateDashboardUi
 import org.damascus.ui.views.user.MateManagementUi
 import org.damascus.ui.views.user.SelectMateUi
-import org.damascus.ui.views.taskState.TaskStateCli
+import org.damascus.ui.views.taskState.TaskStateDashboard
 
 val appModule = module {
 
@@ -128,7 +128,7 @@ val appModule = module {
     single { CreateTaskUi(get(), get(), get(), get(), get(), get()) }
     single { PlanMateConsoleUi(get(), get(), get(), get()) }
     single { CreateProjectUi(get(), get(), get(), get()) }
-    single { ProjectManagementUi(get(), get(), get(), get(), get()) }
+    single { ProjectManagementUi(get(), get(), get(), get(), get(), get()) }
     single { ProjectLogUi(get(), get(), get(), get()) }
     single { TaskLogUi(get(), get(), get(), get()) }
     single { GetAllTasksByProjectIdUi(get(), get(), get()) }
@@ -147,6 +147,5 @@ val appModule = module {
     single { UpdateTaskDescriptionUi(get(), get(), get(), get(), get(), get()) }
     single { UpdateTaskAssigneeUi(get(), get(), get(), get(), get(), get()) }
     single { DeleteTaskUi(get(), get(), get(), get()) }
-    single { TaskStateCli(get(), get(), get(), get()) }
-
+    single { TaskStateDashboard(get(), get(), get(), get(), get()) }
 }
