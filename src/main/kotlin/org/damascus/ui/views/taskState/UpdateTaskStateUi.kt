@@ -5,8 +5,9 @@ import org.damascus.logic.exception.StateNotFoundException
 import org.damascus.logic.repo.TaskStateRepository
 import org.damascus.logic.usecase.state.ManageTaskStateUseCase
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 
-
+@Single
 class UpdateTaskStateUi(
     private val inputReader: InputReader,
     private val taskStateRepository: TaskStateRepository,

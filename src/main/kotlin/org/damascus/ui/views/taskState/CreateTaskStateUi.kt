@@ -9,9 +9,10 @@ import org.damascus.logic.model.History
 import org.damascus.logic.usecase.auditLog.ManageAuditLogUseCase
 import org.damascus.logic.usecase.state.ManageTaskStateUseCase
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 import java.util.*
 
-
+@Single
 class CreateTaskStateUi(
     private val inputReader: InputReader,
     private val manageTaskState: ManageTaskStateUseCase,

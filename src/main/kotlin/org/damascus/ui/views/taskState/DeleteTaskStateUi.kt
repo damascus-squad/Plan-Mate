@@ -2,8 +2,9 @@ package org.damascus.ui.views.taskState
 
 import org.damascus.logic.repo.TaskStateRepository
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 
-
+@Single
 class DeleteTaskStateUi(
     private val inputReader: InputReader,
     private val taskStateRepository: TaskStateRepository

@@ -2,7 +2,9 @@ package org.damascus.ui.views.taskState
 
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
+import org.koin.core.annotation.Single
 
+@Single
 class TaskStateDashboard(
     private val display: Display,
     private val createStateUi: CreateTaskStateUi,

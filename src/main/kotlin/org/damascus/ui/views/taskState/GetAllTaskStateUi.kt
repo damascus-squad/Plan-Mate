@@ -4,7 +4,9 @@ import org.damascus.logic.repo.TaskStateRepository
 import org.damascus.ui.util.TerminalColor
 import org.damascus.ui.util.printTable
 import org.damascus.ui.util.withStyle
+import org.koin.core.annotation.Single
 
+@Single
 class GetAllTaskStateUi(
     private val taskStateRepository: TaskStateRepository,
 ){
