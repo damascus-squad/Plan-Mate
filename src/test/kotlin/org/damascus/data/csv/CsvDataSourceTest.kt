@@ -143,15 +143,8 @@ class CsvDataSourceTest {
         val h2 = createHistory()
         csvDataSource.write(listOf(h1, h2))
 
-        println("apple")
-        println(csvDataSource.read())
-
         // When
         csvDataSource.delete(h1.id)
-
-        println(csvDataSource.read())
-        println("mango")
-
         val result = csvDataSource.read()
 
         // Then

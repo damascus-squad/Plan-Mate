@@ -55,10 +55,6 @@ class CsvDataSource<T>(
         }
 
         val updated = data.filter { extractId(it) != id }
-
-        println("updated")
-        println(updated)
-
         overwriteAll(updated)
     }
 
