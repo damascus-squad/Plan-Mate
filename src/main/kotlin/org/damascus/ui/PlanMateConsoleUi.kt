@@ -6,7 +6,9 @@ import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.user.LoginView
 import org.damascus.ui.views.user.AdminDashboardUi
 import org.damascus.ui.views.user.MateDashboardUi
+import org.koin.core.annotation.Single
 
+@Single
 class PlanMateConsoleUi(
     private val loginView: LoginView,
     private val adminDashboardUi: AdminDashboardUi,

@@ -4,8 +4,10 @@ import org.damascus.logic.exception.NoTasksFoundException
 import org.damascus.logic.model.ProjectState
 import org.damascus.logic.repo.TaskRepository
 import org.damascus.logic.repo.TaskStateRepository
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class GetProjectStateUseCase(
     private val taskRepository: TaskRepository,
     private val taskStateRepository: TaskStateRepository

@@ -4,7 +4,9 @@ import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.util.printMateTable
+import org.koin.core.annotation.Single
 
+@Single
 class SelectMateUi(
     private val inputReader: InputReader,
     private val display: Display

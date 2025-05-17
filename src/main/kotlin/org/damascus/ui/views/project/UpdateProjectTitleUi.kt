@@ -12,8 +12,10 @@ import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.util.printProjectDetails
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UpdateProjectTitleUi(
     private val inputReader: InputReader,
     private val display: Display,
@@ -31,7 +33,7 @@ class UpdateProjectTitleUi(
                 History(
                     id = UUID.randomUUID(),
                     projectId = currentProject.id,
-                    taskId = History.Companion.NO_UUID,
+                    taskId = History.NO_UUID,
                     actionType = ActionType.PROJECT_TITLE_MODIFIED,
                     userId = currentUser.id,
                     currentState = currentProject.name,

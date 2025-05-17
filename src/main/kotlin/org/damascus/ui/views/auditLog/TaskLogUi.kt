@@ -7,8 +7,10 @@ import org.damascus.logic.usecase.auth.ManageMateUseCase
 import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.formatDateTime
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class TaskLogUi(
     private val display: Display,
     private val manageAuditLogUseCase: ManageAuditLogUseCase,

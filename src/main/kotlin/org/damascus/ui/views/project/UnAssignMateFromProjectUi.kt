@@ -12,8 +12,10 @@ import org.damascus.logic.usecase.project.ManageMateAssignmentUseCase
 import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.printProjectDetails
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UnAssignMateFromProjectUi(
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,

@@ -1,0 +1,49 @@
+package org.damascus.ui.views.taskState
+
+import org.damascus.logic.exception.DuplicateStateException
+import org.damascus.logic.exception.StateNotFoundException
+import org.damascus.logic.repo.TaskStateRepository
+import org.damascus.logic.usecase.state.ManageTaskStateUseCase
+import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
+
+@Single
+class UpdateTaskStateUi(
+    private val inputReader: InputReader,
+    private val taskStateRepository: TaskStateRepository,
+    private val manageTaskState: ManageTaskStateUseCase
+) {
+    operator fun invoke() {
+        val states = taskStateRepository.getAllStates()
+        if (states.isEmpty()) {
+            println("⚠️ No states to update.")
+            return
+        }
+
+        states.forEachIndexed { index, state ->
+            println("${index + 1}. ${state.name}")
+        }
+
+        val index = inputReader.readInt("Select the state to update (1-${states.size}): ", 1, states.size)
+        val selectedState = states[index - 1]
+        var newName: String
+
+        do {
+            newName = inputReader.readString("Enter new name (cannot be blank): ").trim()
+            if (newName.isBlank()) {
+                println("⚠️ Name cannot be blank. Please try again.")
+            }
+        } while (newName.isBlank())
+
+        val updated = selectedState.copy(name = newName)
+
+        try {
+            manageTaskState.updateTaskState(selectedState, updated)
+            println("✅ State updated successfully.")
+        } catch (e: DuplicateStateException) {
+            println("❌ Error: A state with that name already exists.")
+        } catch (e: StateNotFoundException) {
+            println("❌ Error: The original state no longer exists.")
+        }
+    }
+}

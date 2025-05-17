@@ -7,7 +7,9 @@ import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.printProjectDetails
 import org.damascus.ui.views.user.SelectMateUi
+import org.koin.core.annotation.Single
 
+@Single
 class UpdateProjectUi(
     private val display: Display,
     private val updateProjectTitleUi: UpdateProjectTitleUi,

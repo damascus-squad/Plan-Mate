@@ -13,8 +13,10 @@ import org.damascus.logic.model.Task
 import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class DeleteTaskUi(
     private val inputReader: InputReader,
     private val display: Display,

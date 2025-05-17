@@ -10,12 +10,16 @@ import org.damascus.logic.model.UserRole
 import org.damascus.logic.repo.AuthenticationRepository
 import org.damascus.logic.repo.DataSource
 import org.damascus.logic.service.HashingService
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class AuthenticationRepoImpl(
     private val hashingService: HashingService,
+    @Named("userDataSource")
     private val usersDataSource: DataSource<UserDTO>
-) : AuthenticationRepository {
+    ) : AuthenticationRepository {
 
     override suspend fun login(username: String, password: String): User {
         val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException()

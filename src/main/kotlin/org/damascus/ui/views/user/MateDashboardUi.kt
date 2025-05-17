@@ -7,7 +7,9 @@ import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.project.GetMateProjectsUi
 import org.damascus.ui.views.project.SelectProjectUi
 import org.damascus.ui.views.task.TaskMainUi
+import org.koin.core.annotation.Single
 
+@Single
 class MateDashboardUi(
     private val consoleDisplay: Display,
     private val getAllProjectsUi: GetMateProjectsUi,

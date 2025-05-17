@@ -5,7 +5,9 @@ import org.damascus.logic.usecase.state.ManageTaskStateUseCase
 import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.printTable
+import org.koin.core.annotation.Single
 
+@Single
 class GetAllTasksByProjectIdUi(
     private val display: Display,
     private val manageTaskUseCase: ManageTaskUseCase,

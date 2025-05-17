@@ -13,8 +13,9 @@ permissions:
 
 jobs:
   run-tests:
-    name: Execute Tests & Generate Coverage
+    name: Execute Tests & Generate Kover Coverage
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,56 +27,44 @@ jobs:
           distribution: 'temurin'
           cache: gradle
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: Grant permission to gradlew
+        run: chmod +x ./gradlew
 
-      - name: Run Unit Tests
-        run: ./gradlew test
+      - name: Run Tests and Generate Kover Report
+        run: ./gradlew koverXmlReport koverHtmlReport
 
-      - name: Generate Coverage
-        run: ./gradlew jacocoTestReport
-
-      - name: Upload coverage reports
+      - name: Upload Kover Coverage Report
         uses: actions/upload-artifact@v4
-        if: always()
         with:
-          name: jacoco-coverage-report
-          path: build/reports/jacoco/
-          retention-days: 1
+          name: kover-coverage-report
+          path: build/reports/kover/
 
-      - name: Test Summary
-        uses: test-summary/action@v2
-        with:
-          paths: "**/build/test-results/**/*.xml"
-        if: always()
-
-      - name: Verify coverage thresholds
-        run: ./gradlew jacocoTestCoverageVerification
+      - name: Verify Coverage Thresholds
+        run: ./gradlew koverVerify
 
   analyze-pr:
     name: Analyze PR Code Coverage
     needs: run-tests
     if: github.event_name == 'pull_request' && always()
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download coverage reports
+      - name: Download Kover Report
         uses: actions/download-artifact@v4
         with:
-          name: jacoco-coverage-report
-          path: build/reports/jacoco/
+          name: kover-coverage-report
+          path: build/reports/kover/
 
-      - name: Add coverage results to PR
-        id: jacoco-pr-comment
-        uses: madrapps/jacoco-report@v1.7.1
+      - name: Add Coverage Results to PR
+        id: kover
+        uses: mi-kas/kover-report@v1
         with:
-          paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
+          path: ${{ github.workspace }}/build/reports/kover/report.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 80
           update-comment: true
           title: Code Coverage Summary
-          pass-emoji: '✅'
-          fail-emoji: '❌'

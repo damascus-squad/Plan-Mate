@@ -1,7 +1,9 @@
 package org.damascus.logic.service
 
+import org.koin.core.annotation.Single
 import java.security.MessageDigest
 
+@Single
 class MD5HashingService : HashingService {
 
     override fun <T> hashData(data: T): String {

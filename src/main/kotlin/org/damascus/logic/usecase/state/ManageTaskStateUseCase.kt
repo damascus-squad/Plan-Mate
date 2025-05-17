@@ -3,8 +3,10 @@ package org.damascus.logic.usecase.state
 import org.damascus.logic.exception.StateNotFoundException
 import org.damascus.logic.model.TaskState
 import org.damascus.logic.repo.TaskStateRepository
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class ManageTaskStateUseCase(
     private val taskStateRepo: TaskStateRepository
 ) {

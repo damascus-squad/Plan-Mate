@@ -15,8 +15,10 @@ import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.util.printTaskDetails
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UpdateTaskDescriptionUi(
     private val inputReader: InputReader,
     private val display: Display,

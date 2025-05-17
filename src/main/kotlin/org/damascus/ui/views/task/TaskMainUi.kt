@@ -5,7 +5,9 @@ import org.damascus.logic.model.User
 import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
+import org.koin.core.annotation.Single
 
+@Single
 class TaskMainUi(
     private val display: Display,
     private val selectTaskUi: SelectTaskUi,
