@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.io.File
 
 class CsvDataSourceTest {
@@ -30,7 +31,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `write should add correct number rows when taking a list`() = runTest {
+    fun `write should add correct number of rows when taking a list`() = runTest {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()
@@ -95,14 +96,15 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `read should create new file when file does not exist`() = runTest {
+    fun `read should return an empty list when file does not exist`() = runTest {
         // Given
         file.delete()
 
-        // When && Then
-        csvDataSource.read()
+        // When
+        val result = csvDataSource.read()
 
-        assertTrue(file.exists())
+        // Then
+        assertThat(result).isEmpty()
     }
 
     @Test
@@ -122,17 +124,50 @@ class CsvDataSourceTest {
     }
 
     @Test
+    fun `update should throw CsvEntryNotFound when id doesn't exist`() = runTest {
+        // Given
+        val h1 = createHistory()
+        val h2 = createHistory()
+        csvDataSource.write(h1)
+
+        // When && Then
+        assertThrows<CsvEntryNotFound> {
+            csvDataSource.update(h2.id, h2.copy(actionType = ActionType.TASK_STATE_CHANGED))
+        }
+    }
+
+    @Test
     fun `delete should remove entry when id exists`() = runTest {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()
         csvDataSource.write(listOf(h1, h2))
 
+        println("apple")
+        println(csvDataSource.read())
+
         // When
         csvDataSource.delete(h1.id)
+
+        println(csvDataSource.read())
+        println("mango")
+
         val result = csvDataSource.read()
 
         // Then
         assertThat(result).containsExactly(h2)
+    }
+
+    @Test
+    fun `delete should throw CsvEntryNotFound when id doesn't exist`() = runTest {
+        // Given
+        val h1 = createHistory()
+        val h2 = createHistory()
+        csvDataSource.write(h1)
+
+        // When && Then
+        assertThrows<CsvEntryNotFound> {
+            csvDataSource.delete(h2.id)
+        }
     }
 }

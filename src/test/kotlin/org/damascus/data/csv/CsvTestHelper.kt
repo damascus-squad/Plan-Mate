@@ -33,7 +33,7 @@ object CsvTestHelper {
         )
     }
 
-    const val HISTORY_FILE_PATH = "test_assets/history.csv"
+    const val HISTORY_FILE_PATH = "assetsTest/history.csv"
 
     fun getHistoryCsvHandler(): CsvDataSource<History> =
         CsvDataSource(
