@@ -5,6 +5,9 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import org.damascus.data.dto.TaskStateDTO
+import org.damascus.data.mapper.toDto
+import org.damascus.data.mapper.toModel
 import org.damascus.logic.exception.StateNotFoundException
 import org.damascus.logic.model.History.Companion.NO_TASK_STATE
 import org.damascus.logic.model.TaskState
@@ -15,7 +18,7 @@ import org.junit.jupiter.api.assertThrows
 import java.util.*
 
 class TaskStateRepositoryImplTest {
-    private lateinit var dataSource: DataSource<TaskState>
+    private lateinit var dataSource: DataSource<TaskStateDTO>
     private lateinit var stateRepositoryImpl: TaskStateRepositoryImpl
 
     @BeforeEach
@@ -33,7 +36,7 @@ class TaskStateRepositoryImplTest {
         val result = stateRepositoryImpl.getAllStates()
 
         //then
-        assertThat(result).isEqualTo(fakeTaskStates)
+        assertThat(result.map { it.toDto() }).isEqualTo(fakeTaskStates)
         coVerify { dataSource.read() }
 
     }
@@ -48,7 +51,7 @@ class TaskStateRepositoryImplTest {
         val result = stateRepositoryImpl.getTaskStateById(targetId)
 
         //then
-        assertThat(result).isEqualTo(fakeTaskStates[0])
+        assertThat(result.toDto()).isEqualTo(fakeTaskStates[0])
         coVerify { dataSource.read() }
 
     }
@@ -90,7 +93,7 @@ class TaskStateRepositoryImplTest {
         coEvery { dataSource.read() } returns fakeTaskStates
 
         //when
-        val result = stateRepositoryImpl.update(fakeTaskStates[1], updatedState)
+        val result = stateRepositoryImpl.update(fakeTaskStates[1].toModel(), updatedState.toModel())
 
         //then
         assertThat(result).isTrue()
@@ -123,7 +126,7 @@ class TaskStateRepositoryImplTest {
         coEvery { dataSource.read() } returns fakeTaskStates
 
         // when
-        val result = stateRepositoryImpl.delete(stateToDelete)
+        val result = stateRepositoryImpl.delete(stateToDelete.toModel())
 
         //then
         assertThat(result).isTrue()
@@ -139,7 +142,7 @@ class TaskStateRepositoryImplTest {
             projectReferencesCount = 40
         )
 
-        coEvery { dataSource.read() } returns listOf(taskStateToDelete)
+        coEvery { dataSource.read() } returns listOf(taskStateToDelete.toDto())
 
         // When
         val result = stateRepositoryImpl.delete(taskStateToDelete)
@@ -152,7 +155,7 @@ class TaskStateRepositoryImplTest {
                 taskStateToDelete.id,
                 taskStateToDelete.copy(
                     projectReferencesCount = 39
-                )
+                ).toDto()
             )
         }
     }
@@ -166,7 +169,7 @@ class TaskStateRepositoryImplTest {
             projectReferencesCount = 1
         )
 
-        coEvery { dataSource.read() } returns listOf(taskStateToDelete)
+        coEvery { dataSource.read() } returns listOf(taskStateToDelete.toDto())
 
         // When
         val result = stateRepositoryImpl.delete(taskStateToDelete)
@@ -247,7 +250,7 @@ class TaskStateRepositoryImplTest {
             projectReferencesCount = 1
         )
 
-        coEvery { dataSource.read() } returns listOf(taskStateToDelete)
+        coEvery { dataSource.read() } returns listOf(taskStateToDelete.toDto())
 
         // When
         val result = stateRepositoryImpl.incrementProjectReferences(taskStateToDelete)
@@ -259,14 +262,14 @@ class TaskStateRepositoryImplTest {
                 taskStateToDelete.id,
                 taskStateToDelete.copy(
                     projectReferencesCount = 2
-                )
+                ).toDto()
             )
         }
     }
 
     private val fakeTaskStates = listOf(
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000001"), "In Progress", 1),
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000002"), "In Review", 1),
-        TaskState(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Completed", 1)
+        TaskStateDTO(UUID.fromString("00000000-0000-0000-0000-000000000001"), "In Progress", 1),
+        TaskStateDTO(UUID.fromString("00000000-0000-0000-0000-000000000002"), "In Review", 1),
+        TaskStateDTO(UUID.fromString("00000000-0000-0000-0000-000000000003"), "Completed", 1)
     )
 }

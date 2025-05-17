@@ -1,6 +1,7 @@
 package org.damascus.data.repo
 
 import org.damascus.data.dto.UserDTO
+import org.damascus.data.mapper.toModel
 import org.damascus.logic.exception.InvalidCredentialsException
 import org.damascus.logic.exception.UnauthorizedActionException
 import org.damascus.logic.exception.UserAlreadyExistException
@@ -29,7 +30,7 @@ class AuthenticationRepoImpl(
             throw InvalidCredentialsException()
         }
 
-        return searchedUser.toUser()
+        return searchedUser.toModel()
     }
 
     override suspend fun createMate(requester: User, newUsername: String, rawPassword: String): User {
@@ -42,20 +43,25 @@ class AuthenticationRepoImpl(
         }
 
         val hashedPassword = hashingService.hashData(rawPassword)
-        val newMate = UserDTO(id = UUID.randomUUID(), hashedPassword, newUsername, UserRole.MATE)
+        val newMate = UserDTO(
+            id = UUID.randomUUID(),
+            username = newUsername,
+            hashedPassword = hashedPassword,
+            userRole = UserRole.MATE
+        )
         usersDataSource.write(newMate)
 
-        return newMate.toUser()
+        return newMate.toModel()
     }
 
     override suspend fun getMateById(userId: UUID): User {
         return usersDataSource.read()
-            .find { it.id == userId }?.toUser() ?: throw UserNotFoundException()
+            .find { it.id == userId }?.toModel() ?: throw UserNotFoundException()
     }
 
     override suspend fun getAllMates(): List<User> {
         return usersDataSource.read()
-            .filter { it.userRole == UserRole.MATE }.map { it.toUser() }
+            .filter { it.userRole == UserRole.MATE }.map { it.toModel() }
     }
 
     private suspend fun getUserByUsername(username: String): UserDTO? {

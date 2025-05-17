@@ -6,6 +6,7 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.damascus.data.dto.UserDTO
+import org.damascus.data.mapper.toModel
 import org.damascus.logic.exception.InvalidCredentialsException
 import org.damascus.logic.exception.UnauthorizedActionException
 import org.damascus.logic.exception.UserAlreadyExistException
@@ -43,7 +44,7 @@ class AuthenticationRepositoryImplTest {
         val username = "abdo"
         val rawPassword = "pass123"
         val hashedPassword = "hashed-pass"
-        val storedUser = UserDTO(id = UUID.randomUUID(), hashedPassword, username, UserRole.MATE)
+        val storedUser = UserDTO(id = UUID.randomUUID(), username, hashedPassword, UserRole.MATE)
 
         coEvery { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(rawPassword, hashedPassword) } returns true
@@ -52,7 +53,7 @@ class AuthenticationRepositoryImplTest {
         val result = authRepo.login(username, rawPassword)
 
         // Then
-        assertEquals(storedUser.toUser(), result)
+        assertEquals(storedUser.toModel(), result)
     }
 
     @Test
@@ -74,7 +75,7 @@ class AuthenticationRepositoryImplTest {
         val username = "ahmed"
         val correctHashed = "hashed-pass"
         val wrongInput = "wrong-pass"
-        val storedUser = UserDTO(id = UUID.randomUUID(), correctHashed, username, UserRole.MATE)
+        val storedUser = UserDTO(id = UUID.randomUUID(), username, correctHashed, UserRole.MATE)
 
         coEvery { usersDataSource.read() } returns listOf(storedUser)
         every { hashingService.verifyData(wrongInput, correctHashed) } returns false
@@ -132,13 +133,13 @@ class AuthenticationRepositoryImplTest {
         @JvmStatic
         fun existingUsersLists(): Stream<List<UserDTO>> {
             val existingUsername = "mate17"
-            val newMate = UserDTO(UUID.randomUUID(), "pass", existingUsername, UserRole.MATE)
+            val newMate = UserDTO(UUID.randomUUID(), existingUsername, "pass", UserRole.MATE)
 
             return Stream.of(
                 listOf(newMate),
                 listOf(
-                    UserDTO(UUID.randomUUID(), "pass", "mate1", UserRole.MATE),
-                    UserDTO(UUID.randomUUID(), "pass", "mate2", UserRole.MATE),
+                    UserDTO(UUID.randomUUID(), "mate1", "pass", UserRole.MATE),
+                    UserDTO(UUID.randomUUID(), "mate2", "pass", UserRole.MATE),
                     newMate
                 )
             )

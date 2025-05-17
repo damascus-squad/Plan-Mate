@@ -2,13 +2,11 @@ package org.damascus.data.dto
 
 import org.bson.codecs.pojo.annotations.BsonId
 import org.damascus.data.mongodb.MongoDocument
-import org.damascus.logic.model.UserRole
 import java.util.*
 
-data class UserDTO(
+data class TaskStateDTO(
     @BsonId
     val id: UUID,
-    val username: String,
-    val hashedPassword: String,
-    val userRole: UserRole
+    val name: String,
+    val projectReferencesCount: Int
 ) : MongoDocument

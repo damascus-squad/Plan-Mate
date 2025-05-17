@@ -6,8 +6,10 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDateTime
+import org.damascus.data.dto.ProjectDTO
+import org.damascus.data.mapper.toDto
+import org.damascus.data.mapper.toModel
 import org.damascus.logic.exception.ProjectNotFoundException
-import org.damascus.logic.model.Project
 import org.damascus.logic.repo.DataSource
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -16,7 +18,7 @@ import java.util.*
 
 class ProjectRepositoryImplTest {
 
-    lateinit var dataSource: DataSource<Project>
+    lateinit var dataSource: DataSource<ProjectDTO>
     lateinit var repo: ProjectRepositoryImpl
 
     @BeforeEach
@@ -32,11 +34,11 @@ class ProjectRepositoryImplTest {
         coEvery { dataSource.read() } returns listOf(project)
 
         // When
-        val result = repo.create(project)
+        val result = repo.create(project.toModel())
 
         // Then
         assertThat(result).isFalse()
-        coVerify(exactly = 0) { dataSource.write(any<Project>()) }
+        coVerify(exactly = 0) { dataSource.write(any<ProjectDTO>()) }
     }
 
     @Test
@@ -46,7 +48,7 @@ class ProjectRepositoryImplTest {
         coEvery { dataSource.read() } returns listOf()
 
         // When
-        val result = repo.create(newProject)
+        val result = repo.create(newProject.toModel())
 
         // Then
         assertThat(result).isTrue()
@@ -60,7 +62,7 @@ class ProjectRepositoryImplTest {
         coEvery { dataSource.read() } returns listOf()
 
         // When
-        val result = repo.update(project.id, project)
+        val result = repo.update(project.id, project.toModel())
 
         // Then
         assertThat(result).isFalse()
@@ -75,7 +77,7 @@ class ProjectRepositoryImplTest {
         coEvery { dataSource.read() } returns listOf(project1, project2)
 
         // When
-        val result = repo.update(project1.id, updatedProject)
+        val result = repo.update(project1.id, updatedProject.toModel())
 
         // Then
         assertThat(result).isTrue()
@@ -143,7 +145,7 @@ class ProjectRepositoryImplTest {
         val result = repo.get(project.id)
 
         // Then
-        assertThat(result).isEqualTo(project)
+        assertThat(result.toDto()).isEqualTo(project)
     }
 
     @Test
@@ -182,7 +184,7 @@ class ProjectRepositoryImplTest {
         val result = repo.getAll()
 
         // Then
-        assertThat(result).isEqualTo(twoProjects)
+        assertThat(result.map { it.toDto() }).isEqualTo(twoProjects)
     }
 
     @Test
@@ -211,7 +213,7 @@ class ProjectRepositoryImplTest {
         val result = repo.getAllProjectsByMateId(mateId)
 
         // Then
-        assertThat(result).containsExactly(project1, project2)
+        assertThat(result.map { it.toDto() }).containsExactly(project1, project2)
     }
 
     @Test
@@ -243,14 +245,13 @@ class ProjectRepositoryImplTest {
         coVerify { dataSource.read() }
     }
 
-    private fun makeProject(id: UUID): Project {
-        return Project(
-            id = id,
-            "name",
-            mutableListOf(),
-            mutableListOf(),
-            LocalDateTime(2023, 10, 7, 3, 30, 0),
-        )
-    }
+    private fun makeProject(id: UUID) = ProjectDTO(
+        id = id,
+        "name",
+        mutableListOf(),
+        mutableListOf(),
+        LocalDateTime(2023, 10, 7, 3, 30, 0),
+    )
+
 
 }
