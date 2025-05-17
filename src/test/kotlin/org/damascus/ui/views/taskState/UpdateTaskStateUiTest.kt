@@ -1,8 +1,9 @@
 package org.damascus.ui.views.taskState
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.damascus.logic.exception.DuplicateStateException
 import org.damascus.logic.exception.StateNotFoundException
 import org.damascus.logic.model.TaskState
@@ -21,65 +22,65 @@ class UpdateTaskStateUiTest {
     private val updateUi = UpdateTaskStateUi(inputReader, taskStateRepo, manageTaskState)
 
     @Test
-    fun `should not proceed when no states exist`() {
-        every { taskStateRepo.getAllStates() } returns emptyList()
+    fun `should not proceed when no states exist`() = runTest {
+        coEvery { taskStateRepo.getAllStates() } returns emptyList()
 
         updateUi()
         // Just ensure it does not crash — would be nice to capture output if needed
     }
 
     @Test
-    fun `should update state successfully`() {
+    fun `should update state successfully`() = runTest {
         val state = TaskState(UUID.randomUUID(), "OldName", 0)
         val newName = "NewName"
 
-        every { taskStateRepo.getAllStates() } returns listOf(state)
-        every { inputReader.readInt(any(), any(), any()) } returns 1
-        every { inputReader.readString(any()) } returns newName
+        coEvery { taskStateRepo.getAllStates() } returns listOf(state)
+        coEvery { inputReader.readInt(any(), any(), any()) } returns 1
+        coEvery { inputReader.readString(any()) } returns newName
 
         updateUi()
 
-        verify { manageTaskState.updateTaskState(state, state.copy(name = newName)) }
+        coVerify { manageTaskState.updateTaskState(state, state.copy(name = newName)) }
     }
 
     @Test
-    fun `should retry input until name is not blank`() {
+    fun `should retry input until name is not blank`() = runTest {
         val state = TaskState(UUID.randomUUID(), "Initial", 0)
 
-        every { taskStateRepo.getAllStates() } returns listOf(state)
-        every { inputReader.readInt(any(), any(), any()) } returns 1
-        every { inputReader.readString(any()) } returnsMany listOf(" ", "\t", "ValidName")
+        coEvery { taskStateRepo.getAllStates() } returns listOf(state)
+        coEvery { inputReader.readInt(any(), any(), any()) } returns 1
+        coEvery { inputReader.readString(any()) } returnsMany listOf(" ", "\t", "ValidName")
 
         updateUi()
 
-        verify { manageTaskState.updateTaskState(state, state.copy(name = "ValidName")) }
+        coVerify { manageTaskState.updateTaskState(state, state.copy(name = "ValidName")) }
     }
 
     @Test
-    fun `should handle DuplicateStateException`() {
+    fun `should handle DuplicateStateException`() = runTest {
         val state = TaskState(UUID.randomUUID(), "Old", 0)
 
-        every { taskStateRepo.getAllStates() } returns listOf(state)
-        every { inputReader.readInt(any(), any(), any()) } returns 1
-        every { inputReader.readString(any()) } returns "DupName"
-        every { manageTaskState.updateTaskState(any(), any()) } throws DuplicateStateException("Exists")
+        coEvery { taskStateRepo.getAllStates() } returns listOf(state)
+        coEvery { inputReader.readInt(any(), any(), any()) } returns 1
+        coEvery { inputReader.readString(any()) } returns "DupName"
+        coEvery { manageTaskState.updateTaskState(any(), any()) } throws DuplicateStateException("Exists")
 
         updateUi()
 
-        verify { manageTaskState.updateTaskState(state, state.copy(name = "DupName")) }
+        coVerify { manageTaskState.updateTaskState(state, state.copy(name = "DupName")) }
     }
 
     @Test
-    fun `should handle StateNotFoundException`() {
+    fun `should handle StateNotFoundException`() = runTest {
         val state = TaskState(UUID.randomUUID(), "StateX", 0)
 
-        every { taskStateRepo.getAllStates() } returns listOf(state)
-        every { inputReader.readInt(any(), any(), any()) } returns 1
-        every { inputReader.readString(any()) } returns "Updated"
-        every { manageTaskState.updateTaskState(any(), any()) } throws StateNotFoundException()
+        coEvery { taskStateRepo.getAllStates() } returns listOf(state)
+        coEvery { inputReader.readInt(any(), any(), any()) } returns 1
+        coEvery { inputReader.readString(any()) } returns "Updated"
+        coEvery { manageTaskState.updateTaskState(any(), any()) } throws StateNotFoundException()
 
         updateUi()
 
-        verify { manageTaskState.updateTaskState(state, state.copy(name = "Updated")) }
+        coVerify { manageTaskState.updateTaskState(state, state.copy(name = "Updated")) }
     }
 }
