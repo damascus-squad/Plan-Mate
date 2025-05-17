@@ -5,17 +5,18 @@ import kotlinx.datetime.LocalDateTime
 import org.damascus.logic.model.ActionType
 import org.damascus.logic.model.History
 import org.damascus.data.csv.utils.CsvConstants
+import org.damascus.data.dto.HistoryLogDTO
 import java.util.*
 
 object HistoryCsvHelper {
 
     private const val HISTORY_FIELD_COUNT = 8
 
-    fun parseHistory(line: String): History {
+    fun parseHistory(line: String): HistoryLogDTO {
         val tokens = line.split(CsvConstants.COMMA_SEPARATOR)
         if (tokens.size != HISTORY_FIELD_COUNT) throw CsvParsingException("Invalid history line: $line")
 
-        return History(
+        return HistoryLogDTO(
             id = UUID.fromString(tokens[0].trim()),
             projectId = UUID.fromString(tokens[1].trim()),
             taskId = UUID.fromString(tokens[2].trim()),
@@ -27,7 +28,7 @@ object HistoryCsvHelper {
         )
     }
 
-    fun serializeHistory(history: History): String {
+    fun serializeHistory(history: HistoryLogDTO): String {
         return listOf(
             history.id.toString(),
             history.projectId.toString(),

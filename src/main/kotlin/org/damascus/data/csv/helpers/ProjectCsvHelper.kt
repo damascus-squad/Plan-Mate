@@ -4,6 +4,7 @@ import org.damascus.data.csv.CsvParsingException
 import kotlinx.datetime.LocalDateTime
 import org.damascus.logic.model.Project
 import org.damascus.data.csv.utils.CsvConstants
+import org.damascus.data.dto.ProjectDTO
 import java.util.*
 
 object ProjectCsvHelper {
@@ -12,11 +13,11 @@ object ProjectCsvHelper {
 
     private enum class FieldPosition { ID, NAME, ASSIGNED_MATES_IDS, ALLOWED_STATES_IDS, CREATION_DATE }
 
-    fun parseProject(line: String): Project {
+    fun parseProject(line: String): ProjectDTO {
         val tokens = line.split(CsvConstants.COMMA_SEPARATOR)
         if (tokens.size != PROJECT_FIELD_COUNT) throw CsvParsingException("Invalid project line: $line")
 
-        return Project(
+        return ProjectDTO(
             id = parseUuid(tokens[FieldPosition.ID.ordinal]),
             name = parseName(tokens[FieldPosition.NAME.ordinal]),
             assignedMatesIds = parseUuidList(tokens[FieldPosition.ASSIGNED_MATES_IDS.ordinal]),
@@ -42,7 +43,7 @@ object ProjectCsvHelper {
     private fun parseCreationDate(creationDate: String): LocalDateTime =
         LocalDateTime.parse(creationDate.trim())
 
-    fun serializeProject(project: Project): String {
+    fun serializeProject(project: ProjectDTO): String {
         val fields = Array(PROJECT_FIELD_COUNT) { "" }
 
         fields[FieldPosition.ID.ordinal] = project.id.toString()
