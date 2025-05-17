@@ -65,7 +65,7 @@ kover {
     reports {
         filters {
             excludes {
-                classes("*di.*", "*ui.*", "*MainKt*", "*mapper*", "*dto*")
+                classes("*di.*", "*ui.*", "*MainKt*")
                 annotatedBy("*KoverIgnore")
             }
         }

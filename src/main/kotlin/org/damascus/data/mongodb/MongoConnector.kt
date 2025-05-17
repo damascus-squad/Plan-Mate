@@ -10,15 +10,14 @@ import org.bson.codecs.configuration.CodecRegistries
 import org.bson.codecs.configuration.CodecRegistry
 import org.bson.codecs.pojo.PojoCodecProvider
 import org.damascus.annotation.KoverIgnore
-import org.koin.core.annotation.Single
 import java.util.*
 
 @KoverIgnore("Mongo Connection Handler")
 object MongoConnector {
     private fun getConnectionString(): String {
         val dotenv = Dotenv.load()
-        val mongoUsername = dotenv["MONGO_USERNAME"] ?: throw CredentialsNotFound("MONGO_USERNAME not found in .env")
-        val mongoPassword = dotenv["MONGO_PASSWORD"] ?: throw CredentialsNotFound("MONGO_PASSWORD not found in .env")
+        val mongoUsername = dotenv["MONGO_USERNAME"] ?: throw DatabaseCredentialsNotFound("MONGO_USERNAME not found in .env")
+        val mongoPassword = dotenv["MONGO_PASSWORD"] ?: throw DatabaseCredentialsNotFound("MONGO_PASSWORD not found in .env")
 
         return "mongodb+srv://$mongoUsername:$mongoPassword@cluster0.cshlend.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
     }
