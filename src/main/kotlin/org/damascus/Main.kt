@@ -6,9 +6,9 @@ import org.damascus.di.KoinAppModule
 import org.damascus.di.dataSourceModule
 import org.damascus.ui.PlanMateConsoleUi
 import org.damascus.ui.util.showEmojiLoading
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
 import org.koin.ksp.generated.module
-import org.koin.mp.KoinPlatform.getKoin
 
 @KoverIgnore("Main function")
 suspend fun main() = coroutineScope {
@@ -18,7 +18,7 @@ suspend fun main() = coroutineScope {
 
     delay(1000)
 
-    val ui: PlanMateConsoleUi = getKoin().get()
+    val ui: PlanMateConsoleUi = GlobalContext.get().get<PlanMateConsoleUi>()
 
     loading.cancelAndJoin()
 
