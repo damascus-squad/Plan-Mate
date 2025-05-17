@@ -1,34 +1,23 @@
 package org.damascus
 
+import kotlinx.coroutines.*
 import org.damascus.annotation.KoverIgnore
 import org.damascus.di.KoinAppModule
 import org.damascus.di.dataSourceModule
-import kotlinx.coroutines.*
-import org.damascus.di.appModule
-import org.damascus.di.repositoryModule
-import org.damascus.di.useCaseModule
 import org.damascus.ui.PlanMateConsoleUi
-import org.koin.core.context.GlobalContext
 import org.damascus.ui.util.showEmojiLoading
 import org.koin.core.context.startKoin
 import org.koin.ksp.generated.module
+import org.koin.mp.KoinPlatform.getKoin
 
 @KoverIgnore("Main function")
-fun main() {
-    startKoin {
-        modules(
-            KoinAppModule().module,
-            dataSourceModule
-        )
-    }
 suspend fun main() = coroutineScope {
     initializeKoin()
 
-    val loading = launchLoadingAnimation("Starting Plan-Mate")
+    val loading = launchLoadingAnimation("Starting PlanMate")
 
     delay(1000)
 
-    val ui: PlanMateConsoleUi = GlobalContext.get().get<PlanMateConsoleUi>()
     val ui: PlanMateConsoleUi = getKoin().get()
 
     loading.cancelAndJoin()
@@ -40,12 +29,13 @@ suspend fun main() = coroutineScope {
 
 private fun initializeKoin() {
     startKoin {
-        modules(appModule, repositoryModule, useCaseModule)
+        modules(
+            KoinAppModule().module,
+            dataSourceModule
+        )
     }
 }
 
-private fun CoroutineScope.launchLoadingAnimation(message: String): Job {
-    return launch {
-        showEmojiLoading(message)
-    }
+private fun CoroutineScope.launchLoadingAnimation(message: String): Job = launch {
+    showEmojiLoading(message)
 }
