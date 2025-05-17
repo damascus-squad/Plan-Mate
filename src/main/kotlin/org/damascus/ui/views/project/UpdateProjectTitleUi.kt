@@ -22,7 +22,7 @@ class UpdateProjectTitleUi(
     private val manageProjectUseCase: ManageProjectUseCase,
     private val manageAuditLogUseCase: ManageAuditLogUseCase
 ) {
-    operator fun invoke (currentProject: Project, currentUser: User) {
+    operator suspend fun invoke (currentProject: Project, currentUser: User) {
         val newTitle = inputReader.readString("Enter new title (or type 's' to keep current)")
 
         if (newTitle.lowercase() != "s") {

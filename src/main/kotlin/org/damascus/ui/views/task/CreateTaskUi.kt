@@ -28,7 +28,7 @@ class CreateTaskUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User) {
+    operator suspend fun invoke(currentProject: Project, currentUser: User) {
         val title = inputReader.readString(prompt = "Enter task title")
         val description = inputReader.readString(prompt = "Enter task description")
         val availableMates = manageMateUseCase.getAllMates().filter { it.id in currentProject.assignedMatesIds }

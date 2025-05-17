@@ -22,7 +22,7 @@ class TaskDashboardUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(currentUser: User, currentTaskId: UUID, currentProject: Project) {
+    operator suspend fun invoke(currentUser: User, currentTaskId: UUID, currentProject: Project) {
         val updatedTask = manageTaskUseCase.getTask(currentTaskId)
 
         val assigneeUsername = updatedTask.assigneeId?.let { manageMateUseCase.getMate(it).username } ?: "Unassigned"

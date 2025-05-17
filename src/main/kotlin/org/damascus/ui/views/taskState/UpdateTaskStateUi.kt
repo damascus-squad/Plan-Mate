@@ -13,7 +13,7 @@ class UpdateTaskStateUi(
     private val taskStateRepository: TaskStateRepository,
     private val manageTaskState: ManageTaskStateUseCase
 ) {
-    operator fun invoke() {
+    operator suspend fun invoke() {
         val states = taskStateRepository.getAllStates()
         if (states.isEmpty()) {
             println("⚠️ No states to update.")

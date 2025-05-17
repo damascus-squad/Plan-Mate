@@ -23,7 +23,7 @@ class DeleteTaskUi(
     private val manageAuditLogUseCase: ManageAuditLogUseCase,
     private val manageTaskUseCase: ManageTaskUseCase
 ) {
-    operator fun invoke(currentProject: Project, task: Task, admin: User) {
+    operator suspend fun invoke(currentProject: Project, task: Task, admin: User) {
         val confirm = inputReader.readBoolean(prompt = "Are you sure you want to delete this task? (yes/no): ")
         if (confirm) {
             try {

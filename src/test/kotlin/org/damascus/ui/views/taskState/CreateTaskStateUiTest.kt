@@ -1,8 +1,11 @@
 package org.damascus.ui.views.taskState
 
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.damascus.logic.usecase.auditLog.ManageAuditLogUseCase
 import org.damascus.logic.usecase.state.ManageTaskStateUseCase
 import org.damascus.ui.io.InputReader
@@ -17,13 +20,13 @@ class CreateTaskStateUiTest {
     private val createTaskStateUi = CreateTaskStateUi(inputReader, manageTaskState, auditLogUseCase)
 
     @Test
-    fun `should create task state and log audit`() {
-        every { inputReader.readString(any()) } returns "In Progress"
+    fun `should create task state and log audit`() = runTest{
+        coEvery { inputReader.readString(any()) } returns "In Progress"
 
         createTaskStateUi()
 
-        verify { manageTaskState.createTaskState("In Progress") }
-        verify { auditLogUseCase.saveLog(any()) }
+        coVerify { manageTaskState.createTaskState("In Progress") }
+        coVerify { auditLogUseCase.saveLog(any()) }
     }
 
 }

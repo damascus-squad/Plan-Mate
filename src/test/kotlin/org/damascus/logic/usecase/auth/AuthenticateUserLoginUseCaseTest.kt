@@ -1,9 +1,12 @@
 package org.damascus.logic.usecase.auth
 
 import com.google.common.truth.Truth.assertThat
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.damascus.logic.exception.InvalidCredentialsException
 import org.damascus.logic.model.User
 import org.damascus.logic.model.UserRole
@@ -24,34 +27,34 @@ class AuthenticateUserLoginUseCaseTest {
     }
 
     @Test
-    fun `login should return success result when credentials are valid`() {
+    fun `login should return success result when credentials are valid`() = runTest {
         // Given
         val username = "testuser"
         val password = "password123"
         val user = User(UUID.randomUUID(), username, UserRole.MATE)
-        every { authRepo.login(username, password) } returns user
+        coEvery { authRepo.login(username, password) } returns user
 
         // When
         val result = authenticateUserLogin(username, password)
 
         // Then
-        verify { authRepo.login(username, password) }
+        coVerify { authRepo.login(username, password) }
         assertThat(result.isSuccess).isEqualTo(true)
 
     }
 
     @Test
-    fun `login should return success result when credentials are valid for admin`() {
+    fun `login should return success result when credentials are valid for admin`()= runTest {
         // Given
         val username = "admin"
         val password = "admin123"
-        every { authRepo.login(username, password) } throws InvalidCredentialsException()
+        coEvery { authRepo.login(username, password) } throws InvalidCredentialsException()
 
         // When
         val result = authenticateUserLogin(username, password)
 
         // Then
-        verify { authRepo.login(username, password) }
+        coVerify { authRepo.login(username, password) }
         assertThat(result.isFailure).isEqualTo(true)
     }
 }

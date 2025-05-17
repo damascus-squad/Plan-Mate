@@ -18,7 +18,7 @@ class UpdateTaskUi(
     private val updateTaskStatusUi: UpdateTaskStatusUi,
     private val manageTaskUseCase: ManageTaskUseCase
 ) {
-    operator fun invoke(taskId: UUID, user: User, project: Project) {
+    operator suspend fun invoke(taskId: UUID, user: User, project: Project) {
         var updatedTask = manageTaskUseCase.getTask(taskId)
         val actions = mutableListOf(
             UiAction(

@@ -2,6 +2,7 @@ package org.damascus.ui.views.taskState
 
 import io.mockk.*
 import io.mockk.junit5.MockKExtension
+import kotlinx.coroutines.test.runTest
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
 import org.junit.jupiter.api.BeforeEach
@@ -32,10 +33,10 @@ class TaskStateDashboardTest {
     }
 
     @Test
-    fun `should display menu with correct title`() {
+    fun `should display menu with correct title`() = runTest{
         // Given
         val titleSlot = slot<String>()
-        every { display.displayMenu(any(), capture(titleSlot)) } just Runs
+        coEvery { display.displayMenu(any(), capture(titleSlot)) } just Runs
 
         // When
         dashboard.invoke()
@@ -45,10 +46,10 @@ class TaskStateDashboardTest {
     }
 
     @Test
-    fun `menu actions - should be in correct order`() {
+    fun `menu actions - should be in correct order`() =runTest{
         // Given
         val slot = slot<List<UiAction>>()
-        every { display.displayMenu(capture(slot), any()) } just Runs
+        coEvery { display.displayMenu(capture(slot), any()) } just Runs
 
         // When
         dashboard.invoke()

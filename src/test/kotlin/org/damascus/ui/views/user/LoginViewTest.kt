@@ -1,8 +1,7 @@
 package org.damascus.ui.views.user
 
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.verify
+import io.mockk.*
+import kotlinx.coroutines.test.runTest
 import org.damascus.logic.model.User
 import org.damascus.logic.model.UserRole
 import org.damascus.logic.usecase.auth.AuthenticateUserLoginUseCase
@@ -29,7 +28,7 @@ class LoginViewTest {
     }
 
     @Test
-    fun `should return user when authentication succeeds`() {
+    fun `should return user when authentication succeeds`() = runTest {
         // Given
         val username = "testUser"
         val password = "password123"
@@ -37,7 +36,7 @@ class LoginViewTest {
 
         every { inputReader.readString("👤 Enter your name ") } returns username
         every { inputReader.readString("🔒 Enter Your Password ") } returns password
-        every { authenticateUserLoginUseCase(username, password) } returns Result.success(expectedUser)
+        coEvery { authenticateUserLoginUseCase(username, password) } returns Result.success(expectedUser)
 
         // When
         val actualUser = loginView.getLoggedUser()
@@ -46,11 +45,11 @@ class LoginViewTest {
         assertEquals(expectedUser, actualUser)
         verify(exactly = 1) { inputReader.readString("👤 Enter your name ") }
         verify(exactly = 1) { inputReader.readString("🔒 Enter Your Password ") }
-        verify(exactly = 1) { authenticateUserLoginUseCase(username, password) }
+        coVerify(exactly = 1) { authenticateUserLoginUseCase(username, password) }
     }
 
     @Test
-    fun `should prompt again when authentication fails`() {
+    fun `should prompt again when authentication fails`() = runTest {
         // Given
         val failUsername = "wrongUser"
         val failPassword = "wrongPass"
@@ -60,13 +59,13 @@ class LoginViewTest {
 
         every { inputReader.readString("👤 Enter your name ") } returns failUsername andThen correctUsername
         every { inputReader.readString("🔒 Enter Your Password ") } returns failPassword andThen correctPassword
-        every {
+        coEvery {
             authenticateUserLoginUseCase(
                 failUsername,
                 failPassword
             )
         } returns Result.failure(Exception("Authentication failed"))
-        every { authenticateUserLoginUseCase(correctUsername, correctPassword) } returns Result.success(expectedUser)
+        coEvery { authenticateUserLoginUseCase(correctUsername, correctPassword) } returns Result.success(expectedUser)
 
         // When
         val actualUser = loginView.getLoggedUser()
@@ -75,12 +74,12 @@ class LoginViewTest {
         assertEquals(expectedUser, actualUser)
         verify(exactly = 2) { inputReader.readString("👤 Enter your name ") }
         verify(exactly = 2) { inputReader.readString("🔒 Enter Your Password ") }
-        verify(exactly = 1) { authenticateUserLoginUseCase(failUsername, failPassword) }
-        verify(exactly = 1) { authenticateUserLoginUseCase(correctUsername, correctPassword) }
+        coVerify(exactly = 1) { authenticateUserLoginUseCase(failUsername, failPassword) }
+        coVerify(exactly = 1) { authenticateUserLoginUseCase(correctUsername, correctPassword) }
     }
 
     @Test
-    fun `should attempt multiple logins until success`() {
+    fun `should attempt multiple logins until success`() = runTest {
         // Given
         val firstUsername = "user1"
         val firstPassword = "pass1"
@@ -93,19 +92,19 @@ class LoginViewTest {
 
         every { inputReader.readString("👤 Enter your name ") } returns firstUsername andThen secondUsername andThen thirdUsername
         every { inputReader.readString("🔒 Enter Your Password ") } returns firstPassword andThen secondPassword andThen thirdPassword
-        every {
+        coEvery {
             authenticateUserLoginUseCase(
                 firstUsername,
                 firstPassword
             )
         } returns Result.failure(Exception("Authentication failed"))
-        every {
+        coEvery {
             authenticateUserLoginUseCase(
                 secondUsername,
                 secondPassword
             )
         } returns Result.failure(Exception("Authentication failed"))
-        every { authenticateUserLoginUseCase(thirdUsername, thirdPassword) } returns Result.success(expectedUser)
+        coEvery { authenticateUserLoginUseCase(thirdUsername, thirdPassword) } returns Result.success(expectedUser)
 
         // When
         val actualUser = loginView.getLoggedUser()
@@ -114,9 +113,9 @@ class LoginViewTest {
         assertEquals(expectedUser, actualUser)
         verify(exactly = 3) { inputReader.readString("👤 Enter your name ") }
         verify(exactly = 3) { inputReader.readString("🔒 Enter Your Password ") }
-        verify(exactly = 1) { authenticateUserLoginUseCase(firstUsername, firstPassword) }
-        verify(exactly = 1) { authenticateUserLoginUseCase(secondUsername, secondPassword) }
-        verify(exactly = 1) { authenticateUserLoginUseCase(thirdUsername, thirdPassword) }
+        coVerify(exactly = 1) { authenticateUserLoginUseCase(firstUsername, firstPassword) }
+        coVerify(exactly = 1) { authenticateUserLoginUseCase(secondUsername, secondPassword) }
+        coVerify(exactly = 1) { authenticateUserLoginUseCase(thirdUsername, thirdPassword) }
     }
 
 }

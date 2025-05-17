@@ -12,7 +12,7 @@ class GetProjectStateUseCase(
     private val taskRepository: TaskRepository,
     private val taskStateRepository: TaskStateRepository
 ) {
-    operator fun invoke(projectId: UUID): ProjectState {
+    suspend operator fun invoke(projectId: UUID): ProjectState {
         val projectTaskStateIds = taskRepository.getByProject(projectId).map { it.stateId }
         if (projectTaskStateIds.isEmpty()) throw NoTasksFoundException("Project has no tasks, hence has no state!")
 

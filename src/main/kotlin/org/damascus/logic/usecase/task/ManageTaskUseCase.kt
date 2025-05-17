@@ -9,9 +9,9 @@ import java.util.*
 class ManageTaskUseCase(
     private val taskRepo: TaskRepository
 ) {
-    fun createTask(task: Task) = taskRepo.create(task)
-    fun getProjectTasks(projectId: UUID) = taskRepo.getByProject(projectId)
-    fun getTask(taskId: UUID) = taskRepo.get(taskId)
-    fun updateTask(taskId: UUID, task: Task) = taskRepo.update(taskId, task)
-    fun deleteTask(taskId: UUID) = taskRepo.delete(taskId)
+    suspend fun createTask(task: Task) = taskRepo.create(task)
+    suspend fun getProjectTasks(projectId: UUID) = taskRepo.getByProject(projectId)
+    suspend fun getTask(taskId: UUID) = taskRepo.get(taskId)
+    suspend fun updateTask(taskId: UUID, task: Task) = taskRepo.update(taskId, task)
+    suspend fun deleteTask(taskId: UUID) = taskRepo.delete(taskId)
 }

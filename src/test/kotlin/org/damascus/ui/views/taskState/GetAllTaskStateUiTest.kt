@@ -1,8 +1,9 @@
 package org.damascus.ui.views.taskState
 
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.test.runTest
 import org.damascus.logic.model.TaskState
 import org.damascus.logic.repo.TaskStateRepository
 import java.util.*
@@ -14,20 +15,21 @@ class GetAllTaskStateUiTest {
     private val ui = GetAllTaskStateUi(repository)
 
     @Test
-    fun `should print message when no states exist`() {
-        every { repository.getAllStates() } returns emptyList()
+    fun `should print message when no states exist`() = runTest {
+        coEvery { repository.getAllStates() } returns emptyList()
         ui()
     }
 
     @Test
-    fun `should display table with state names and project references`() {
-        every { repository.getAllStates() } returns listOf(
+    fun `should display table with state names and project references`() = runTest {
+        coEvery { repository.getAllStates() } returns listOf(
             TaskState(UUID.randomUUID(), "To Do", 1),
             TaskState(UUID.randomUUID(), "In Progress", 1)
         )
 
         ui()
     }
+
     @Test
     fun `buildHeaders returns correct header list`() {
         val states = listOf(

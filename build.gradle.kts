@@ -19,6 +19,7 @@ sourceSets.main {
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
     implementation("io.insert-koin:koin-core:4.0.3")
     implementation("io.insert-koin:koin-annotations:1.3.0")
     ksp("io.insert-koin:koin-ksp-compiler:1.3.0")
@@ -31,6 +32,8 @@ dependencies {
     testImplementation("com.google.truth:truth:1.4.4")
     testImplementation("io.mockk:mockk:1.14.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+
 }
 
 tasks.test {
@@ -44,7 +47,7 @@ kover {
     reports {
         filters {
             excludes {
-                classes("*di.*", "*ui.*", "*model.*")
+                classes("*di.*", "*ui.*", "*MainKt*")
                 annotatedBy("*KoverIgnore")
             }
         }

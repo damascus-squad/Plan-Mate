@@ -19,7 +19,7 @@ class ProjectManagementUi(
     private val taskMainUi: TaskMainUi,
     private val taskStateDashboard: TaskStateDashboard
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User) {
+    operator suspend fun invoke(currentProject: Project, currentUser: User) {
         currentProject.printProjectDetails()
 
         val adminActions = listOf(

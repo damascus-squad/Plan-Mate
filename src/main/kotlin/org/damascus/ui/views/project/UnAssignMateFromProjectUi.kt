@@ -22,7 +22,7 @@ class UnAssignMateFromProjectUi(
     private val manageAuditLogUseCase: ManageAuditLogUseCase,
     private val manageMateAssignmentUseCase: ManageMateAssignmentUseCase
 ) {
-    operator fun invoke(currentProject: Project, mate: User, admin: User) {
+    operator suspend fun invoke(currentProject: Project, mate: User, admin: User) {
 
         if (currentProject.assignedMatesIds.contains(mate.id).not()) {
             display.writeError(errorMessage = " This Mate is Already UnAssigned")

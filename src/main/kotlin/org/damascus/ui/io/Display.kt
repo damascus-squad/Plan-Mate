@@ -3,7 +3,7 @@ package org.damascus.ui.io
 import org.damascus.ui.util.UiAction
 
 interface Display {
-    fun displayMenu(
+    suspend fun displayMenu(
         uiActionList: List<UiAction>,
         menuTitle: String,
         showBackOption: Boolean = true

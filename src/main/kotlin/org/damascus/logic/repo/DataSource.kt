@@ -3,9 +3,10 @@ package org.damascus.logic.repo
 import java.util.*
 
 interface DataSource<T> {
-    fun read(): List<T>
-    fun write(entry: T)
-    fun write(entriesList: List<T>)
-    fun update(id: UUID, updatedData: T)
-    fun delete(id: UUID)
+    suspend fun read(): List<T>
+    suspend fun write(entry: T)
+    suspend fun write(entriesList: List<T>)
+    suspend fun update(id: UUID, updatedData: T)
+    suspend fun delete(id: UUID)
+
 }

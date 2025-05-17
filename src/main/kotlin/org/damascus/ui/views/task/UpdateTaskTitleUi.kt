@@ -27,7 +27,7 @@ class UpdateTaskTitleUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
+    operator suspend fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
         val newTitle = inputReader.readString(prompt = "Enter new title (or type 's' to keep current)")
 
         return if (newTitle.lowercase() != "s") {

@@ -17,7 +17,7 @@ class MateDashboardUi(
     private val selectProjectUi: SelectProjectUi,
     private val taskDashboardUi: TaskMainUi
 ) {
-    operator fun invoke(currentUser: User) {
+    operator suspend fun invoke(currentUser: User) {
         getAllProjectsUi(currentUser)
         val dashboardActions = listOf(
             UiAction("Select Project", {

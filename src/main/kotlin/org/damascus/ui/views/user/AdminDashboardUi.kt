@@ -12,7 +12,7 @@ class AdminDashboardUi(
     private val allProjectsUi: AllProjectsUi,
     private val mateManagementUi: MateManagementUi
 ) {
-    operator fun invoke (admin: User) {
+    operator suspend fun invoke(admin: User) {
         val dashboardActions = listOf(
             UiAction("📁 Projects Management", { allProjectsUi(admin) }),
             UiAction("👥 User management", { mateManagementUi(admin) }),

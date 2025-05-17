@@ -10,7 +10,7 @@ class GetAdminProjectsUi(
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,
 ) {
-    operator fun invoke(): Boolean {
+    operator suspend fun invoke(): Boolean {
         val projects = manageProjectUseCase.getAllProjects()
         if (projects.isEmpty()) {
             display.writeError(errorMessage = "No projects available. Please Create Project first..")

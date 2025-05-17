@@ -11,7 +11,7 @@ class CreateMateUi(
     private val createMateUseCase: CreateMateUseCase
 ) {
 
-    operator fun invoke(admin: User) {
+    operator suspend fun invoke(admin: User) {
         println("Creating new mate, please fill the following fields")
 
         val usernameInput = getUsernameInput()

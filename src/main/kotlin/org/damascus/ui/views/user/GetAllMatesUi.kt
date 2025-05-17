@@ -13,7 +13,7 @@ class GetAllMatesUi(
     private val manageMateUseCase: ManageMateUseCase
 ) {
 
-    operator fun invoke() {
+    operator suspend fun invoke() {
         try {
             val mates: List<User> = manageMateUseCase.getAllMates()
             if (mates.isNotEmpty()) {

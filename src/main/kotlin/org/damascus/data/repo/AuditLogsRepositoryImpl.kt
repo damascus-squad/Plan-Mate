@@ -12,15 +12,15 @@ class AuditLogsRepositoryImpl(
     @Named("historyDataSource")
     private val dataSource: DataSource<History>
 ) : AuditLogsRepository {
-    override fun saveLog(history: History) {
+    override suspend fun saveLog(history: History) {
         dataSource.write(history)
     }
 
-    override fun getLogsByProjectId(projectId: UUID): List<History> {
+    override suspend fun getLogsByProjectId(projectId: UUID): List<History> {
         return dataSource.read().filter { it.projectId == projectId }
     }
 
-    override fun getLogsByTaskId(taskId: UUID): List<History> {
+    override suspend fun getLogsByTaskId(taskId: UUID): List<History> {
         return dataSource.read().filter { it.taskId == taskId }
     }
 }

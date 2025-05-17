@@ -27,7 +27,7 @@ class UpdateTaskAssigneeUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(admin: User, currentTask: Task, currentProject: Project): Task {
+    operator suspend fun invoke(admin: User, currentTask: Task, currentProject: Project): Task {
         val mates = currentProject.assignedMatesIds.map { mateId ->
             manageMateUseCase.getMate(mateId)
         }
