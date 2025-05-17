@@ -1,10 +1,6 @@
 package org.damascus
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.damascus.di.appModule
 import org.damascus.di.repositoryModule
 import org.damascus.di.useCaseModule
@@ -13,20 +9,30 @@ import org.damascus.ui.util.showEmojiLoading
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.getKoin
 
- fun main() {
-     val appScope = CoroutineScope(Dispatchers.Default)
-     startKoin {
+suspend fun main() = coroutineScope {
+    initializeKoin()
+
+    val loading = launchLoadingAnimation("Starting Plan-Mate")
+
+    delay(1000)
+
+    val ui: PlanMateConsoleUi = getKoin().get()
+
+    loading.cancelAndJoin()
+
+    println()
+
+    ui.start()
+}
+
+private fun initializeKoin() {
+    startKoin {
         modules(appModule, repositoryModule, useCaseModule)
     }
-     appScope.launch {
-         val loadingJob = launch {
-             showEmojiLoading("Starting PlanMate")
-         }
-         delay(1000)
-         val ui: PlanMateConsoleUi = getKoin().get()
-         loadingJob.cancelAndJoin()
-         println("\r")
-         ui.start()
-     }
-     Thread.sleep(50_000)
- }
+}
+
+private fun CoroutineScope.launchLoadingAnimation(message: String): Job {
+    return launch {
+        showEmojiLoading(message)
+    }
+}
