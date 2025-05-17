@@ -1,6 +1,7 @@
 package org.damascus.data.csv
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.test.runTest
 import org.damascus.data.csv.CsvTestHelper.HISTORY_FILE_PATH
 import org.damascus.data.csv.CsvTestHelper.createHistory
 import org.damascus.logic.model.ActionType
@@ -29,7 +30,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `write should add correct number rows when taking a list`() {
+    fun `write should add correct number rows when taking a list`() = runTest {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()
@@ -43,7 +44,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `write should add a row when taking exactly one valid entry`() {
+    fun `write should add a row when taking exactly one valid entry`() = runTest {
         // Given
         val h1 = createHistory()
 
@@ -56,7 +57,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `read should return empty list if csv file only contains header`() {
+    fun `read should return empty list if csv file only contains header`() = runTest {
         // Given
         file.writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n")
 
@@ -68,7 +69,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `read should return empty list if csv file only contains blank lines`() {
+    fun `read should return empty list if csv file only contains blank lines`() = runTest {
         // Given
         file.writeText("id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\n\n\n\n\n")
 
@@ -80,7 +81,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `read should skip invalid lines when parsing`() {
+    fun `read should skip invalid lines when parsing`() = runTest {
         // Given
         file.writeText(
             "id,projectID,taskId,actionType,changedBy,oldState,newState,timestamp\ninvalid_line\n"
@@ -94,7 +95,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `read should create new file when file does not exist`() {
+    fun `read should create new file when file does not exist`() = runTest {
         // Given
         file.delete()
 
@@ -105,7 +106,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `update should modify entry when it already exists`() {
+    fun `update should modify entry when it already exists`() = runTest {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()
@@ -121,7 +122,7 @@ class CsvDataSourceTest {
     }
 
     @Test
-    fun `delete should remove entry when id exists`() {
+    fun `delete should remove entry when id exists`() = runTest {
         // Given
         val h1 = createHistory()
         val h2 = createHistory()

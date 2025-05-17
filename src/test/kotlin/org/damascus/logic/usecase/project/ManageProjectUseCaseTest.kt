@@ -1,8 +1,9 @@
 package org.damascus.logic.usecase.project
 
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -39,90 +40,90 @@ class ManageProjectUseCaseTest {
     }
 
     @Test
-    fun `createProject should call projectRepo create when project doesn't exist`() {
+    fun `createProject should call projectRepo create when project doesn't exist`() = runTest {
         // Given
-        every { projectRepo.exists(testProjectId) } returns false
+        coEvery { projectRepo.exists(testProjectId) } returns false
 
         // When
         manageProjectUseCase.createProject(testProject)
 
         // Then
-        verify(exactly = 1) { projectRepo.exists(testProjectId) }
-        verify(exactly = 1) { projectRepo.create(testProject) }
+        coVerify(exactly = 1) { projectRepo.exists(testProjectId) }
+        coVerify(exactly = 1) { projectRepo.create(testProject) }
     }
 
     @Test
-    fun `createProject should only call projectRepo exists when project exists`() {
+    fun `createProject should only call projectRepo exists when project exists`() = runTest {
         // Given
-        every { projectRepo.exists(testProjectId) } returns true
+        coEvery { projectRepo.exists(testProjectId) } returns true
 
         // When
         manageProjectUseCase.createProject(testProject)
 
         // Then
-        verify(exactly = 1) { projectRepo.exists(testProjectId) }
-        verify(exactly = 0) { projectRepo.create(any()) }
+        coVerify(exactly = 1) { projectRepo.exists(testProjectId) }
+        coVerify(exactly = 0) { projectRepo.create(any()) }
     }
 
     @Test
-    fun `getProject should call projectRepo get() when it is called`() {
+    fun `getProject should call projectRepo get() when it is called`() = runTest {
         // Given
-        every { projectRepo.get(testProjectId) } returns testProject
+        coEvery { projectRepo.get(testProjectId) } returns testProject
 
         // When
         manageProjectUseCase.getProject(testProjectId)
 
         // Then
-        verify(exactly = 1) { projectRepo.get(testProjectId) }
+        coVerify(exactly = 1) { projectRepo.get(testProjectId) }
     }
 
     @Test
-    fun `getAllProjects should call projectRepo getAll() when called`() {
+    fun `getAllProjects should call projectRepo getAll() when called`() = runTest {
         // Given
-        every { projectRepo.getAll() } returns listOf(testProject)
+        coEvery { projectRepo.getAll() } returns listOf(testProject)
 
         // When
         manageProjectUseCase.getAllProjects()
 
         // Then
-        verify(exactly = 1) { projectRepo.getAll() }
+        coVerify(exactly = 1) { projectRepo.getAll() }
     }
 
     @Test
-    fun `getMateProjects should call projectRepo getAllProjectsByMateId() when called`() {
+    fun `getMateProjects should call projectRepo getAllProjectsByMateId() when called`() = runTest {
         // Given
-        every { projectRepo.getAllProjectsByMateId(testMate.id) } returns listOf(testProject)
+        coEvery { projectRepo.getAllProjectsByMateId(testMate.id) } returns listOf(testProject)
 
         // When
         manageProjectUseCase.getMateProjects(testMate.id)
 
         // Then
-        verify(exactly = 1) { projectRepo.getAllProjectsByMateId(testMate.id) }
+        coVerify(exactly = 1) { projectRepo.getAllProjectsByMateId(testMate.id) }
     }
 
     @Test
-    fun `updateProject should call projectRepo update() when called`() {
+    fun `updateProject should call projectRepo update() when called`() = runTest {
         // Given
         val updatedProject = testProject.copy(name = "Updated Name")
-        every { projectRepo.update(testProjectId, updatedProject) } returns true
+        coEvery { projectRepo.update(testProjectId, updatedProject) } returns true
 
         // When
         manageProjectUseCase.updateProject(testProjectId, updatedProject)
 
         // Then
-        verify(exactly = 1) { projectRepo.update(testProjectId, updatedProject) }
+        coVerify(exactly = 1) { projectRepo.update(testProjectId, updatedProject) }
     }
 
     @Test
-    fun `deleteProject should call projectRepo delete() when called`() {
+    fun `deleteProject should call projectRepo delete() when called`() = runTest {
         // Given
-        every { projectRepo.delete(testProjectId) } returns true
+        coEvery { projectRepo.delete(testProjectId) } returns true
 
         // When
         manageProjectUseCase.deleteProject(testProjectId)
 
         // Then
-        verify(exactly = 1) { projectRepo.delete(testProjectId) }
+        coVerify(exactly = 1) { projectRepo.delete(testProjectId) }
     }
 
 }

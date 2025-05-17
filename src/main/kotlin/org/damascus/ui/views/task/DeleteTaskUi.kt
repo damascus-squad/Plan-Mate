@@ -13,15 +13,17 @@ import org.damascus.logic.model.Task
 import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class DeleteTaskUi(
     private val inputReader: InputReader,
     private val display: Display,
     private val manageAuditLogUseCase: ManageAuditLogUseCase,
     private val manageTaskUseCase: ManageTaskUseCase
 ) {
-    operator fun invoke(currentProject: Project, task: Task, admin: User) {
+    operator suspend fun invoke(currentProject: Project, task: Task, admin: User) {
         val confirm = inputReader.readBoolean(prompt = "Are you sure you want to delete this task? (yes/no): ")
         if (confirm) {
             try {

@@ -4,13 +4,15 @@ import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.util.printMateTable
+import org.koin.core.annotation.Single
 
+@Single
 class SelectMateUi(
     private val inputReader: InputReader,
     private val display: Display
 ) {
 
-    operator fun invoke(mates: List<User>): User? {
+    operator suspend fun invoke(mates: List<User>): User? {
         if (mates.isEmpty()) {
             display.writeError(errorMessage = "No mates assigned to this project.")
             return null

@@ -4,7 +4,9 @@ import org.damascus.logic.model.User
 import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
+import org.koin.core.annotation.Single
 
+@Single
 class AllProjectsUi(
     private val consoleDisplay: Display,
     private val getAdminProjectsUi: GetAdminProjectsUi,
@@ -13,7 +15,7 @@ class AllProjectsUi(
     private val selectProjectUi: SelectProjectUi,
     private val manageProjectUseCase: ManageProjectUseCase
 ) {
-    operator fun invoke(currentUser: User) {
+    operator suspend fun invoke(currentUser: User) {
         val hasProjects = getAdminProjectsUi()
 
         val dashboardActions =
@@ -37,7 +39,7 @@ class AllProjectsUi(
         )
     }
 
-    private fun createProjectUiAction(createProjectUi: CreateProjectUi, currentUser: User): UiAction {
+    private suspend fun createProjectUiAction(createProjectUi: CreateProjectUi, currentUser: User): UiAction {
         return UiAction(
             name = "➕ Create a New Project",
             action = { createProjectUi(currentUser) },

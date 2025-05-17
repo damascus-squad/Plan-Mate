@@ -11,14 +11,18 @@ import org.damascus.logic.model.UserRole
 import org.damascus.logic.repo.AuthenticationRepository
 import org.damascus.logic.repo.DataSource
 import org.damascus.logic.service.HashingService
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class AuthenticationRepoImpl(
     private val hashingService: HashingService,
+    @Named("userDataSource")
     private val usersDataSource: DataSource<UserDTO>
-) : AuthenticationRepository {
+    ) : AuthenticationRepository {
 
-    override fun login(username: String, password: String): User {
+    override suspend fun login(username: String, password: String): User {
         val searchedUser = getUserByUsername(username) ?: throw UserNotFoundException()
         val searchedUserPassword = searchedUser.hashedPassword
 
@@ -29,7 +33,7 @@ class AuthenticationRepoImpl(
         return searchedUser.toModel()
     }
 
-    override fun createMate(requester: User, newUsername: String, rawPassword: String): User {
+    override suspend fun createMate(requester: User, newUsername: String, rawPassword: String): User {
         if (requester.userRole == UserRole.MATE) {
             throw UnauthorizedActionException("create a mate")
         }
@@ -50,17 +54,17 @@ class AuthenticationRepoImpl(
         return newMate.toModel()
     }
 
-    override fun getMateById(userId: UUID): User {
+    override suspend fun getMateById(userId: UUID): User {
         return usersDataSource.read()
             .find { it.id == userId }?.toModel() ?: throw UserNotFoundException()
     }
 
-    override fun getAllMates(): List<User> {
+    override suspend fun getAllMates(): List<User> {
         return usersDataSource.read()
             .filter { it.userRole == UserRole.MATE }.map { it.toModel() }
     }
 
-    private fun getUserByUsername(username: String): UserDTO? {
+    private suspend fun getUserByUsername(username: String): UserDTO? {
         return usersDataSource.read().find { it.username == username }
     }
 }

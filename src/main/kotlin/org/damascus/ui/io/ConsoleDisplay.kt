@@ -3,12 +3,14 @@ package org.damascus.ui.io
 import org.damascus.ui.util.TerminalColor
 import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.withStyle
+import org.koin.core.annotation.Single
 import kotlin.system.exitProcess
 
+@Single
 class ConsoleDisplay(
     private val inputReader: InputReader
 ) : Display {
-    override fun displayMenu(
+    override suspend fun displayMenu(
         uiActionList: List<UiAction>,
         menuTitle: String,
         showBackOption: Boolean,

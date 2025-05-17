@@ -7,15 +7,17 @@ import org.damascus.logic.usecase.auth.ManageMateUseCase
 import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.formatDateTime
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class ProjectLogUi (
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,
     private val manageAuditLogUseCase: ManageAuditLogUseCase,
     private val manageMateUseCase: ManageMateUseCase
 ){
-    operator fun invoke(projectId: UUID) {
+    operator suspend fun invoke(projectId: UUID) {
         val projectName = manageProjectUseCase.getProject(projectId).name
         try {
             val logs = manageAuditLogUseCase.getProjectLogs(projectId)

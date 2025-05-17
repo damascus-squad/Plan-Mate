@@ -4,12 +4,14 @@ import org.damascus.logic.model.User
 import org.damascus.logic.usecase.auth.CreateMateUseCase
 import org.damascus.ui.input.checkPasswordInput
 import org.damascus.ui.input.checkUsernameInput
+import org.koin.core.annotation.Single
 
+@Single
 class CreateMateUi(
     private val createMateUseCase: CreateMateUseCase
 ) {
 
-    operator fun invoke(admin: User) {
+    operator suspend fun invoke(admin: User) {
         println("Creating new mate, please fill the following fields")
 
         val usernameInput = getUsernameInput()

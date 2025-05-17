@@ -12,15 +12,17 @@ import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.util.printProjectDetails
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UpdateProjectTitleUi(
     private val inputReader: InputReader,
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,
     private val manageAuditLogUseCase: ManageAuditLogUseCase
 ) {
-    operator fun invoke (currentProject: Project, currentUser: User) {
+    operator suspend fun invoke (currentProject: Project, currentUser: User) {
         val newTitle = inputReader.readString("Enter new title (or type 's' to keep current)")
 
         if (newTitle.lowercase() != "s") {
@@ -31,7 +33,7 @@ class UpdateProjectTitleUi(
                 History(
                     id = UUID.randomUUID(),
                     projectId = currentProject.id,
-                    taskId = History.Companion.NO_UUID,
+                    taskId = History.NO_UUID,
                     actionType = ActionType.PROJECT_TITLE_MODIFIED,
                     userId = currentUser.id,
                     currentState = currentProject.name,

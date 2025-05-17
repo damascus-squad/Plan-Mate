@@ -4,13 +4,15 @@ import org.damascus.logic.model.Project
 import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 
+@Single
 class SelectProjectUi(
     private val consoleUserInput: InputReader,
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,
 ) {
-    operator fun invoke(projects: List<Project>): Project {
+    operator suspend fun invoke(projects: List<Project>): Project {
 
         val choice = consoleUserInput.readInt(
             prompt = "Enter project number to select",

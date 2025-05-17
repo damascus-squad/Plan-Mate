@@ -7,15 +7,17 @@ import org.damascus.logic.usecase.auth.ManageMateUseCase
 import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.formatDateTime
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class TaskLogUi(
     private val display: Display,
     private val manageAuditLogUseCase: ManageAuditLogUseCase,
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageMateUseCase: ManageMateUseCase
 ) {
-    operator fun invoke(taskId: UUID) {
+    operator suspend fun invoke(taskId: UUID) {
         val taskName = manageTaskUseCase.getTask(taskId).title
         try {
             val logs = manageAuditLogUseCase.getTaskLogs(taskId)

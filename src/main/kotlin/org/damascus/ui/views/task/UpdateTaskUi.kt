@@ -6,8 +6,10 @@ import org.damascus.logic.model.UserRole
 import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UpdateTaskUi(
     private val display: Display,
     private val updateTaskAssigneeUi: UpdateTaskAssigneeUi,
@@ -16,7 +18,7 @@ class UpdateTaskUi(
     private val updateTaskStatusUi: UpdateTaskStatusUi,
     private val manageTaskUseCase: ManageTaskUseCase
 ) {
-    operator fun invoke(taskId: UUID, user: User, project: Project) {
+    operator suspend fun invoke(taskId: UUID, user: User, project: Project) {
         var updatedTask = manageTaskUseCase.getTask(taskId)
         val actions = mutableListOf(
             UiAction(

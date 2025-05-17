@@ -9,8 +9,10 @@ import org.damascus.ui.io.Display
 import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.printTaskDetails
 import org.damascus.ui.views.auditLog.TaskLogUi
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class TaskDashboardUi(
     private val display: Display,
     private val updateTaskUi: UpdateTaskUi,
@@ -20,7 +22,7 @@ class TaskDashboardUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(currentUser: User, currentTaskId: UUID, currentProject: Project) {
+    operator suspend fun invoke(currentUser: User, currentTaskId: UUID, currentProject: Project) {
         val updatedTask = manageTaskUseCase.getTask(currentTaskId)
 
         val assigneeUsername = updatedTask.assigneeId?.let { manageMateUseCase.getMate(it).username } ?: "Unassigned"

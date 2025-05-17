@@ -7,15 +7,19 @@ import org.damascus.ui.util.UiAction
 import org.damascus.ui.util.printProjectDetails
 import org.damascus.ui.views.auditLog.ProjectLogUi
 import org.damascus.ui.views.task.TaskMainUi
+import org.koin.core.annotation.Single
+import org.damascus.ui.views.taskState.TaskStateDashboard
 
+@Single
 class ProjectManagementUi(
     private val display: Display,
     private val updateProjectUi: UpdateProjectUi,
     private val deleteProjectUi: DeleteProjectUi,
     private val projectLogUi: ProjectLogUi,
     private val taskMainUi: TaskMainUi,
+    private val taskStateDashboard: TaskStateDashboard
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User) {
+    operator suspend fun invoke(currentProject: Project, currentUser: User) {
         currentProject.printProjectDetails()
 
         val adminActions = listOf(
@@ -46,6 +50,11 @@ class ProjectManagementUi(
                 name = "📋 View Tasks Board",
                 action = { taskMainUi(currentProject, currentUser) },
                 refreshAction = { invoke(currentProject, currentUser) }
+            ),
+            UiAction(
+                name = "🧮 Manage Task State",
+                action = { taskStateDashboard() },
+                exitAfterAction = true
             )
         )
 

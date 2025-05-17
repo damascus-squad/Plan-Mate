@@ -1,9 +1,10 @@
 package org.damascus.data.repo
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -27,21 +28,21 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `create should add new task if not exists`() {
+    fun `create should add new task if not exists`() = runTest {
         // Given
-        every { dataSource.read() } returns emptyList()
+        coEvery { dataSource.read() } returns emptyList()
 
         // When
         repository.create(sampleTask)
 
         // Then
-        verify(exactly = 1) { dataSource.write(sampleTask) }
+        coVerify(exactly = 1) { dataSource.write(sampleTask) }
     }
 
     @Test
-    fun `create should throw exception when task already exists`() {
+    fun `create should throw exception when task already exists`() = runTest {
         // Given
-        every { dataSource.read() } returns listOf(sampleTask)
+        coEvery { dataSource.read() } returns listOf(sampleTask)
 
         // When && Than
         assertThrows<TaskAlreadyExistsException> {
@@ -50,22 +51,22 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `update should replace existing task`() {
+    fun `update should replace existing task`() = runTest {
         // Given
-        every { dataSource.read() } returns listOf(sampleTask)
+        coEvery { dataSource.read() } returns listOf(sampleTask)
         val updatedTask = sampleTask.copy(title = "Updated Title")
 
         // When
         repository.update(sampleTask.id, updatedTask)
 
         // Then
-        verify(exactly = 1) { dataSource.update(sampleTask.id, updatedTask) }
+        coVerify(exactly = 1) { dataSource.update(sampleTask.id, updatedTask) }
     }
 
     @Test
-    fun `update should throw exception when task does not exist`() {
+    fun `update should throw exception when task does not exist`() = runTest {
         // Given
-        every { dataSource.read() } returns emptyList()
+        coEvery { dataSource.read() } returns emptyList()
 
         // When && That
         assertThrows<TaskNotFoundException> {
@@ -74,21 +75,21 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `delete should remove existing task`() {
+    fun `delete should remove existing task`() = runTest {
         // Given
-        every { dataSource.read() } returns listOf(sampleTask)
+        coEvery { dataSource.read() } returns listOf(sampleTask)
 
         // When
         repository.delete(sampleTask.id)
 
         //Then
-        verify(exactly = 1) { dataSource.delete(sampleTask.id) }
+        coVerify(exactly = 1) { dataSource.delete(sampleTask.id) }
     }
 
     @Test
-    fun `delete should throw exception when task does not exist`() {
+    fun `delete should throw exception when task does not exist`() = runTest {
         // Given
-        every { dataSource.read() } returns emptyList()
+        coEvery { dataSource.read() } returns emptyList()
 
         // When && Then
         assertThrows<TaskNotFoundException> {
@@ -97,9 +98,9 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `get should return task when it exists`() {
+    fun `get should return task when it exists`() = runTest {
         // Given
-        every { dataSource.read() } returns listOf(sampleTask)
+        coEvery { dataSource.read() } returns listOf(sampleTask)
 
         // When
         val result = repository.get(sampleTask.id)
@@ -109,9 +110,9 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `get should throw exception when task does not exist`() {
+    fun `get should throw exception when task does not exist`() = runTest {
         // Given
-        every { dataSource.read() } returns emptyList()
+        coEvery { dataSource.read() } returns emptyList()
 
         // When && Then
         assertThrows<TaskNotFoundException> {
@@ -120,12 +121,12 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `getByProject should return tasks that match projectId`() {
+    fun `getByProject should return tasks that match projectId`() = runTest {
         // Given
         val projectId = sampleTask.projectId
 
         // When
-        every { dataSource.read() } returns listOf(sampleTask)
+        coEvery { dataSource.read() } returns listOf(sampleTask)
         val result = repository.getByProject(projectId)
 
         // Then
@@ -133,9 +134,9 @@ class TaskRepositoryImplTest {
     }
 
     @Test
-    fun `getByProject should return empty list when no tasks match projectId`() {
+    fun `getByProject should return empty list when no tasks match projectId`() = runTest {
         // Given
-        every { dataSource.read() } returns listOf(sampleTask)
+        coEvery { dataSource.read() } returns listOf(sampleTask)
 
         // When
         val result = repository.getByProject(UUID.randomUUID())

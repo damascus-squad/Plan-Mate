@@ -1,12 +1,14 @@
 package org.damascus.logic.usecase.project
 
 import org.damascus.logic.repo.ProjectRepository
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class ManageMateAssignmentUseCase(
     private val repository: ProjectRepository
 ) {
-    fun assign(
+    suspend fun assign(
         projectId: UUID,
         mateId: UUID,
     ) = manageAssignment(
@@ -17,7 +19,7 @@ class ManageMateAssignmentUseCase(
         }
     )
 
-    fun unAssign(
+    suspend fun unAssign(
         projectId: UUID,
         mateId: UUID,
     ) = manageAssignment(
@@ -28,7 +30,7 @@ class ManageMateAssignmentUseCase(
         }
     )
 
-    private fun manageAssignment(
+    private suspend fun manageAssignment(
         projectId: UUID,
         action: MutableList<UUID>.() -> Unit
     ): Boolean {

@@ -5,20 +5,26 @@ import org.damascus.logic.model.TaskState
 import org.damascus.logic.repo.DataSource
 import org.damascus.logic.repo.TaskStateRepository
 import org.damascus.logic.model.History
+import org.koin.core.annotation.Named
+import org.koin.core.annotation.Single
 import java.util.*
 
-class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : TaskStateRepository {
+@Single
+class TaskStateRepositoryImpl(
+    @Named("taskStateDataSource")
+    private val dataSource: DataSource<TaskState>
+) : TaskStateRepository {
 
-    override fun getAllStates(): List<TaskState> {
+    override suspend fun getAllStates(): List<TaskState> {
         return dataSource.read()
     }
 
-    override fun getTaskStateById(id: UUID): TaskState {
+    override suspend fun getTaskStateById(id: UUID): TaskState {
         return dataSource.read().firstOrNull { it.id == id }
-            ?: History.Companion.NO_TASK_STATE
+            ?: History.NO_TASK_STATE
     }
 
-    override fun create(taskStateName: String): TaskState {
+    override suspend fun create(taskStateName: String): TaskState {
         if (exists(taskStateName)) {
             val existingTaskState = getTaskStateByName(taskStateName)
             incrementProjectReferences(existingTaskState)
@@ -30,7 +36,7 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         return newTaskState
     }
 
-    override fun update(taskState: TaskState, updatedTaskState: TaskState): Boolean {
+    override suspend fun update(taskState: TaskState, updatedTaskState: TaskState): Boolean {
         if (!exists(taskState.name)) {
             throw StateNotFoundException()
         }
@@ -39,7 +45,7 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         return true
     }
 
-    override fun delete(taskState: TaskState): Boolean {
+    override suspend fun delete(taskState: TaskState): Boolean {
         if (!exists(taskState.name)) {
             throw StateNotFoundException()
         }
@@ -58,7 +64,7 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         return true
     }
 
-    override fun incrementProjectReferences(taskState: TaskState): Boolean {
+    override suspend fun incrementProjectReferences(taskState: TaskState): Boolean {
         if (!exists(taskState.name)) {
             throw StateNotFoundException()
         }
@@ -71,11 +77,11 @@ class TaskStateRepositoryImpl(private val dataSource: DataSource<TaskState>) : T
         return true
     }
 
-    override fun exists(name: String): Boolean {
+    override suspend fun exists(name: String): Boolean {
         return dataSource.read().any { it.name == name }
     }
 
-    private fun getTaskStateByName(name: String): TaskState {
-        return dataSource.read().firstOrNull { it.name == name } ?: History.Companion.NO_TASK_STATE
+    private suspend fun getTaskStateByName(name: String): TaskState {
+        return dataSource.read().firstOrNull { it.name == name } ?: History.NO_TASK_STATE
     }
 }

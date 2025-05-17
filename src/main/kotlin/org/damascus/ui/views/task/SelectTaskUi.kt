@@ -4,13 +4,15 @@ import org.damascus.logic.model.Task
 import org.damascus.logic.usecase.task.ManageTaskUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
+import org.koin.core.annotation.Single
 
+@Single
 class SelectTaskUi(
     private val display: Display,
     private val inputReader: InputReader,
     private val manageTaskUseCase: ManageTaskUseCase,
 ) {
-    operator fun invoke(tasks: List<Task>): Task {
+    operator suspend fun invoke(tasks: List<Task>): Task {
 
         val selection = inputReader.readInt(
             prompt = "Enter task number to take action on",

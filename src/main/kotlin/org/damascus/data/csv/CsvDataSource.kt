@@ -23,18 +23,18 @@ class CsvDataSource<T>(
         file.appendText(serializer(item) + "\n")
     }
 
-    override fun read(): List<T> {
+    override suspend fun read(): List<T> {
         createFileIfNotExists()
         val lines = readLinesSkippingHeader()
         return lines.mapNotNull { runCatching { parser(it) }.getOrNull() }
     }
 
-    override fun write(entry: T) {
+    override suspend fun write(entry: T) {
         createFileIfNotExists()
         append(entry)
     }
 
-    override fun write(entriesList: List<T>) {
+    override suspend fun write(entriesList: List<T>) {
         createFileIfNotExists()
         entriesList.forEach { entry -> write(entry) }
     }
@@ -46,7 +46,7 @@ class CsvDataSource<T>(
         }
     }
 
-    override fun update(id: UUID, updatedData: T) {
+    override suspend fun update(id: UUID, updatedData: T) {
         val data = read().toMutableList()
         val index = data.indexOfFirst { extractId(it) == id }
         if (index != INDEX_NOT_FOUND) {
@@ -57,7 +57,7 @@ class CsvDataSource<T>(
         }
     }
 
-    override fun delete(id: UUID) {
+    override suspend fun delete(id: UUID) {
         val data = read()
 
         val idExistsOrNull = data.find { extractId(it) == id }

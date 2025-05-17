@@ -7,7 +7,9 @@ import org.damascus.ui.util.UiAction
 import org.damascus.ui.views.project.GetMateProjectsUi
 import org.damascus.ui.views.project.SelectProjectUi
 import org.damascus.ui.views.task.TaskMainUi
+import org.koin.core.annotation.Single
 
+@Single
 class MateDashboardUi(
     private val consoleDisplay: Display,
     private val getAllProjectsUi: GetMateProjectsUi,
@@ -15,7 +17,7 @@ class MateDashboardUi(
     private val selectProjectUi: SelectProjectUi,
     private val taskDashboardUi: TaskMainUi
 ) {
-    operator fun invoke(currentUser: User) {
+    operator suspend fun invoke(currentUser: User) {
         getAllProjectsUi(currentUser)
         val dashboardActions = listOf(
             UiAction("Select Project", {

@@ -16,8 +16,10 @@ import org.damascus.logic.model.User
 import org.damascus.logic.model.UserRole
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.views.user.SelectMateUi
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class CreateTaskUi(
     private val inputReader: InputReader,
     private val selectMateUi: SelectMateUi,
@@ -26,7 +28,7 @@ class CreateTaskUi(
     private val manageTaskUseCase: ManageTaskUseCase,
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
-    operator fun invoke(currentProject: Project, currentUser: User) {
+    operator suspend fun invoke(currentProject: Project, currentUser: User) {
         val title = inputReader.readString(prompt = "Enter task title")
         val description = inputReader.readString(prompt = "Enter task description")
         val availableMates = manageMateUseCase.getAllMates().filter { it.id in currentProject.assignedMatesIds }

@@ -12,15 +12,17 @@ import org.damascus.logic.usecase.project.ManageMateAssignmentUseCase
 import org.damascus.logic.usecase.project.ManageProjectUseCase
 import org.damascus.ui.io.Display
 import org.damascus.ui.util.printProjectDetails
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UnAssignMateFromProjectUi(
     private val display: Display,
     private val manageProjectUseCase: ManageProjectUseCase,
     private val manageAuditLogUseCase: ManageAuditLogUseCase,
     private val manageMateAssignmentUseCase: ManageMateAssignmentUseCase
 ) {
-    operator fun invoke(currentProject: Project, mate: User, admin: User) {
+    operator suspend fun invoke(currentProject: Project, mate: User, admin: User) {
 
         if (currentProject.assignedMatesIds.contains(mate.id).not()) {
             display.writeError(errorMessage = " This Mate is Already UnAssigned")

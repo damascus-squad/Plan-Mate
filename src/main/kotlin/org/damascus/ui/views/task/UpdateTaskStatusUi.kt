@@ -15,8 +15,10 @@ import org.damascus.logic.model.User
 import org.damascus.ui.io.Display
 import org.damascus.ui.io.InputReader
 import org.damascus.ui.util.printTaskDetails
+import org.koin.core.annotation.Single
 import java.util.*
 
+@Single
 class UpdateTaskStatusUi(
     private val inputReader: InputReader,
     private val display: Display,
@@ -26,7 +28,7 @@ class UpdateTaskStatusUi(
     private val manageTaskStateUseCase: ManageTaskStateUseCase
 ) {
 
-    operator fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
+    operator suspend fun invoke(currentProject: Project, currentUser: User, currentTask: Task): Task {
         val availableTaskStates = currentProject.allowedStatesIds.map { manageTaskStateUseCase.getTaskState(it) }
 
         display.write(prompt = "Available task states:")
