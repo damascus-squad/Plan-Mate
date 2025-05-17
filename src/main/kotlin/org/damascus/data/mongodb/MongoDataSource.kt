@@ -35,8 +35,7 @@ class MongoDataSource<T : MongoDocument>(
     suspend fun write(entriesList: List<T>) = withContext(dispatcher) {
         try {
             collection.insertMany(entriesList)
-        }
-        catch (e: MongoException) {
+        } catch (e: MongoException) {
             throw e
         }
     }

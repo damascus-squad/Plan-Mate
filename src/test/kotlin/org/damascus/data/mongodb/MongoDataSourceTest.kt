@@ -2,10 +2,8 @@ package org.damascus.data.mongodb
 
 import com.google.common.truth.Truth.assertThat
 import com.mongodb.MongoException
-import com.mongodb.MongoWriteException
 import com.mongodb.kotlin.client.coroutine.MongoClient
 import com.mongodb.kotlin.client.coroutine.MongoDatabase
-import io.mockk.coEvery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
