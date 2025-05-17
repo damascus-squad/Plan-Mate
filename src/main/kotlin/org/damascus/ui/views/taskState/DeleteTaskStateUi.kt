@@ -9,7 +9,7 @@ class DeleteTaskStateUi(
     private val inputReader: InputReader,
     private val taskStateRepository: TaskStateRepository
 ) {
-    operator fun invoke() {
+    operator suspend fun invoke() {
         val states = taskStateRepository.getAllStates()
         if (states.isEmpty()) {
             println("⚠️ No states to delete.")

@@ -17,7 +17,7 @@ class CreateTaskStateUi(
     private val manageTaskState: ManageTaskStateUseCase,
     private val manageAuditLogUseCase: ManageAuditLogUseCase
 ) {
-    operator fun invoke() {
+    operator suspend fun invoke() {
         val taskStateName = inputReader.readString("Enter name for new state: ")
         manageTaskState.createTaskState(taskStateName)
         println("✅ Task state created successfully.")

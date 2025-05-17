@@ -8,7 +8,7 @@ import org.koin.core.annotation.Single
 
 @Single
 class GetAllTaskStateUi(private val repository: TaskStateRepository) {
-    operator fun invoke() {
+    operator suspend fun invoke() {
         val states = repository.getAllStates()
         if (states.isEmpty()) {
             println("⚠️ No task states found.")
