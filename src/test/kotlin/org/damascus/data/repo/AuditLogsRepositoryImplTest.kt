@@ -9,15 +9,16 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.damascus.data.dto.HistoryLogDTO
+import org.damascus.data.mapper.toModel
 import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
 import org.damascus.logic.repo.DataSource
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 
 class AuditLogsRepositoryImplTest {
-    private lateinit var dataSource: DataSource<History>
+    private lateinit var dataSource: DataSource<HistoryLogDTO>
     private lateinit var repository: AuditLogsRepositoryImpl
 
     @BeforeEach
@@ -32,10 +33,10 @@ class AuditLogsRepositoryImplTest {
         val log = sampleLog
 
         // When
-        repository.saveLog(log)
+        repository.saveLog(log.toModel())
 
         // Then
-        coVerify  { dataSource.write(log) }
+        coVerify { dataSource.write(log) }
     }
 
     @Test
@@ -49,7 +50,7 @@ class AuditLogsRepositoryImplTest {
         val result = repository.getLogsByProjectId(log.projectId)
 
         // Then
-        assertThat(result).containsExactly(log)
+        assertThat(result).containsExactly(log.toModel())
     }
 
     @Test
@@ -76,7 +77,7 @@ class AuditLogsRepositoryImplTest {
         val result = repository.getLogsByTaskId(log.taskId)
 
         // Then
-        assertThat(result).containsExactly(log)
+        assertThat(result).containsExactly(log.toModel())
     }
 
     @Test
@@ -107,7 +108,7 @@ class AuditLogsRepositoryImplTest {
         currentStateId: String,
         targetedStateId: String,
         actionType: ActionType = ActionType.TASK_STATE_CHANGED,
-    ): History = History(
+    ) = HistoryLogDTO(
         id = id,
         taskId = taskId,
         projectId = projectId,

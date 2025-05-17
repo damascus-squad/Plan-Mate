@@ -10,6 +10,7 @@ import org.bson.codecs.configuration.CodecRegistries
 import org.bson.codecs.configuration.CodecRegistry
 import org.bson.codecs.pojo.PojoCodecProvider
 import org.damascus.annotation.KoverIgnore
+import org.koin.core.annotation.Single
 import java.util.*
 
 @KoverIgnore("Mongo Connection Handler")

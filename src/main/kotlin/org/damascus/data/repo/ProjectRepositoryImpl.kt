@@ -1,5 +1,8 @@
 package org.damascus.data.repo
 
+import org.damascus.data.dto.ProjectDTO
+import org.damascus.data.mapper.toDto
+import org.damascus.data.mapper.toModel
 import org.damascus.logic.exception.ProjectNotFoundException
 import org.damascus.logic.model.Project
 import org.damascus.logic.repo.DataSource
@@ -11,18 +14,18 @@ import java.util.*
 @Single
 class ProjectRepositoryImpl(
     @Named("projectDataSource")
-    private val dataSource: DataSource<Project>
+    private val dataSource: DataSource<ProjectDTO>
 ) : ProjectRepository {
 
     override suspend fun create(project: Project): Boolean {
         if (dataSource.read().any { it.id == project.id }) return false
-        dataSource.write(project)
+        dataSource.write(project.toDto())
         return true
     }
 
     override suspend fun update(projectId: UUID, project: Project): Boolean {
         if (dataSource.read().none { it.id == projectId }) return false
-        dataSource.update(projectId, project)
+        dataSource.update(projectId, project.toDto())
         return true
     }
 
@@ -37,15 +40,15 @@ class ProjectRepositoryImpl(
     }
 
     override suspend fun get(projectId: UUID): Project {
-        return dataSource.read().firstOrNull { it.id == projectId }
+        return dataSource.read().firstOrNull { it.id == projectId }?.toModel()
             ?: throw ProjectNotFoundException(projectId)
     }
 
     override suspend fun getAll(): List<Project> {
-        return dataSource.read()
+        return dataSource.read().map { it.toModel() }
     }
 
     override suspend fun getAllProjectsByMateId(mateId: UUID): List<Project> {
-        return dataSource.read().filter { mateId in it.assignedMatesIds }
+        return dataSource.read().filter { mateId in it.assignedMatesIds }.map { it.toModel() }
     }
 }

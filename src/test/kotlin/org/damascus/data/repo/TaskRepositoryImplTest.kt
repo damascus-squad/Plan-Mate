@@ -9,6 +9,8 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.damascus.data.csv.CsvDataSource
+import org.damascus.data.dto.TaskDTO
+import org.damascus.data.mapper.toModel
 import org.damascus.logic.exception.TaskAlreadyExistsException
 import org.damascus.logic.exception.TaskNotFoundException
 import org.damascus.logic.model.Task
@@ -18,7 +20,7 @@ import java.util.*
 import kotlin.test.Test
 
 class TaskRepositoryImplTest {
-    private lateinit var dataSource: CsvDataSource<Task>
+    private lateinit var dataSource: CsvDataSource<TaskDTO>
     private lateinit var repository: TaskRepositoryImpl
 
     @BeforeEach
@@ -33,7 +35,7 @@ class TaskRepositoryImplTest {
         coEvery { dataSource.read() } returns emptyList()
 
         // When
-        repository.create(sampleTask)
+        repository.create(sampleTask.toModel())
 
         // Then
         coVerify(exactly = 1) { dataSource.write(sampleTask) }
@@ -46,7 +48,7 @@ class TaskRepositoryImplTest {
 
         // When && Than
         assertThrows<TaskAlreadyExistsException> {
-            repository.create(sampleTask)
+            repository.create(sampleTask.toModel())
         }
     }
 
@@ -57,7 +59,7 @@ class TaskRepositoryImplTest {
         val updatedTask = sampleTask.copy(title = "Updated Title")
 
         // When
-        repository.update(sampleTask.id, updatedTask)
+        repository.update(sampleTask.id, updatedTask.toModel())
 
         // Then
         coVerify(exactly = 1) { dataSource.update(sampleTask.id, updatedTask) }
@@ -70,7 +72,7 @@ class TaskRepositoryImplTest {
 
         // When && That
         assertThrows<TaskNotFoundException> {
-            repository.update(sampleTask.id, sampleTask)
+            repository.update(sampleTask.id, sampleTask.toModel())
         }
     }
 
@@ -106,7 +108,7 @@ class TaskRepositoryImplTest {
         val result = repository.get(sampleTask.id)
 
         // Then
-        assertThat(result).isEqualTo(sampleTask)
+        assertThat(result).isEqualTo(sampleTask.toModel())
     }
 
     @Test
@@ -130,7 +132,7 @@ class TaskRepositoryImplTest {
         val result = repository.getByProject(projectId)
 
         // Then
-        assertThat(result).containsExactly(sampleTask)
+        assertThat(result).containsExactly(sampleTask.toModel())
     }
 
     @Test
@@ -145,7 +147,7 @@ class TaskRepositoryImplTest {
         assertThat(result).isEmpty()
     }
 
-    private val sampleTask = Task(
+    private val sampleTask = TaskDTO(
         id = UUID.randomUUID(),
         projectId = UUID.randomUUID(),
         title = "Sample Task",
