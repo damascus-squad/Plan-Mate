@@ -5,8 +5,8 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.damascus.data.csv.helpers.HistoryCsvHelper
+import org.damascus.data.dto.HistoryLogDTO
 import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
 import java.util.*
 
 object CsvTestHelper {
@@ -20,25 +20,23 @@ object CsvTestHelper {
         oldStateId: String = "TODO",
         newStateId: String = "IN PROGRESS",
         timestamp: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-    ): History {
-        return History(
-            id = id,
-            projectId = projectId,
-            taskId = taskId,
-            actionType = actionType,
-            userId = userId,
-            currentState = oldStateId,
-            newState = newStateId,
-            actionDate = timestamp,
-        )
-    }
+    ) = HistoryLogDTO(
+        id = id,
+        projectId = projectId,
+        taskId = taskId,
+        actionType = actionType,
+        userId = userId,
+        currentState = oldStateId,
+        newState = newStateId,
+        actionDate = timestamp,
+    )
 
     const val HISTORY_FILE_PATH = "assetsTest/history.csv"
 
-    fun getHistoryCsvHandler(): CsvDataSource<History> =
+    fun getHistoryCsvHandler(): CsvDataSource<HistoryLogDTO> =
         CsvDataSource(
             filePath = HISTORY_FILE_PATH,
-            generateHeader = { generateCsvHeader<History>() },
+            generateHeader = { generateCsvHeader<HistoryLogDTO>() },
             extractId = { it.id },
             parser = HistoryCsvHelper::parseHistory,
             serializer = HistoryCsvHelper::serializeHistory

@@ -1,7 +1,6 @@
 package org.damascus.data.csv.helpers
 
 import org.damascus.data.csv.CsvParsingException
-import org.damascus.logic.model.TaskState
 import org.damascus.data.csv.utils.CsvConstants
 import org.damascus.data.dto.TaskStateDTO
 import java.util.*

@@ -3,8 +3,9 @@ package org.damascus.data.csv
 import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDateTime
 import org.damascus.data.csv.helpers.*
-import org.damascus.data.dto.UserDTO
-import org.damascus.logic.model.*
+import org.damascus.data.dto.*
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.UserRole
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.util.*
@@ -61,8 +62,9 @@ class CsvDataParserTest {
     @Test
     fun `parseProject should return a valid project when csv entry is a valid project`() {
         // Given
-        val csvEntry = "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]};${listOfUUIDs[2]};${listOfUUIDs[3]},${listOfUUIDs[4]};${listOfUUIDs[5]},${date1}"
-        val expectedProject = Project(
+        val csvEntry =
+            "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]};${listOfUUIDs[2]};${listOfUUIDs[3]},${listOfUUIDs[4]};${listOfUUIDs[5]},${date1}"
+        val expectedProject = ProjectDTO(
             listOfUUIDs[0],
             "projectName",
             mutableListOf(listOfUUIDs[1], listOfUUIDs[2], listOfUUIDs[3]),
@@ -82,7 +84,7 @@ class CsvDataParserTest {
         // Given
         val csvEntry =
             "${listOfUUIDs[0]},projectName,${listOfUUIDs[1]};;;${listOfUUIDs[2]};${listOfUUIDs[3]},${listOfUUIDs[4]};${listOfUUIDs[5]},${date1}"
-        val expectedProject = Project(
+        val expectedProject = ProjectDTO(
             listOfUUIDs[0],
             "projectName",
             mutableListOf(
@@ -115,7 +117,7 @@ class CsvDataParserTest {
         // Given
         val csvEntry =
             "${listOfUUIDs[0]},${listOfUUIDs[1]},Super task,A task that never ends,${listOfUUIDs[2]},${listOfUUIDs[3]},${date1}"
-        val expectedTask = Task(
+        val expectedTask = TaskDTO(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             title = "Super task",
@@ -137,7 +139,7 @@ class CsvDataParserTest {
         // Given
         val csvEntry =
             "${listOfUUIDs[0]},${listOfUUIDs[1]},Super task,A task that never ends,,${listOfUUIDs[3]},${date1}"
-        val expectedTask = Task(
+        val expectedTask = TaskDTO(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             title = "Super task",
@@ -171,7 +173,7 @@ class CsvDataParserTest {
         // Given
         val csvEntry = "${listOfUUIDs[0]},Backlog,1"
 
-        val expectedTaskState = TaskState(
+        val expectedTaskState = TaskStateDTO(
             id = listOfUUIDs[0],
             name = "Backlog",
             projectReferencesCount = 1
@@ -201,7 +203,7 @@ class CsvDataParserTest {
         val csvEntry =
             "${listOfUUIDs[0]},${listOfUUIDs[1]},${listOfUUIDs[2]},${ActionType.TASK_STATE_CHANGED.ordinal},${listOfUUIDs[3]}, $currentState, $newState  ,$date1"
 
-        val expectedHistory = History(
+        val expectedHistory = HistoryLogDTO(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             taskId = listOfUUIDs[2],

@@ -1,11 +1,9 @@
 package org.damascus.data.csv
 
-import org.damascus.annotation.KoverIgnore
 import org.damascus.logic.repo.DataSource
 import java.io.File
 import java.util.*
 
-@KoverIgnore("Refactoring needed")
 class CsvDataSource<T>(
     filePath: String,
     generateHeader: () -> String,

@@ -4,8 +4,8 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.test.runTest
 import org.damascus.data.csv.CsvTestHelper.HISTORY_FILE_PATH
 import org.damascus.data.csv.CsvTestHelper.createHistory
+import org.damascus.data.dto.HistoryLogDTO
 import org.damascus.logic.model.ActionType
-import org.damascus.logic.model.History
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -16,7 +16,7 @@ import java.io.File
 
 class CsvDataSourceTest {
 
-    private lateinit var csvDataSource: CsvDataSource<History>
+    private lateinit var csvDataSource: CsvDataSource<HistoryLogDTO>
     private val file = File(HISTORY_FILE_PATH)
 
     @BeforeEach
