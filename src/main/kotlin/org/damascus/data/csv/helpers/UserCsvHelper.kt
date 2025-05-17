@@ -1,9 +1,9 @@
 package org.damascus.data.csv.helpers
 
 import org.damascus.data.csv.CsvParsingException
+import org.damascus.data.csv.utils.CsvConstants
 import org.damascus.data.dto.UserDTO
 import org.damascus.logic.model.UserRole
-import org.damascus.data.csv.utils.CsvConstants
 import java.util.*
 
 object UserCsvHelper {

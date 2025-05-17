@@ -4,8 +4,9 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.datetime.LocalDateTime
 import org.damascus.data.csv.helpers.*
 import org.damascus.data.csv.utils.CsvConstants.LIST_SEPARATOR
-import org.damascus.data.dto.UserDTO
-import org.damascus.logic.model.*
+import org.damascus.data.dto.*
+import org.damascus.logic.model.ActionType
+import org.damascus.logic.model.UserRole
 import org.junit.jupiter.api.Test
 import java.util.*
 
@@ -40,7 +41,7 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeProject should return csv entry when user is passed`() {
         // Given
-        val project = Project(
+        val project = ProjectDTO(
             id = listOfUUIDs[0],
             name = "Project",
             assignedMatesIds = mutableListOf(listOfUUIDs[1], listOfUUIDs[2]),
@@ -66,7 +67,7 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeTask should return csv entry when an assigned task is passed`() {
         // Given
-        val task = Task(
+        val task = TaskDTO(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             title = "EndlessTask",
@@ -96,7 +97,7 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeTask should return csv entry when a non-assigned task is passed`() {
         // Given
-        val task = Task(
+        val task = TaskDTO(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             title = "EndlessTask",
@@ -126,7 +127,7 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeState should return csv entry when state is passed`() {
         // Given
-        val taskState = TaskState(
+        val taskState = TaskStateDTO(
             id = listOfUUIDs[0],
             name = "Backlog",
             projectReferencesCount = 1,
@@ -149,7 +150,7 @@ class CsvDataSerializerTest {
     @Test
     fun `serializeHistory should return csv entry when history is passed`() {
         // Given
-        val history = History(
+        val history = HistoryLogDTO(
             id = listOfUUIDs[0],
             projectId = listOfUUIDs[1],
             taskId = listOfUUIDs[2],

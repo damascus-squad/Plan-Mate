@@ -1,16 +1,16 @@
 package org.damascus.data.csv.helpers
 
-import org.damascus.data.csv.CsvParsingException
 import kotlinx.datetime.LocalDateTime
-import org.damascus.logic.model.Task
+import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.utils.CsvConstants
+import org.damascus.data.dto.TaskDTO
 import java.util.*
 
 object TaskCsvHelper {
 
     const val TASK_FIELD_COUNT = 7
 
-    fun parseTask(line: String): Task {
+    fun parseTask(line: String): TaskDTO {
         val tokens = line.split(CsvConstants.COMMA_SEPARATOR)
         if (tokens.size != TASK_FIELD_COUNT) throw CsvParsingException("Invalid task line: $line")
 
@@ -22,10 +22,10 @@ object TaskCsvHelper {
         val stateId = UUID.fromString(tokens[5].trim())
         val creationDate = LocalDateTime.parse(tokens[6].trim())
 
-        return Task(id, projectId, title, description, assigneeId, stateId, creationDate)
+        return TaskDTO(id, projectId, title, description, assigneeId, stateId, creationDate)
     }
 
-    fun serializeTask(task: Task): String {
+    fun serializeTask(task: TaskDTO): String {
         val assigneeId = task.assigneeId?.toString()
         return listOf(
             task.id.toString(),
