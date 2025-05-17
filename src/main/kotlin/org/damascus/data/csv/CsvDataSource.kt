@@ -17,35 +17,24 @@ class CsvDataSource<T>(
     private val file = File(filePath)
     private val header = generateHeader()
 
-    private fun append(item: T) {
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.writeText("$header\n")
-        }
-        file.appendText(serializer(item) + "\n")
-    }
-
     override suspend fun read(): List<T> {
-        createFileIfNotExists()
-        val lines = readLinesSkippingHeader()
+        val lines = try {
+            readLinesSkippingHeader()
+        } catch (_: CsvFileNotFound) {
+            return emptyList()
+        }
+
         return lines.mapNotNull { runCatching { parser(it) }.getOrNull() }
     }
 
     override suspend fun write(entry: T) {
-        createFileIfNotExists()
-        append(entry)
+        createCsvFileIfNotFound()
+        appendEntry(entry)
     }
 
     override suspend fun write(entriesList: List<T>) {
-        createFileIfNotExists()
+        createCsvFileIfNotFound()
         entriesList.forEach { entry -> write(entry) }
-    }
-
-    private fun overwriteAll(data: List<T>) {
-        file.writer().use { writer ->
-            writer.appendLine(header)
-            data.forEach { writer.appendLine(serializer(it)) }
-        }
     }
 
     override suspend fun update(id: UUID, updatedData: T) {
@@ -62,17 +51,42 @@ class CsvDataSource<T>(
     override suspend fun delete(id: UUID) {
         val data = read()
 
-        val idExistsOrNull = data.find { extractId(it) == id }
-        if (idExistsOrNull == null) {
+        val entryNotFound = data.find { extractId(it) == id } == null
+        if (entryNotFound) {
             throw CsvEntryNotFound("Entry for id $id doesn't exist, hence can't be deleted")
         }
 
         val updated = data.filter { extractId(it) != id }
+
+        println("updated")
+        println(updated)
+
         overwriteAll(updated)
     }
 
+    private fun csvFileFound() = file.exists()
+    private fun csvFileNotFound() = file.exists().not()
+
+    private fun createCsvFileIfNotFound() {
+        if (csvFileFound()) return
+
+        file.parentFile.mkdirs()
+        file.writeText("$header\n")
+    }
+
+    private fun appendEntry(item: T) {
+        file.appendText(serializer(item) + "\n")
+    }
+
+    private fun overwriteAll(data: List<T>) {
+        file.writer().use { writer ->
+            writer.appendLine(header)
+            data.forEach { writer.appendLine(serializer(it)) }
+        }
+    }
+
     private fun readLinesSkippingHeader(): List<String> {
-        if (!file.exists()) throw CsvFileNotFound("File ${file.name} does not exist")
+        if (csvFileNotFound()) throw CsvFileNotFound("File ${file.name} does not exist")
         return file.readLines()
             .drop(HEADER_LINE_COUNT)
             .filter { it.isNotBlank() }
@@ -81,12 +95,5 @@ class CsvDataSource<T>(
     private companion object {
         const val HEADER_LINE_COUNT = 1
         const val INDEX_NOT_FOUND = -1
-    }
-
-    private fun createFileIfNotExists() {
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.writeText("$header\n")
-        }
     }
 }
