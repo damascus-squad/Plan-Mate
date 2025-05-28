@@ -3,6 +3,7 @@ package org.damascus.data.csv.helpers
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.utils.CsvConstants
 import org.damascus.data.dto.TaskStateDTO
+import java.lang.Integer.parseInt
 import java.util.*
 
 object TaskStateCsvHelper {
@@ -16,15 +17,11 @@ object TaskStateCsvHelper {
         if (tokens.size != STATE_FIELD_COUNT) throw CsvParsingException("Invalid state line: $line")
 
         return TaskStateDTO(
-            id = parseUuid(tokens[FieldPosition.ID.ordinal]),
-            name = parseName(tokens[FieldPosition.NAME.ordinal]),
-            projectReferencesCount = parseInt(tokens[FieldPosition.PROJECT_REFERENCES_COUNT.ordinal])
+            id = tokens[FieldPosition.ID.ordinal].toCsvUuid(),
+            name = tokens[FieldPosition.NAME.ordinal].trim(),
+            projectReferencesCount = tokens[FieldPosition.PROJECT_REFERENCES_COUNT.ordinal].toCsvInt()
         )
     }
-
-    private fun parseUuid(uuid: String): UUID = UUID.fromString(uuid.trim())
-    private fun parseName(name: String): String = name.trim()
-    private fun parseInt(number: String): Int = number.toInt()
 
     fun serializeTaskState(taskState: TaskStateDTO): String {
         val fields = Array(STATE_FIELD_COUNT) { "" }

@@ -1,6 +1,5 @@
 package org.damascus.data.csv.helpers
 
-import kotlinx.datetime.LocalDateTime
 import org.damascus.data.csv.CsvParsingException
 import org.damascus.data.csv.utils.CsvConstants
 import org.damascus.data.dto.ProjectDTO
@@ -17,30 +16,13 @@ object ProjectCsvHelper {
         if (tokens.size != PROJECT_FIELD_COUNT) throw CsvParsingException("Invalid project line: $line")
 
         return ProjectDTO(
-            id = parseUuid(tokens[FieldPosition.ID.ordinal]),
-            name = parseName(tokens[FieldPosition.NAME.ordinal]),
-            assignedMatesIds = parseUuidList(tokens[FieldPosition.ASSIGNED_MATES_IDS.ordinal]),
-            allowedStatesIds = parseUuidList(tokens[FieldPosition.ALLOWED_STATES_IDS.ordinal]),
-            creationDate = parseCreationDate(tokens[FieldPosition.CREATION_DATE.ordinal])
+            id = tokens[FieldPosition.ID.ordinal].toCsvUuid(),
+            name = tokens[FieldPosition.NAME.ordinal].trim(),
+            assignedMatesIds = tokens[FieldPosition.ASSIGNED_MATES_IDS.ordinal].toCsvUuidMutableList(),
+            allowedStatesIds = tokens[FieldPosition.ALLOWED_STATES_IDS.ordinal].toCsvUuidMutableList(),
+            creationDate = tokens[FieldPosition.CREATION_DATE.ordinal].toCsvDate()
         )
     }
-
-    private fun parseUuid(uuid: String): UUID =
-        UUID.fromString(uuid.trim())
-
-    private fun parseName(name: String): String =
-        name.trim()
-
-    private fun parseUuidList(uuidList: String): MutableList<UUID> =
-        uuidList
-            .trim()
-            .split(CsvConstants.LIST_SEPARATOR)
-            .filter { it.isNotBlank() }
-            .map { UUID.fromString(it) }
-            .toMutableList()
-
-    private fun parseCreationDate(creationDate: String): LocalDateTime =
-        LocalDateTime.parse(creationDate.trim())
 
     fun serializeProject(project: ProjectDTO): String {
         val fields = Array(PROJECT_FIELD_COUNT) { "" }
