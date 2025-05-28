@@ -19,8 +19,8 @@ class CsvDataSerializerTest {
         // Given
         val user = UserDTO(
             id = listOfUUIDs[0],
-            hashedPassword = "SuperStrongPassword",
             username = "Ameer",
+            hashedPassword = "SuperStrongPassword",
             userRole = UserRole.ADMIN
         )
 
@@ -30,9 +30,9 @@ class CsvDataSerializerTest {
         // Then
         val expected = listOf(
             listOfUUIDs[0],
-            "SuperStrongPassword",
             "Ameer",
-            UserRole.ADMIN
+            "SuperStrongPassword",
+            UserRole.ADMIN.ordinal
         ).joinToString(",")
 
         assertThat(result).isEqualTo(expected)
